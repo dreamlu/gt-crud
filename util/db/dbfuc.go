@@ -145,24 +145,23 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 //获得数据,根据id
 func GetDataById(dest interface{},id string) interface{} {
 	var info interface{}
-
 	var getinfo lib.GetInfoN
 
 	dba := DB.First(dest, id)
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
-	if num > 0 {
+	//有数据是返回相应信息
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
+	} else if num == 0 && dba.Error == nil{
+		info = lib.MapNoResult
+	} else {
 		//统计页码等状态
 		getinfo.Status = 200
 		getinfo.Msg = "请求成功"
 		getinfo.Data = dest //数据
-
 		info = getinfo
-	} else if num == 0 {
-		info = lib.MapNoResult
-	} else {
-		info = lib.MapError
 	}
 	return info
 }
@@ -175,10 +174,14 @@ func GetDataBySearch(dest interface{}, tablename string, args map[string][]strin
 
 	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(tablename, args)
 
-	DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
+	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
-	if num > 0 {
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql,dba.Error)
+	} else if num == 0 && dba.Error == nil{
+		info = lib.MapNoResult
+	} else {
 		//DB.Debug().Find(&dest)
 		DB.Raw(sql).Scan(dest)
 
@@ -191,10 +194,6 @@ func GetDataBySearch(dest interface{}, tablename string, args map[string][]strin
 		getinfo.Pager.EveryPage = everyPage
 
 		info = getinfo
-	} else if num == 0 {
-		info = lib.MapNoResult
-	} else {
-		info = lib.MapError
 	}
 	return info
 }
@@ -208,10 +207,12 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 	dba := DB.Exec(sql, value)
 
 	num := dba.RowsAffected
-	if num > 0 {
-		info = lib.MapDelete
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql,dba.Error)
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapExistOrNo
 	} else {
-		info = lib.MapError
+		info = lib.MapDelete
 	}
 	return info
 }
@@ -225,8 +226,10 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
-	if num == 0 {
-		info = lib.MapError
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapExistOrNo
 	} else {
 		info = lib.MapUpdate
 	}
@@ -241,7 +244,10 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 	sql := GetInsertSql(tablename, args)
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
-	if num == 0 {
+
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
 		info = lib.MapError
 	} else {
 		info = lib.MapCreate

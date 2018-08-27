@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="209f683c-4196-4dbe-955b-7a4c1538b82c" name="Default Changelist" comment="" />
+    <list default="true" id="209f683c-4196-4dbe-955b-7a4c1538b82c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/util/validator/validator.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/db/dbfuc.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/db/dbfuc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/lib/lib.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/lib/lib.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util/string/string.go" beforeDir="false" afterPath="$PROJECT_DIR$/util/string/string.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,7 +21,7 @@
     <session id="-648855767">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="1" />
@@ -37,13 +46,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="conf" value="103" />
-          <entry key="go" value="3850" />
+          <entry key="go" value="3881" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="3850" />
+          <entry key="Go" value="3881" />
           <entry key="PLAIN_TEXT" value="106" />
         </counts>
       </usages-collector>
@@ -53,59 +62,72 @@
         </counts>
       </usages-collector>
     </session>
+    <session id="165727663">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.15" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="go" value="8" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Go" value="8" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="go" value="1457" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Go" value="1457" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../deercoder-gin/conf/app.conf">
+        <entry file="file://$PROJECT_DIR$/models/user.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="10" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="23" />
+            <state relative-caret-position="-18">
+              <caret line="20" column="36" lean-forward="true" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../deercoder-gin/models/user.go">
+        <entry file="file://$PROJECT_DIR$/util/db/dbfuc.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
-              <folding>
-                <element signature="e#16#99#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/util.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="88" column="29" lean-forward="true" selection-start-line="88" selection-start-column="29" selection-end-line="88" selection-end-column="29" />
+            <state relative-caret-position="123">
+              <caret line="155" column="46" selection-start-line="155" selection-start-column="46" selection-end-line="155" selection-end-column="46" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/db/dbfuc.go">
+        <entry file="file://$PROJECT_DIR$/util/validator/validator.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="150" column="20" lean-forward="true" selection-start-line="150" selection-start-column="20" selection-end-line="150" selection-end-column="20" />
+            <state relative-caret-position="137">
+              <caret line="10" column="13" lean-forward="true" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
               <folding>
-                <element signature="e#32#100#0" expanded="true" />
+                <element signature="e#19#76#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../deercoder-gin/routers/router.go">
+        <entry file="file://$PROJECT_DIR$/util/lib/lib.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="884">
-              <caret line="61" column="13" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
-              <folding>
-                <element signature="e#17#133#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="47">
+              <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
             </state>
           </provider>
         </entry>
@@ -115,6 +137,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Go Application" />
         <option value="Go File" />
       </list>
     </option>
@@ -134,6 +157,9 @@
     </replaceStrings>
   </component>
   <component name="GOROOT" path="/usr/lib/go-1.10" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -141,23 +167,24 @@
         <option value="$PROJECT_DIR$/pkg/e/msg.go" />
         <option value="$PROJECT_DIR$/pkg/e/code.go" />
         <option value="$PROJECT_DIR$/conf/conf.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/util/db/db.go" />
         <option value="$PROJECT_DIR$/lib/lib.go" />
-        <option value="$PROJECT_DIR$/util/string/string.go" />
         <option value="$PROJECT_DIR$/util/time.go" />
         <option value="$PROJECT_DIR$/util/code/code.go" />
         <option value="$PROJECT_DIR$/util/db/lib.go" />
-        <option value="$PROJECT_DIR$/util/lib/lib.go" />
         <option value="$PROJECT_DIR$/controllers/user.go" />
         <option value="$PROJECT_DIR$/conf/app.conf" />
         <option value="$PROJECT_DIR$/util/file/file.go" />
         <option value="$PROJECT_DIR$/util/util.go" />
-        <option value="$PROJECT_DIR$/models/user.go" />
         <option value="$PROJECT_DIR$/routers/router.go" />
+        <option value="$PROJECT_DIR$/models/user.go" />
+        <option value="$PROJECT_DIR$/models/user.go" />
+        <option value="$PROJECT_DIR$/util/string/string.go" />
+        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/util/db/dbfuc.go" />
-        <option value="$PROJECT_DIR$/../deercoder-gin/models/user.go" />
-        <option value="$PROJECT_DIR$/../deercoder-gin/util/db/dbfuc.go" />
+        <option value="$PROJECT_DIR$/util/db/dbfuc.go" />
+        <option value="$PROJECT_DIR$/util/lib/lib.go" />
+        <option value="$PROJECT_DIR$/util/validator/validator.go" />
       </list>
     </option>
   </component>
@@ -173,22 +200,14 @@
     <option name="width" value="890" />
     <option name="height" value="654" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="gindemo" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -211,17 +230,16 @@
               <item name="deercoder-gin" type="462c0819:PsiDirectoryNode" />
               <item name="util" type="462c0819:PsiDirectoryNode" />
             </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
             <path>
-              <item name="deercoder-gin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deercoder-gin" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="deercoder-gin" type="b2602c69:ProjectViewProjectNode" />
-              <item name="deercoder-gin" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="gindemo" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
           </expand>
           <select />
@@ -236,7 +254,7 @@
     <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="js.buildTools.grunt.grunt-cli.package" value="" />
     <property name="js.buildTools.gulp.gulp_package_dir" value="" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../deercoder-gin" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../yd_hm" />
     <property name="nodejs.jest.jest_package" value="" />
     <property name="nodejs.protractor.protractor_package" value="" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -278,7 +296,7 @@
     </configuration>
     <configuration name="go build" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="deercoder-gin" />
-      <working_directory value="$PROJECT_DIR$/../deercoder-gin" />
+      <working_directory value="$PROJECT_DIR$" />
       <go_parameters value="-i" />
       <kind value="PACKAGE" />
       <filePath value="$PROJECT_DIR$/" />
@@ -316,18 +334,18 @@
     <frame x="0" y="25" width="1366" height="743" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18806647" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19033232" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.2358643" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.23462783" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.44911146" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.27948305" />
+      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.31877023" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
@@ -400,7 +418,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/conf/conf.go">
+    <entry file="file://$PROJECT_DIR$/conf/conf.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="15" selection-start-line="15" selection-end-line="15" />
@@ -428,9 +446,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/string/string.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/util/time.go" />
     <entry file="file://$PROJECT_DIR$/util/code/code.go" />
     <entry file="file://$PROJECT_DIR$/../github.com/gin-gonic/gin/tree.go">
@@ -447,24 +462,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/controllers/user.go">
+    <entry file="file://$PROJECT_DIR$/controllers/user.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
           <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/file/file.go">
+    <entry file="file://$PROJECT_DIR$/util/file/file.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="24" column="33" lean-forward="true" selection-start-line="24" selection-start-column="33" selection-end-line="24" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/lib/lib.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="31" column="65" lean-forward="true" selection-start-line="31" selection-start-column="65" selection-end-line="31" selection-end-column="65" />
         </state>
       </provider>
     </entry>
@@ -489,67 +497,95 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/jinzhu/gorm/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="170" column="13" selection-start-line="170" selection-start-column="13" selection-end-line="170" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/conf/app.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="10" selection-start-line="6" selection-start-column="10" selection-end-line="6" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="5" selection-start-line="3" selection-start-column="5" selection-end-line="3" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/db/db.go">
+    <entry file="file://$PROJECT_DIR$/util/db/db.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="58">
           <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/routers/router.go">
+    <entry file="file://$PROJECT_DIR$/util/util.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="61" column="13" selection-start-line="61" selection-start-column="13" selection-end-line="61" selection-end-column="13" />
+        <state relative-caret-position="1188">
+          <caret line="95" column="5" lean-forward="true" selection-start-line="95" selection-start-column="5" selection-end-line="95" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/string/string.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+          <folding>
+            <element signature="e#14#126#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/conf/app.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routers/router.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="32" />
           <folding>
             <element signature="e#17#133#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/util.go">
+    <entry file="file://$PROJECT_DIR$/../github.com/jinzhu/gorm/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="88" column="29" lean-forward="true" selection-start-line="88" selection-start-column="29" selection-end-line="88" selection-end-column="29" />
+        <state relative-caret-position="30">
+          <caret line="15" column="7" lean-forward="true" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/models/user.go">
+    <entry file="file:///usr/lib/go-1.10/src/builtin/builtin.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
-          <folding>
-            <element signature="e#16#99#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="236">
+          <caret line="255" column="4" selection-start-line="255" selection-start-column="4" selection-end-line="255" selection-end-column="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../deercoder-gin/util/db/dbfuc.go">
+    <entry file="file://$PROJECT_DIR$/models/user.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="150" column="20" lean-forward="true" selection-start-line="150" selection-start-column="20" selection-end-line="150" selection-end-column="20" />
+        <state relative-caret-position="-18">
+          <caret line="20" column="36" lean-forward="true" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/db/dbfuc.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="155" column="46" selection-start-line="155" selection-start-column="46" selection-end-line="155" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/lib/lib.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="47">
+          <caret line="38" lean-forward="true" selection-start-line="38" selection-end-line="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/validator/validator.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="10" column="13" lean-forward="true" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
           <folding>
-            <element signature="e#32#100#0" expanded="true" />
+            <element signature="e#19#76#0" expanded="true" />
           </folding>
         </state>
       </provider>

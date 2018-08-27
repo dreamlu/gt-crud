@@ -15,6 +15,7 @@ type User struct {
 
 //获得用户,根据id
 func GetUserById(id string) interface{} {
+
 	db.DB.AutoMigrate(&User{})
 	var user = User{}
 	return db.GetDataById(&user, id)
@@ -22,7 +23,7 @@ func GetUserById(id string) interface{} {
 
 //获得用户,分页/查询
 func GetUserBySearch(args map[string][]string) interface{} {
-
+	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
 	db.DB.AutoMigrate(&User{})
 	var user = []*User{}
 	return db.GetDataBySearch(&user, "user", args)
