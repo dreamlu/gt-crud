@@ -4,18 +4,32 @@ package db
 import (
 	"deercoder-gin/conf"
 	"deercoder-gin/util/lib"
+	"reflect"
 	"strconv"
 	"strings"
-)
+	)
+
+/*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名*/
+func GetSqlColumnsSql(model interface{}) (sql string) {
+	typ := reflect.TypeOf(model)
+
+	for i := 0; i < typ.NumField(); i++ {
+		tag := typ.Field(i).Tag.Get("json")
+		sql += tag + ","
+	}
+	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
+	return sql
+}
 
 /*传入表名,查询语句拼接*/
-func SearchTableSql(tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
+func SearchTableSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
 
 	//页码,每页数量
 	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
 	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
 
-	sql = "select * from `" + tablename + "` where 1=1 and "
+	//尝试将select* 变为对应的字段名
+	sql = "select "+GetSqlColumnsSql(model)+" from `" + tablename + "` where 1=1 and "
 	for k, v := range args {
 		if k == "clientPage" {
 			clientPageStr = v[0]
@@ -37,7 +51,7 @@ func SearchTableSql(tablename string, args map[string][]string) (sqlnolimit, sql
 
 	c := []byte(sql)
 	sql = string(c[:len(c)-4]) //去and
-	sqlnolimit = strings.Replace(sql, "*", "count(id) as sum_page", -1)
+	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
 	sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
 
 	return sqlnolimit, sql, clientPage, everyPage
@@ -66,10 +80,6 @@ func SearchTableSqlInclueDate(time string, tablename string, args map[string][]s
 		}
 		if k == "everyPage" { //每页数量
 			everyPageStr = v[0]
-			continue
-		}
-		if k == "publish_num" { //轮播/新闻识别,轮播>0
-			sql += "publish_num > 0 and "
 			continue
 		}
 		if v[0] == "" { //条件为空,舍弃
@@ -103,7 +113,7 @@ func GetUpdateSqlById(tablename string, args map[string][]string) (sql, id strin
 			id = v[0]
 			continue
 		}
-		v[0] = strings.Replace(v[0],"'","\\'",-1)
+		v[0] = strings.Replace(v[0], "'", "\\'", -1)
 		sql += k + "='" + v[0] + "',"
 	}
 	c := []byte(sql)
@@ -143,52 +153,52 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 /*============================================================================*/
 
 //获得数据,根据id
-func GetDataById(dest interface{},id string) interface{} {
+func GetDataById(data interface{}, id string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
-	dba := DB.First(dest, id)
+	dba := DB.First(data, id) //只要一行数据时使用 LIMIT 1,增加查询性能
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
-	} else if num == 0 && dba.Error == nil{
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//统计页码等状态
 		getinfo.Status = 200
 		getinfo.Msg = "请求成功"
-		getinfo.Data = dest //数据
+		getinfo.Data = data //数据
 		info = getinfo
 	}
 	return info
 }
 
 //获得数据,分页/查询
-func GetDataBySearch(dest interface{}, tablename string, args map[string][]string) interface{} {
+func GetDataBySearch(model,data interface{}, tablename string, args map[string][]string) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
 
-	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(tablename, args)
+	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(model, tablename, args)
 
 	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql,dba.Error)
-	} else if num == 0 && dba.Error == nil{
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error)
+	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//DB.Debug().Find(&dest)
-		DB.Raw(sql).Scan(dest)
+		DB.Raw(sql).Scan(data)
 
 		//统计页码等状态
 		getinfo.Status = 200
 		getinfo.Msg = "请求成功"
-		getinfo.Data = dest //数据
+		getinfo.Data = data //数据
 		//getinfo.Pager.SumPage = num
 		getinfo.Pager.ClientPage = clientPage
 		getinfo.Pager.EveryPage = everyPage
@@ -208,7 +218,7 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 
 	num := dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql,dba.Error)
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error)
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -227,7 +237,7 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -246,7 +256,7 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 	num = dba.RowsAffected
 
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql,dba.Error.Error())
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapError
 	} else {

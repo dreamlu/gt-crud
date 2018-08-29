@@ -25,8 +25,9 @@ func GetUserById(id string) interface{} {
 func GetUserBySearch(args map[string][]string) interface{} {
 	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
 	db.DB.AutoMigrate(&User{})
-	var user = []*User{}
-	return db.GetDataBySearch(&user, "user", args)
+	var users = []*User{}
+	var user User
+	return db.GetDataBySearch(user,&users, "user", args)
 }
 
 //删除用户,根据id
