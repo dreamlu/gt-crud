@@ -7,9 +7,9 @@ import (
 
 /*用户*/
 type User struct {
-	ID           uint          `json:"id"`
+	ID           uint          `json:"id" gorm:"primary_key"`
 	Username     string        `json:"username"`
-	Userpassword string        `json:"userpassword"`
+	//Userpassword string        `json:"userpassword"`
 	Createtime   util.JsonTime `json:"createtime"`
 }
 
@@ -26,8 +26,7 @@ func GetUserBySearch(args map[string][]string) interface{} {
 	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
 	db.DB.AutoMigrate(&User{})
 	var users = []*User{}
-	var user User
-	return db.GetDataBySearch(user,&users, "user", args)
+	return db.GetDataBySearch(User{},&users, "user", args)//匿名User{}
 }
 
 //删除用户,根据id

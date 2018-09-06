@@ -36,6 +36,11 @@ func SetRouter() *gin.Engine {
 			user.POST("/create", controllers.CreateUser)
 			user.PATCH("/update", controllers.UpdateUser)
 		}
+		//用户账户数据
+		usercount := v.Group("/userinfo")
+		{
+			usercount.GET("/getbysearch", controllers.GetUserinfoBySearch)
+		}
 	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {

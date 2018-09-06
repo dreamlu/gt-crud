@@ -7,15 +7,17 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	)
+	"fmt"
+		)
 
 /*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名*/
 func GetSqlColumnsSql(model interface{}) (sql string) {
 	typ := reflect.TypeOf(model)
-
+	//var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
 		tag := typ.Field(i).Tag.Get("json")
-		sql += tag + ","
+		//buffer.WriteString("`"+tag + "`,")
+		sql += "`"+tag + "`,"
 	}
 	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
 	return sql
@@ -29,7 +31,7 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
 
 	//尝试将select* 变为对应的字段名
-	sql = "select "+GetSqlColumnsSql(model)+" from `" + tablename + "` where 1=1 and "
+	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ",GetSqlColumnsSql(model),tablename)
 	for k, v := range args {
 		if k == "clientPage" {
 			clientPageStr = v[0]
@@ -188,12 +190,16 @@ func GetDataBySearch(model,data interface{}, tablename string, args map[string][
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error)
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//DB.Debug().Find(&dest)
-		DB.Raw(sql).Scan(data)
+		dba = DB.Raw(sql).Scan(data)
+		if dba.Error != nil {
+			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+			return info
+		}
 
 		//统计页码等状态
 		getinfo.Status = 200
@@ -218,7 +224,7 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 
 	num := dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error)
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {

@@ -5,7 +5,7 @@ import (
 	"deercoder-gin/conf"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	)
+		)
 
 var (
 	DB *gorm.DB
@@ -23,6 +23,8 @@ func init() {
 	DB.SingularTable(true)
 	//sql打印
 	DB.LogMode(true)
+	//logFile,err  := os.Create("log/logs.log")
+	//DB.SetLogger(log.New()
 	//连接池
 	//最大闲置连接与打开连接
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
