@@ -1,0 +1,2 @@
+GORM 2018-09-22 09:54:59
+sql/home/lu/gowork/src/kpx_crm/controllers/basic/baseinfo.go:33545.503µs select version() as mysql[] 1

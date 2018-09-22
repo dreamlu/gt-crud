@@ -3,6 +3,7 @@ package routers
 import (
 	"deercoder-gin/controllers"
 	"github.com/gin-gonic/gin"
+	"kpx_crm/controllers/basic"
 	"net/http"
 	"regexp"
 	"deercoder-gin/util/file"
@@ -25,6 +26,8 @@ func SetRouter() *gin.Engine {
 	v1 := router.Group("/api/v1")
 	{
 		v := v1
+		//网站基本信息
+		v.GET("/basic/getbasic",basic.GetBasicInfo)
 		//文件上传
 		v.POST("/file/upload",file.UpoadFile)
 		//用户
@@ -46,7 +49,7 @@ func SetRouter() *gin.Engine {
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status": 404,
-			"msg":  "接口不存在->('.')",
+			"msg":  "接口不存在->('.')/请求方法不存在",
 		})
 	})
 	return router
