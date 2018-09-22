@@ -2,10 +2,10 @@ package basic
 
 import (
 	"github.com/gin-gonic/gin"
-	"kpx_crm/conf"
-	"kpx_crm/util/db"
-	"kpx_crm/util/lib"
-	"kpx_crm/util/str"
+	"deercoder-gin/conf"
+	"deercoder-gin/util/db"
+	"deercoder-gin/util/lib"
+	"deercoder-gin/util/str"
 	"net/http"
 	"runtime"
 )
