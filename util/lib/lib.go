@@ -24,30 +24,30 @@ type GetInfoN struct {
 }
 
 /*全局变量*/
-var MapError = map[string]string{"status": "500", "msg": "系统繁忙"}
-var MapUpdate = map[string]string{"status": "206", "msg": "修改成功"}
-var MapDelete = map[string]string{"status": "209", "msg": "删除成功"}
-var MapCreate = map[string]string{"status": "201", "msg": "创建成功"}
-var MapNoResult = map[string]string{"status": "204", "msg": "暂无数据"}
-var MapNoAuth = map[string]string{"status": "203", "msg": "请求非法"}
-var MapNoToken = map[string]string{"status": "213", "msg": "用户凭证失效,请重新登录"}
-var MapCaptcha = map[string]string{"status": "214", "msg": "验证码验证失败"}
-var MapExistOrNo = map[string]string{"status": "220", "msg": "数据已存在 or 条件不存在"}
-var MapCountErr = map[string]string{"status": "211", "msg": "用户账号或密码错误"}
-var MapNoCount = map[string]string{"status": "211", "msg": "用户账号不存在"}
-var MapNoArgs = map[string]string{"status": "223", "msg": "缺少参数"}
-
+var MapError = map[string]interface{}{"status": 500, "msg": "系统繁忙"}
+var MapUpdate = map[string]interface{}{"status": 206, "msg": "修改成功"}
+var MapDelete = map[string]interface{}{"status": 209, "msg": "删除成功"}
+var MapCreate = map[string]interface{}{"status": 201, "msg": "创建成功"}
+var MapNoResult = map[string]interface{}{"status": 204, "msg": "暂无数据"}
+var MapNoAuth = map[string]interface{}{"status": 203, "msg": "请求非法"}
+var MapNoToken = map[string]interface{}{"status": 213, "msg": "用户凭证失效,请重新登录"}
+var MapCaptcha = map[string]interface{}{"status": 214, "msg": "验证码验证失败"}
+var MapExistOrNo = map[string]interface{}{"status": 220, "msg": "数据已存在 or 条件不存在"}
+var MapCountErr = map[string]interface{}{"status": 211, "msg": "用户账号或密码错误"}
+var MapNoCount = map[string]interface{}{"status": 211, "msg": "用户账号不存在"}
+var MapNoArgs = map[string]interface{}{"status": 223, "msg": "缺少参数"}
 
 /*缺省或验证字段*/
-var MapPhone = map[string]string{"status": "210", "msg": "字段提交不合法", "data": "电话号码格式非法"}
-var MapEmail = map[string]string{"status": "210", "msg": "字段提交不合法", "data": "邮箱格式非法"}
-var MapEmpty = map[string]string{"status": "210", "msg": "字段提交不合法", "data": "字段内容不能为空"}
+var MapPhone = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "电话号码格式非法"}
+var MapEmail = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "邮箱格式非法"}
+var MapEmpty = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "字段内容不能为空"}
 
 /*约定状态码*/
 const (
-	CodeSuccess  = 200
-	CodeSql      = 222
-	CodeRequired = 210
+	CodeSuccess  = 200 //请求成功
+	CodeRequired = 210 //必填项
+	CodeSql      = 222 //数据库错误统一状态
+	CodeNoDelete = 225 //存在外健约束(逻辑或数据库约束)
 )
 
 /*约定提示信息*/

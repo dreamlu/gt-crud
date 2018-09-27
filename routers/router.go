@@ -2,18 +2,27 @@ package routers
 
 import (
 	"deercoder-gin/controllers"
+	"deercoder-gin/util/file"
+	"github.com/casbin/casbin"
 	"github.com/gin-gonic/gin"
 	"kpx_crm/controllers/basic"
 	"net/http"
 	"regexp"
-	"deercoder-gin/util/file"
+	"strings"
 )
 
 func SetRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	router := gin.Default()
-	router.Use(CorsMiddleware())
+	//router.Use(CorsMiddleware())
+
+	// load the casbin model and policy from files, database is also supported.
+	//登录失效验证
+	//router.Use(CheckLogin())
+	//权限中间件
+	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
+	//router.Use(controllers.NewAuthorizer(e))
 
 	//静态目录
 	router.Static("static", "../static")
@@ -27,9 +36,9 @@ func SetRouter() *gin.Engine {
 	{
 		v := v1
 		//网站基本信息
-		v.GET("/basic/getbasic",basic.GetBasicInfo)
+		v.GET("/basic/getbasic", basic.GetBasicInfo)
 		//文件上传
-		v.POST("/file/upload",file.UpoadFile)
+		v.POST("/file/upload", file.UpoadFile)
 		//用户
 		user := v.Group("/user")
 		{
@@ -49,10 +58,24 @@ func SetRouter() *gin.Engine {
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status": 404,
-			"msg":  "接口不存在->('.')/请求方法不存在",
+			"msg":    "接口不存在->('.')/请求方法不存在",
 		})
 	})
 	return router
+}
+
+/*登录失效验证*/
+func CheckLogin() gin.HandlerFunc{
+	return func(c *gin.Context) {
+		path := c.Request.URL.String()
+		if !strings.Contains(path,"login") && !strings.Contains(path,"/captcha/getkey") && !strings.Contains(path,"/captcha/showimage") {
+			_,err := c.Cookie("role_id")
+			if err != nil{
+				c.Abort()
+				c.JSON(http.StatusOK,lib.MapNoToken)
+			}
+		}
+	}
 }
 
 /*跨域解决方案*/

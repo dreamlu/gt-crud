@@ -11,7 +11,32 @@ import (
 	"strings"
 )
 
-/*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名*/
+/*根据model中表模型的json标签获取表字段,增加select where 条件 关键字查询*/
+//尝试单条件搜索全部,多条件搜索关系为且
+func GetSearchSqlByKey(model interface{},keys []string) (sql string) {
+	typ := reflect.TypeOf(model)
+	//var buffer bytes.Buffer
+
+	for _,v := range keys{
+		sql += "("
+
+		for i := 0; i < typ.NumField(); i++ {
+			tag := typ.Field(i).Tag.Get("json")
+			//buffer.WriteString("`"+tag + "`,")
+			sql += "`" + tag + "` like binary '%" + v + "%' or "
+		}
+		sql = string([]byte(sql)[:len(sql)-3]) //去掉or
+		//多条件and关系
+		sql += ") and "
+	}
+
+	sql = string([]byte(sql)[:len(sql)-4]) //去掉and
+	return sql
+}
+
+
+
+/*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名,增加别名,表连接问题*/
 func GetColumnsSql(model interface{},alias string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
