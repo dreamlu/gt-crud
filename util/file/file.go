@@ -2,8 +2,8 @@ package file
 
 import (
 	"github.com/gin-gonic/gin"
-	"kpx_crm/conf"
-	"kpx_crm/util/lib"
+	"rzf/conf"
+	"rzf/util/lib"
 	"net/http"
 	"strings"
 	"time"

@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"kpx_crm/util/lib"
+	"rzf/util/lib"
 	"regexp"
 	"strings"
 )

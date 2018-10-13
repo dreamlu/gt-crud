@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"kpx_crm/conf"
-	"log"
-	"os"
-	"time"
+	"rzf/conf"
 )
 
 var (
@@ -28,8 +25,8 @@ func init() {
 	DB.LogMode(true)
 	//DB.SetLogger(gorm.Logger{log.New(os.Stderr, "TRACE ", log.Ldate|log.Ltime|log.Lshortfile)})
 
-	f,_ := os.Create("log/"+time.Now().Format("2006-01-02")+"-sql.log")
-	DB.SetLogger(log.New(f, "GORM "+time.Now().Format("2006-01-02 15:04:05")+"\r\n", 0))
+	//f,_ := os.Create("log/"+time.Now().Format("2006-01-02")+"-sql.log")
+	//DB.SetLogger(log.New(f, "GORM "+time.Now().Format("2006-01-02 15:04:05")+"\r\n", 0))
 
 	//连接池
 	//最大闲置连接与打开连接

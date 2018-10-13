@@ -3,21 +3,39 @@ package db
 /*made by lucheng*/
 import (
 	"fmt"
-	"kpx_crm/conf"
-	"kpx_crm/util"
-	"kpx_crm/util/lib"
 	"reflect"
+	"rzf/conf"
+	"rzf/util"
+	"rzf/util/lib"
 	"strconv"
 	"strings"
 )
 
+/*select *替换, 两张表*/
+func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql string) {
+	typ := reflect.TypeOf(model)
+	//var buffer bytes.Buffer
+	for i := 0; i < typ.NumField(); i++ {
+		tag := typ.Field(i).Tag.Get("json")
+		//table2的数据处理,去除table2_id
+		if strings.Contains(tag, table2+"_") && !strings.Contains(tag, table2+"_id") {
+			sql += table2 + ".`" + string([]byte(tag)[len(table2)+1:]) + "` as " + tag + "," //string([]byte(tag)[len(table2+1-1):])
+			continue
+		}
+
+		sql += table1 + ".`" + tag + "`,"
+	}
+	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
+	return sql
+}
+
 /*根据model中表模型的json标签获取表字段,增加select where 条件 关键字查询*/
 //尝试单条件搜索全部,多条件搜索关系为且
-func GetSearchSqlByKey(model interface{},keys []string) (sql string) {
+func GetSearchSqlByKey(model interface{}, keys []string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
 
-	for _,v := range keys{
+	for _, v := range keys {
 		sql += "("
 
 		for i := 0; i < typ.NumField(); i++ {
@@ -34,16 +52,14 @@ func GetSearchSqlByKey(model interface{},keys []string) (sql string) {
 	return sql
 }
 
-
-
-/*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名,增加别名,表连接问题*/
-func GetColumnsSql(model interface{},alias string) (sql string) {
+/*根据model中表模型的json标签获取表字段,将select* 中'*'变为对应的字段名,增加别名,表连接问题*/
+func GetColumnsSql(model interface{}, alias string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
 		tag := typ.Field(i).Tag.Get("json")
 		//buffer.WriteString("`"+tag + "`,")
-		sql += alias+".`" + tag + "`,"
+		sql += alias + ".`" + tag + "`,"
 	}
 	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
 	return sql
@@ -60,6 +76,60 @@ func GetSqlColumnsSql(model interface{}) (sql string) {
 	}
 	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
 	return sql
+}
+
+//=======================================语句拼接==========================================
+//========================================================================================
+
+/*两张表名,查询语句拼接*/
+func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
+
+	//页码,每页数量
+	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
+	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+
+	//尝试将select* 变为对应的字段名
+	sql = fmt.Sprintf("select %s from "+table1+" "+
+		"inner join "+table2+" "+
+		"on "+table1+"."+table2+"_id="+table2+".id where 1=1 and ", GetDoubleTableColumnsql(model,table1,table2))
+
+	sqlnolimit = "select count("+table1+".id) as sum_page from "+table1+" "+
+		"inner join "+table2+" "+
+		"on "+table1+"."+table2+"_id="+table2+".id where 1=1 and "
+	for k, v := range args {
+		if k == "clientPage" {
+			clientPageStr = v[0]
+			continue
+		}
+		if k == "everyPage" {
+			everyPageStr = v[0]
+			continue
+		}
+		if v[0] == "" { //条件值为空,舍弃
+			continue
+		}
+
+		//表2值查询
+		if strings.Contains(k, table2+"_") && !strings.Contains(k, table2+"_id") {
+			sql += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " like '%" + v[0] + "%' and " //string([]byte(tag)[len(table2+1-1):])
+			continue
+		}
+
+
+		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
+		sql += table1 +"."+k + " like '%" + v[0] + "%' and "
+		sqlnolimit += table1 +"."+k + " like '%" + v[0] + "%' and "
+	}
+
+	clientPage, _ = strconv.Atoi(clientPageStr)
+	everyPage, _ = strconv.Atoi(everyPageStr)
+
+	sql = string([]byte(sql)[:len(sql)-4]) //去and
+	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
+	//sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count("+table1+".id) as sum_page", -1)
+	sql += "order by "+table1+".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+
+	return sqlnolimit, sql, clientPage, everyPage
 }
 
 /*传入表名,查询语句拼接*/
@@ -181,7 +251,7 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 		if k == "userpassword" {
 			v[0] = util.AesEn(v[0])
 		}
-		sql += "`"+k + "`,"
+		sql += "`" + k + "`,"
 		values = append(values, v[0])
 	}
 	c := []byte(sql)
@@ -201,12 +271,69 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 /*==========================增删改查通用=========made=by=lucheng================*/
 /*============================================================================*/
 
-//获得数据,根据sql语句
-func GetDataBySql(data interface{}, sql string, args...string) interface{} {
+//获得数据,根据sql语句,分页
+func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int, args ...string) interface{} {
+	var info interface{}
+	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
+	var getinfo lib.GetInfo
+
+	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
+	num := getinfo.Pager.SumPage
+	//有数据是返回相应信息
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapNoResult
+	} else {
+		//DB.Debug().Find(&dest)
+		dba = DB.Raw(sql).Scan(data)
+		if dba.Error != nil {
+			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+			return info
+		}
+
+		//统计页码等状态
+		getinfo.Status = 200
+		getinfo.Msg = "请求成功"
+		getinfo.Data = data //数据
+		//getinfo.Pager.SumPage = num
+		getinfo.Pager.ClientPage = clientPage
+		getinfo.Pager.EveryPage = everyPage
+
+		info = getinfo
+	}
+	return info
+}
+
+//获得数据,根据sql语句,无分页
+func GetDataBySql(data interface{}, sql string, args ...string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
-	dba := DB.Raw(sql,args).Scan(data)
+	dba := DB.Raw(sql, args).Scan(data)
+	num := dba.RowsAffected
+
+	//有数据是返回相应信息
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapNoResult
+	} else {
+		//统计页码等状态
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
+		getinfo.Data = data //数据
+		info = getinfo
+	}
+	return info
+}
+
+//获得数据,根据name条件
+func GetDataByName(data interface{}, name, value string) interface{} {
+	var info interface{}
+	var getinfo lib.GetInfoN
+
+	dba := DB.Where(name+" = ?", value).Find(data) //只要一行数据时使用 LIMIT 1,增加查询性能
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
@@ -224,12 +351,17 @@ func GetDataBySql(data interface{}, sql string, args...string) interface{} {
 	return info
 }
 
-//获得数据,根据name条件
-func GetDataByName(data interface{}, name,value string) interface{} {
+//查询数据约定,表名_字段名(若有重复)
+//获得数据,根据id,两张表连接尝试
+func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
-	dba := DB.Where(name + " = ?",value).Find(data) //只要一行数据时使用 LIMIT 1,增加查询性能
+	sql := fmt.Sprintf("select %s from "+table1+" "+
+		"inner join "+table2+" "+
+		"on "+table1+"."+table2+"_id="+table2+".id where "+table1+".id=? limit 1", GetDoubleTableColumnsql(model, table1, table2))
+
+	dba := DB.Raw(sql, id).Scan(data)
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
@@ -239,8 +371,8 @@ func GetDataByName(data interface{}, name,value string) interface{} {
 		info = lib.MapNoResult
 	} else {
 		//统计页码等状态
-		getinfo.Status = 200
-		getinfo.Msg = "请求成功"
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据
 		info = getinfo
 	}
@@ -256,16 +388,50 @@ func GetDataById(data interface{}, id string) interface{} {
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
-	//有数据是返回相应信息
 	if dba.Error != nil {
 		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//统计页码等状态
-		getinfo.Status = 200
-		getinfo.Msg = "请求成功"
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据
+		info = getinfo
+	}
+	return info
+}
+
+//获得数据,分页/查询,两张表
+func GetDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
+	var info interface{}
+	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
+	var getinfo lib.GetInfo
+
+	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
+
+	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
+	num := getinfo.Pager.SumPage
+	//有数据是返回相应信息
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapNoResult
+	} else {
+		//DB.Debug().Find(&dest)
+		dba = DB.Raw(sql).Scan(data)
+		if dba.Error != nil {
+			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+			return info
+		}
+
+		//统计页码等状态
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
+		getinfo.Data = data //数据
+		getinfo.Pager.ClientPage = clientPage
+		getinfo.Pager.EveryPage = everyPage
+
 		info = getinfo
 	}
 	return info

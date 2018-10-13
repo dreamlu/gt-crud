@@ -42,12 +42,17 @@ var MapPhone = map[string]interface{}{"status": 210, "msg": "字段提交不合�
 var MapEmail = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "邮箱格式非法"}
 var MapEmpty = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "字段内容不能为空"}
 
+/*微信小程序*/
+//var WxEcryptError = map[string]interface{}{"status": 230, "msg": "缺少参数"}
+
 /*约定状态码*/
 const (
 	CodeSuccess  = 200 //请求成功
 	CodeRequired = 210 //必填项
 	CodeSql      = 222 //数据库错误统一状态
 	CodeNoDelete = 225 //存在外健约束(逻辑或数据库约束)
+	CodeEcrypt   = 230 //数据解密失败
+	CodeWx       = 240 //小程序相关
 )
 
 /*约定提示信息*/
