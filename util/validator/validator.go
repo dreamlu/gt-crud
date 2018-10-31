@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"rzf/util/lib"
+	"xqd/util/lib"
 	"regexp"
 	"strings"
 )

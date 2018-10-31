@@ -47,12 +47,19 @@ var MapEmpty = map[string]interface{}{"status": 210, "msg": "字段提交不合�
 
 /*约定状态码*/
 const (
-	CodeSuccess  = 200 //请求成功
-	CodeRequired = 210 //必填项
-	CodeSql      = 222 //数据库错误统一状态
-	CodeNoDelete = 225 //存在外健约束(逻辑或数据库约束)
-	CodeEcrypt   = 230 //数据解密失败
-	CodeWx       = 240 //小程序相关
+	CodeSuccess    = 200 //请求成功
+	CodeRequired   = 210 //必填项
+	CodeSql        = 222 //数据库错误统一状态
+	CodeFile	   = 224 //文件上传相关
+	CodeNoDelete   = 225 //存在外健约束(逻辑或数据库约束)
+	CodeEcrypt     = 230 //数据解密失败
+	CodeWx         = 240 //小程序相关
+	CodeWxPay      = 242 //支付失败
+	CodeWxWithDraw = 243 //提现失败
+	CodeOrder      = 251 //订单相关
+	CodeValidator  = 255 //验证相关
+	CodeAliPay	   = 262 //支付宝支付失败
+
 )
 
 /*约定提示信息*/

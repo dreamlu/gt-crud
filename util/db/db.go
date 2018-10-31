@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"rzf/conf"
+	"xqd/conf"
 )
 
 var (
@@ -31,8 +31,8 @@ func init() {
 	//连接池
 	//最大闲置连接与打开连接
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
-	DB.DB().SetMaxIdleConns(10)
+	DB.DB().SetMaxIdleConns(20)
 
 	// SetMaxOpenConns sets the maximum number of open connections to the database.
-	DB.DB().SetMaxOpenConns(100)
+	DB.DB().SetMaxOpenConns(200)
 }

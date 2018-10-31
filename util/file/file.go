@@ -2,8 +2,8 @@ package file
 
 import (
 	"github.com/gin-gonic/gin"
-	"rzf/conf"
-	"rzf/util/lib"
+	"xqd/conf"
+	"xqd/util/lib"
 	"net/http"
 	"strings"
 	"time"
@@ -31,7 +31,7 @@ func UpoadFile(u *gin.Context) {
 
 	file, err := u.FormFile("file")
 	if err != nil {
-		u.JSON(http.StatusOK, lib.MapDataError{224,err.Error()})
+		u.JSON(http.StatusOK, lib.MapDataError{lib.CodeFile,err.Error()})
 	}
 
 	filenameSplit := strings.Split(file.Filename, ".")

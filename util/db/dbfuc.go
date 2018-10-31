@@ -4,9 +4,9 @@ package db
 import (
 	"fmt"
 	"reflect"
-	"rzf/conf"
-	"rzf/util"
-	"rzf/util/lib"
+	"xqd/conf"
+	"xqd/util"
+	"xqd/util/lib"
 	"strconv"
 	"strings"
 )
@@ -87,6 +87,7 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 	//页码,每页数量
 	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
 	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	every := ""
 
 	//尝试将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from "+table1+" "+
@@ -105,20 +106,24 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 			everyPageStr = v[0]
 			continue
 		}
+		if k == "every" {
+			every = v[0]
+			continue
+		}
 		if v[0] == "" { //条件值为空,舍弃
 			continue
 		}
 
 		//表2值查询
 		if strings.Contains(k, table2+"_") && !strings.Contains(k, table2+"_id") {
-			sql += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " like '%" + v[0] + "%' and " //string([]byte(tag)[len(table2+1-1):])
+			sql += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and " //string([]byte(tag)[len(table2+1-1):])
+			sqlnolimit += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and "
 			continue
 		}
 
-
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += table1 +"."+k + " like '%" + v[0] + "%' and "
-		sqlnolimit += table1 +"."+k + " like '%" + v[0] + "%' and "
+		sql += table1 +"."+k + " = '" + v[0] + "' and "
+		sqlnolimit += table1 +"."+k + " = '" + v[0] + "' and "
 	}
 
 	clientPage, _ = strconv.Atoi(clientPageStr)
@@ -127,7 +132,9 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 	sql = string([]byte(sql)[:len(sql)-4]) //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
 	//sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count("+table1+".id) as sum_page", -1)
-	sql += "order by "+table1+".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	if every == ""{
+		sql += "order by "+table1+".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	}
 
 	return sqlnolimit, sql, clientPage, everyPage
 }
@@ -138,6 +145,7 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	//页码,每页数量
 	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
 	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	every := ""
 
 	//尝试将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetSqlColumnsSql(model), tablename)
@@ -148,6 +156,10 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 		}
 		if k == "everyPage" {
 			everyPageStr = v[0]
+			continue
+		}
+		if k == "every" {
+			every = v[0]
 			continue
 		}
 		if v[0] == "" { //条件值为空,舍弃
@@ -163,7 +175,9 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	c := []byte(sql)
 	sql = string(c[:len(c)-4]) //去and
 	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
-	sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	if every == ""{
+		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	}
 
 	return sqlnolimit, sql, clientPage, everyPage
 }
@@ -174,6 +188,7 @@ func SearchTableSqlInclueDate(time string, tablename string, args map[string][]s
 	//页码,每页数量
 	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
 	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	every := ""
 
 	sql = "select * from `" + tablename + "` where 1=1 and "
 	for k, v := range args {
@@ -193,6 +208,10 @@ func SearchTableSqlInclueDate(time string, tablename string, args map[string][]s
 			everyPageStr = v[0]
 			continue
 		}
+		if k == "every" {
+			every = v[0]
+			continue
+		}
 		if v[0] == "" { //条件为空,舍弃
 			continue
 		}
@@ -206,7 +225,9 @@ func SearchTableSqlInclueDate(time string, tablename string, args map[string][]s
 	sql = string(c[:len(c)-4]) //去and
 	sqlnolimimt = sql
 
-	sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	if every == ""{
+		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	}
 
 	return sqlnolimimt, sql, clientPage, everyPage
 
@@ -267,12 +288,12 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 	return sql
 }
 
-/*============================================================================*/
-/*==========================增删改查通用=========made=by=lucheng================*/
-/*============================================================================*/
+/*==================================================================================*/
+/*==========================增删改查通用=========made=by=lucheng======================*/
+/*==================================================================================*/
 
 //获得数据,根据sql语句,分页
-func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int, args ...string) interface{} {
+func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
@@ -354,29 +375,11 @@ func GetDataByName(data interface{}, name, value string) interface{} {
 //查询数据约定,表名_字段名(若有重复)
 //获得数据,根据id,两张表连接尝试
 func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
-	var info interface{}
-	var getinfo lib.GetInfoN
-
 	sql := fmt.Sprintf("select %s from "+table1+" "+
 		"inner join "+table2+" "+
 		"on "+table1+"."+table2+"_id="+table2+".id where "+table1+".id=? limit 1", GetDoubleTableColumnsql(model, table1, table2))
 
-	dba := DB.Raw(sql, id).Scan(data)
-	num := dba.RowsAffected
-
-	//有数据是返回相应信息
-	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
-		info = lib.MapNoResult
-	} else {
-		//统计页码等状态
-		getinfo.Status = lib.CodeSuccess
-		getinfo.Msg = lib.MsgSuccess
-		getinfo.Data = data //数据
-		info = getinfo
-	}
-	return info
+	return GetDataBySql(data,sql,id)
 }
 
 //获得数据,根据id
@@ -402,39 +405,24 @@ func GetDataById(data interface{}, id string) interface{} {
 	return info
 }
 
-//获得数据,分页/查询,两张表
-func GetDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
-	var info interface{}
-	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
-	var getinfo lib.GetInfo
+//获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
+//如table2中查询,字段用table2_+"字段名",table1字段查询不变
+func GetLeftDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
+	//级联表的查询以及
+	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
+	sql = strings.Replace(sql,"inner join","left join",-1)
+	sqlnolimit = strings.Replace(sqlnolimit,"inner join","left join",-1)
 
+	return GetDataBySqlSearch(data,sql,sqlnolimit,clientPage,everyPage)
+}
+
+//获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
+//如table2中查询,字段用table2_+"字段名",table1字段查询不变
+func GetDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
+	//级联表的查询以及
 	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
 
-	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
-	num := getinfo.Pager.SumPage
-	//有数据是返回相应信息
-	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
-		info = lib.MapNoResult
-	} else {
-		//DB.Debug().Find(&dest)
-		dba = DB.Raw(sql).Scan(data)
-		if dba.Error != nil {
-			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
-			return info
-		}
-
-		//统计页码等状态
-		getinfo.Status = lib.CodeSuccess
-		getinfo.Msg = lib.MsgSuccess
-		getinfo.Data = data //数据
-		getinfo.Pager.ClientPage = clientPage
-		getinfo.Pager.EveryPage = everyPage
-
-		info = getinfo
-	}
-	return info
+	return GetDataBySqlSearch(data,sql,sqlnolimit,clientPage,everyPage)
 }
 
 //获得数据,分页/查询
@@ -461,10 +449,9 @@ func GetDataBySearch(model, data interface{}, tablename string, args map[string]
 		}
 
 		//统计页码等状态
-		getinfo.Status = 200
-		getinfo.Msg = "请求成功"
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据
-		//getinfo.Pager.SumPage = num
 		getinfo.Pager.ClientPage = clientPage
 		getinfo.Pager.EveryPage = everyPage
 
@@ -511,6 +498,23 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 	return info
 }
 
+//结合struct修改
+func UpdateStructData(date interface{}) interface{} {
+	var info interface{}
+	var num int64 //返回影响的行数
+
+	dba := DB.Save(date)
+	num = dba.RowsAffected
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapExistOrNo
+	} else {
+		info = lib.MapUpdate
+	}
+	return info
+}
+
 /*创建数据,通用*/
 func CreateData(tablename string, args map[string][]string) interface{} {
 	var info interface{}
@@ -518,6 +522,24 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 
 	sql := GetInsertSql(tablename, args)
 	dba := DB.Exec(sql)
+	num = dba.RowsAffected
+
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapError
+	} else {
+		info = lib.MapCreate
+	}
+	return info
+}
+
+//结合struct创建
+func CreateStructData(date interface{}) interface{} {
+	var info interface{}
+	var num int64 //返回影响的行数
+
+	dba := DB.Create(date)
 	num = dba.RowsAffected
 
 	if dba.Error != nil {
