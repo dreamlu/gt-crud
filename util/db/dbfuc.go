@@ -81,7 +81,7 @@ func GetSqlColumnsSql(model interface{}) (sql string) {
 //=======================================语句拼接==========================================
 //========================================================================================
 
-/*两张表名,查询语句拼接*/
+/*两张表名,查询语句拼接,表1中有表2 id*/
 func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
 
 	//页码,每页数量
@@ -131,7 +131,6 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 
 	sql = string([]byte(sql)[:len(sql)-4]) //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
-	//sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count("+table1+".id) as sum_page", -1)
 	if every == ""{
 		sql += "order by "+table1+".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
 	}
@@ -314,8 +313,8 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 		}
 
 		//统计页码等状态
-		getinfo.Status = 200
-		getinfo.Msg = "请求成功"
+		getinfo.Status = lib.CodeSuccess
+		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据
 		//getinfo.Pager.SumPage = num
 		getinfo.Pager.ClientPage = clientPage
@@ -382,6 +381,15 @@ func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) 
 	return GetDataBySql(data,sql,id)
 }
 
+func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
+
+	sql := fmt.Sprintf("select %s from "+table1+" "+
+		"left join "+table2+" "+
+		"on "+table1+"."+table2+"_id="+table2+".id where "+table1+".id=? limit 1", GetDoubleTableColumnsql(model, table1, table2))
+
+	return GetDataBySql(data,sql,id)
+}
+
 //获得数据,根据id
 func GetDataById(data interface{}, id string) interface{} {
 	var info interface{}
@@ -408,7 +416,7 @@ func GetDataById(data interface{}, id string) interface{} {
 //获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
 //如table2中查询,字段用table2_+"字段名",table1字段查询不变
 func GetLeftDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
-	//级联表的查询以及
+	//级联表的查询
 	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
 	sql = strings.Replace(sql,"inner join","left join",-1)
 	sqlnolimit = strings.Replace(sqlnolimit,"inner join","left join",-1)
@@ -475,6 +483,23 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 		info = lib.MapExistOrNo
 	} else {
 		info = lib.MapDelete
+	}
+	return info
+}
+
+/*修改数据,通用*/
+func UpdateDataBySql(sql string, args...string) interface{} {
+	var info interface{}
+	var num int64 //返回影响的行数
+
+	dba := DB.Exec(sql,args)
+	num = dba.RowsAffected
+	if dba.Error != nil {
+		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapExistOrNo
+	} else {
+		info = lib.MapUpdate
 	}
 	return info
 }

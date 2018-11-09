@@ -90,6 +90,15 @@ func (this JsonTime) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
+//时间格式化
+type JsonDate time.Time
+
+//实现它的json序列化方法
+func (this JsonDate) MarshalJSON() ([]byte, error) {
+	var stamp = fmt.Sprintf("\"%s\"", time.Time(this).Format("2006-01-02"))
+	return []byte(stamp), nil
+}
+
 // key
 const aesTable = "abcdefghijklmnopkrstuvwsyz012345"
 

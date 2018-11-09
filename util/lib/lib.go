@@ -50,7 +50,7 @@ const (
 	CodeSuccess    = 200 //请求成功
 	CodeRequired   = 210 //必填项
 	CodeSql        = 222 //数据库错误统一状态
-	CodeFile	   = 224 //文件上传相关
+	CodeFile       = 224 //文件上传相关
 	CodeNoDelete   = 225 //存在外健约束(逻辑或数据库约束)
 	CodeEcrypt     = 230 //数据解密失败
 	CodeWx         = 240 //小程序相关
@@ -58,7 +58,9 @@ const (
 	CodeWxWithDraw = 243 //提现失败
 	CodeOrder      = 251 //订单相关
 	CodeValidator  = 255 //验证相关
-	CodeAliPay	   = 262 //支付宝支付失败
+	CodeAliPay     = 262 //支付宝支付失败
+	CodeError      = 270 //通用错误信息
+	CodeChat	   = 280 //chat相关
 
 )
 
