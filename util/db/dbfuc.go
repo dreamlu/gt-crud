@@ -4,11 +4,11 @@ package db
 import (
 	"fmt"
 	"reflect"
+	"strconv"
+	"strings"
 	"xqd/conf"
 	"xqd/util"
 	"xqd/util/lib"
-	"strconv"
-	"strings"
 )
 
 /*select *替换, 两张表*/
@@ -92,11 +92,11 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 	//尝试将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from "+table1+" "+
 		"inner join "+table2+" "+
-		"on "+table1+"."+table2+"_id="+table2+".id where 1=1 and ", GetDoubleTableColumnsql(model,table1,table2))
+		"on "+table1+"."+table2+"_id="+table2+".id where 1=1 and ", GetDoubleTableColumnsql(model, table1, table2))
 
-	sqlnolimit = "select count("+table1+".id) as sum_page from "+table1+" "+
-		"inner join "+table2+" "+
-		"on "+table1+"."+table2+"_id="+table2+".id where 1=1 and "
+	sqlnolimit = "select count(" + table1 + ".id) as sum_page from " + table1 + " " +
+		"inner join " + table2 + " " +
+		"on " + table1 + "." + table2 + "_id=" + table2 + ".id where 1=1 and "
 	for k, v := range args {
 		if k == "clientPage" {
 			clientPageStr = v[0]
@@ -122,17 +122,17 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 		}
 
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += table1 +"."+k + " = '" + v[0] + "' and "
-		sqlnolimit += table1 +"."+k + " = '" + v[0] + "' and "
+		sql += table1 + "." + k + " = '" + v[0] + "' and "
+		sqlnolimit += table1 + "." + k + " = '" + v[0] + "' and "
 	}
 
 	clientPage, _ = strconv.Atoi(clientPageStr)
 	everyPage, _ = strconv.Atoi(everyPageStr)
 
-	sql = string([]byte(sql)[:len(sql)-4]) //去and
+	sql = string([]byte(sql)[:len(sql)-4])                      //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
-	if every == ""{
-		sql += "order by "+table1+".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+	if every == "" {
+		sql += "order by " + table1 + ".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
 	}
 
 	return sqlnolimit, sql, clientPage, everyPage
@@ -174,7 +174,7 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	c := []byte(sql)
 	sql = string(c[:len(c)-4]) //去and
 	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
-	if every == ""{
+	if every == "" {
 		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
 	}
 
@@ -224,7 +224,7 @@ func SearchTableSqlInclueDate(time string, tablename string, args map[string][]s
 	sql = string(c[:len(c)-4]) //去and
 	sqlnolimimt = sql
 
-	if every == ""{
+	if every == "" {
 		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
 	}
 
@@ -301,14 +301,14 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//DB.Debug().Find(&dest)
 		dba = DB.Raw(sql).Scan(data)
 		if dba.Error != nil {
-			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+			info = lib.GetSqlError(dba.Error.Error())
 			return info
 		}
 
@@ -335,7 +335,7 @@ func GetDataBySql(data interface{}, sql string, args ...string) interface{} {
 
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
@@ -358,7 +358,7 @@ func GetDataByName(data interface{}, name, value string) interface{} {
 
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
@@ -378,7 +378,7 @@ func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) 
 		"inner join "+table2+" "+
 		"on "+table1+"."+table2+"_id="+table2+".id where "+table1+".id=? limit 1", GetDoubleTableColumnsql(model, table1, table2))
 
-	return GetDataBySql(data,sql,id)
+	return GetDataBySql(data, sql, id)
 }
 
 func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
@@ -387,7 +387,7 @@ func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 stri
 		"left join "+table2+" "+
 		"on "+table1+"."+table2+"_id="+table2+".id where "+table1+".id=? limit 1", GetDoubleTableColumnsql(model, table1, table2))
 
-	return GetDataBySql(data,sql,id)
+	return GetDataBySql(data, sql, id)
 }
 
 //获得数据,根据id
@@ -400,7 +400,7 @@ func GetDataById(data interface{}, id string) interface{} {
 
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
@@ -415,22 +415,22 @@ func GetDataById(data interface{}, id string) interface{} {
 
 //获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
 //如table2中查询,字段用table2_+"字段名",table1字段查询不变
-func GetLeftDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
+func GetLeftDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
 	//级联表的查询
 	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
-	sql = strings.Replace(sql,"inner join","left join",-1)
-	sqlnolimit = strings.Replace(sqlnolimit,"inner join","left join",-1)
+	sql = strings.Replace(sql, "inner join", "left join", -1)
+	sqlnolimit = strings.Replace(sqlnolimit, "inner join", "left join", -1)
 
-	return GetDataBySqlSearch(data,sql,sqlnolimit,clientPage,everyPage)
+	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 //获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
 //如table2中查询,字段用table2_+"字段名",table1字段查询不变
-func GetDoubleTableDataBySearch(model, data interface{}, table1,table2 string, args map[string][]string) interface{} {
+func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
 	//级联表的查询以及
 	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
 
-	return GetDataBySqlSearch(data,sql,sqlnolimit,clientPage,everyPage)
+	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 //获得数据,分页/查询
@@ -445,14 +445,14 @@ func GetDataBySearch(model, data interface{}, tablename string, args map[string]
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapNoResult
 	} else {
 		//DB.Debug().Find(&dest)
 		dba = DB.Raw(sql).Scan(data)
 		if dba.Error != nil {
-			info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+			info = lib.GetSqlError(dba.Error.Error())
 			return info
 		}
 
@@ -478,7 +478,7 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 
 	num := dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -488,14 +488,14 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 }
 
 /*修改数据,通用*/
-func UpdateDataBySql(sql string, args...string) interface{} {
+func UpdateDataBySql(sql string, args ...string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	dba := DB.Exec(sql,args)
+	dba := DB.Exec(sql, args)
 	num = dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -514,7 +514,7 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -531,7 +531,7 @@ func UpdateStructData(date interface{}) interface{} {
 	dba := DB.Save(date)
 	num = dba.RowsAffected
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapExistOrNo
 	} else {
@@ -550,7 +550,7 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 	num = dba.RowsAffected
 
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapError
 	} else {
@@ -568,7 +568,7 @@ func CreateStructData(date interface{}) interface{} {
 	num = dba.RowsAffected
 
 	if dba.Error != nil {
-		info = lib.GetMapDataError(lib.CodeSql, dba.Error.Error())
+		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapError
 	} else {

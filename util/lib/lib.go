@@ -61,7 +61,6 @@ const (
 	CodeAliPay     = 262 //支付宝支付失败
 	CodeError      = 270 //通用错误信息
 	CodeChat	   = 280 //chat相关
-
 )
 
 /*约定提示信息*/
