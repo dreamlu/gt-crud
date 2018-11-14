@@ -3,9 +3,7 @@ package lib
 /*made by lucheng*/
 /*分页数据信息*/
 type GetInfo struct {
-	Status int64       `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"` //数据,通用接口
+	GetInfoN
 	Pager  Pager       `json:"pager"`
 }
 

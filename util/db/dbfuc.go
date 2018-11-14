@@ -236,40 +236,6 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 /*==========================增删改查通用=========made=by=lucheng======================*/
 /*==================================================================================*/
 
-//获得数据,根据sql语句,分页
-func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64) interface{} {
-	var info interface{}
-	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
-	var getinfo lib.GetInfo
-
-	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
-	num := getinfo.Pager.SumPage
-	//有数据是返回相应信息
-	if dba.Error != nil {
-		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
-		info = lib.MapNoResult
-	} else {
-		//DB.Debug().Find(&dest)
-		dba = DB.Raw(sql).Scan(data)
-		if dba.Error != nil {
-			info = lib.GetSqlError(dba.Error.Error())
-			return info
-		}
-
-		//统计页码等状态
-		getinfo.Status = lib.CodeSuccess
-		getinfo.Msg = lib.MsgSuccess
-		getinfo.Data = data //数据
-		//getinfo.Pager.SumPage = num
-		getinfo.Pager.ClientPage = clientPage
-		getinfo.Pager.EveryPage = everyPage
-
-		info = getinfo
-	}
-	return info
-}
-
 //获得数据,根据sql语句,无分页
 func GetDataBySql(data interface{}, sql string, args ...string) interface{} {
 	var info interface{}
@@ -378,17 +344,43 @@ func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
-//获得数据,分页/查询
-func GetDataBySearch(model, data interface{}, tablename string, args map[string][]string) interface{} {
+//获得数据,根据sql语句,分页
+func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
 
-	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(model, tablename, args)
-
 	dba := DB.Raw(sqlnolimit).Scan(&getinfo.Pager)
 	num := getinfo.Pager.SumPage
 	//有数据是返回相应信息
+	//switch dba.Error {//代码不好看
+	//case nil:
+	//	if num == 0{
+	//		info = lib.MapNoResult
+	//	}else {
+	//		//DB.Debug().Find(&dest)
+	//		dba = DB.Raw(sql).Scan(data)
+	//		if dba.Error != nil {
+	//			info = lib.GetSqlError(dba.Error.Error())
+	//			return info
+	//		}
+	//		getinfo.Status = lib.CodeSuccess
+	//		getinfo.Msg = lib.MsgSuccess
+	//		getinfo.Data = data //数据
+	//
+	//		switch {
+	//		case strings.Contains(sql,"limit"):
+	//			//统计页码等状态
+	//			getinfo.Pager.ClientPage = clientPage
+	//			getinfo.Pager.EveryPage = everyPage
+	//			info = getinfo
+	//		default:
+	//			info = getinfo.GetInfoN
+	//		}
+	//	}
+	//default:
+	//	info = lib.GetSqlError(dba.Error.Error())
+	//}
 	if dba.Error != nil {
 		info = lib.GetSqlError(dba.Error.Error())
 	} else if num == 0 && dba.Error == nil {
@@ -400,17 +392,29 @@ func GetDataBySearch(model, data interface{}, tablename string, args map[string]
 			info = lib.GetSqlError(dba.Error.Error())
 			return info
 		}
-
-		// get Paper information
 		getinfo.Status = lib.CodeSuccess
 		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据
-		getinfo.Pager.ClientPage = clientPage
-		getinfo.Pager.EveryPage = everyPage
 
-		info = getinfo
+		switch {
+		case strings.Contains(sql,"limit"):
+			//统计页码等状态
+			getinfo.Pager.ClientPage = clientPage
+			getinfo.Pager.EveryPage = everyPage
+			info = getinfo
+		default:
+			info = getinfo.GetInfoN
+		}
 	}
 	return info
+}
+
+//获得数据,分页/查询
+func GetDataBySearch(model, data interface{}, tablename string, args map[string][]string) interface{} {
+
+	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(model, tablename, args)
+
+	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 /*删除通用,任意参数*/
