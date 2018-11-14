@@ -1,24 +1,24 @@
-deercoder-gin is a common api development demo
+deercoder-gin 是一个通用的api快速开发框架示例
 
-it can be most golang api development demo  
-fragment : gin + gorm + mysql + casbin + go-ini  
+框架构成：gin + gorm + mysql + casbin + go-ini
 
-##### principle：  
-1.abstract func    
+##### 通用原理：
+
+1.封装  
 2.golang reflect interface{}  
 
-##### feature：  
+##### 特点:
 
-1.return json data  
-2.one table crud,limit  
-3.add two table operation(...waiting for being beeter)  
-4.add basic info about website  
-5.select replace * by reflect
-6.add log(waiting for better)
-7.add permission(user-->group(role)-->menu(permission)
+1.返回json数据  
+2.一张表的增删改查以及分页  
+3.增加多张表连接操作(...waiting for being beeter)  
+4.增加网站基本信息接口  
+5.select * 的优化(反射替换*为具体字段名)  
+6.增加日志(定期清理待完善...)  
+7.增加权限(用户-组(角色)-权限(菜单))
 
-##### use demo 
-- create
+##### 使用示例  
+- 新增
 ```go
 // create user
 func CreateUser(args map[string][]string) interface{} {
@@ -26,7 +26,7 @@ func CreateUser(args map[string][]string) interface{} {
 	return db.CreateData("user", args)
 }
 ```
-- update
+- 修改
 
 ```go
 // update user
@@ -35,7 +35,7 @@ func UpdateUser(args map[string][]string) interface{} {
 	return db.UpdateData("user", args)
 }
 ```
-- delete
+- 删除
 ```go
 // delete user, by id
 func DeleteUserByid(id string) interface{} {
@@ -44,7 +44,7 @@ func DeleteUserByid(id string) interface{} {
 }
 ```
 
-- get information, limit and search
+- 分页,搜索二合一
 ```go
 // get user, limit and search
 // clientPage(页码) 1, everyPage(当前页) 10 default
@@ -54,7 +54,7 @@ func GetUserBySearch(args map[string][]string) interface{} {
 	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 ```
-- return json
+- 返回json
 ```go
 {
     "status":200,
@@ -78,7 +78,7 @@ func GetUserBySearch(args map[string][]string) interface{} {
     }
 }
 ```
-- get information by id
+- 根据id获得信息
 ```go
 // get user, by id
 func GetUserById(id string) interface{} {
@@ -88,7 +88,7 @@ func GetUserById(id string) interface{} {
 	return db.GetDataById(&user, id)
 }
 ```
-- get some data from two tables
+- 表连接,分页搜索二合一
 ```go
 // user detail info
 // include table `user` and `userinfo` data
