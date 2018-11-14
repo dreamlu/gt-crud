@@ -98,19 +98,17 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 		"inner join " + table2 + " " +
 		"on " + table1 + "." + table2 + "_id=" + table2 + ".id where 1=1 and "
 	for k, v := range args {
-		if k == "clientPage" {
+		switch k {
+		case "clientPage":
 			clientPageStr = v[0]
 			continue
-		}
-		if k == "everyPage" {
+		case "everyPage":
 			everyPageStr = v[0]
 			continue
-		}
-		if k == "every" {
+		case "every":
 			every = v[0]
 			continue
-		}
-		if v[0] == "" { //条件值为空,舍弃
+		case "":
 			continue
 		}
 
@@ -149,19 +147,17 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	//尝试将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetSqlColumnsSql(model), tablename)
 	for k, v := range args {
-		if k == "clientPage" {
+		switch k {
+		case "clientPage":
 			clientPageStr = v[0]
 			continue
-		}
-		if k == "everyPage" {
+		case "everyPage":
 			everyPageStr = v[0]
 			continue
-		}
-		if k == "every" {
+		case "every":
 			every = v[0]
 			continue
-		}
-		if v[0] == "" { //条件值为空,舍弃
+		case "":
 			continue
 		}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
@@ -179,57 +175,6 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	}
 
 	return sqlnolimit, sql, clientPage, everyPage
-}
-
-/*传入表名,查询语句拼接,包含一个日期范围,time:被比较的表中的字段名*/
-func SearchTableSqlInclueDate(time string, tablename string, args map[string][]string) (sqlnolimimt, sql string, clientPage, everyPage int) {
-
-	//页码,每页数量
-	clientPageStr := str.ClientPageStr
-	everyPageStr := str.EveryPageStr
-	every := ""
-
-	sql = "select * from `" + tablename + "` where 1=1 and "
-	for k, v := range args {
-		if k == "time1" { //时间范围
-			sql += "timestampdiff(day,'" + v[0] + "'," + time + ") >= 0 and "
-			continue
-		}
-		if k == "time2" {
-			sql += "timestampdiff(day,'" + v[0] + "'," + time + ") <= 0 and "
-			continue
-		}
-		if k == "clientPage" { //页码
-			clientPageStr = v[0]
-			continue
-		}
-		if k == "everyPage" { //每页数量
-			everyPageStr = v[0]
-			continue
-		}
-		if k == "every" {
-			every = v[0]
-			continue
-		}
-		if v[0] == "" { //条件为空,舍弃
-			continue
-		}
-		sql += k + " like '%" + v[0] + "%' and "
-	}
-
-	clientPage, _ = strconv.Atoi(clientPageStr)
-	everyPage, _ = strconv.Atoi(everyPageStr)
-
-	c := []byte(sql)
-	sql = string(c[:len(c)-4]) //去and
-	sqlnolimimt = sql
-
-	if every == "" {
-		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
-	}
-
-	return sqlnolimimt, sql, clientPage, everyPage
-
 }
 
 /*

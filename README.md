@@ -49,11 +49,11 @@ func DeleteUserByid(id string) interface{} {
 - get information, limit and search
 ```go
 // get user, limit and search
-// clientPage(页码) 1, everyPage(当前页) 10 default
+// clientPage(page num) 1, everyPage(every page num) 10 default
 func GetUserBySearch(args map[string][]string) interface{} {
 	
 	var users []*User
-	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
+	return db.GetDataBySearch(User{}, &users, "user", args) // anonymous User{}
 }
 ```
 - return json
@@ -95,7 +95,7 @@ func GetUserById(id string) interface{} {
 // user detail info
 // include table `user` and `userinfo` data
 // maybe you need to build detail info like model UserinfoBK
-func GetUserinfoBySearch(args map[string][]string) interface{} {
+func GetUserinfoBySearch(args map[string][]string) interface{} { //inner join 
 
 	var userdetail []UserinfoDe
 	return db.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)

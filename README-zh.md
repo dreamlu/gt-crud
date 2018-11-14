@@ -93,7 +93,7 @@ func GetUserById(id string) interface{} {
 // user detail info
 // include table `user` and `userinfo` data
 // maybe you need to build detail info like model UserinfoBK
-func GetUserinfoBySearch(args map[string][]string) interface{} {
+func GetUserinfoBySearch(args map[string][]string) interface{} {//inner join 
 
 	var userdetail []UserinfoDe
 	return db.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
