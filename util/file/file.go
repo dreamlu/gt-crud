@@ -2,8 +2,8 @@ package file
 
 import (
 	"github.com/gin-gonic/gin"
-	"xqd/conf"
-	"xqd/util/lib"
+	"deercoder-gin/conf"
+	"deercoder-gin/util/lib"
 	"net/http"
 	"strings"
 	"time"
@@ -14,7 +14,7 @@ func GetUpoadFile(u *gin.Context) (filename string){
 
 	file, err := u.FormFile("file")
 	if err != nil {
-		u.JSON(http.StatusOK, lib.MapDataError{224,err.Error()})
+		u.JSON(http.StatusOK, lib.GetMapData(lib.CodeFile,err.Error()))
 	}
 
 	filenameSplit := strings.Split(file.Filename, ".")
@@ -31,7 +31,7 @@ func UpoadFile(u *gin.Context) {
 
 	file, err := u.FormFile("file")
 	if err != nil {
-		u.JSON(http.StatusOK, lib.MapDataError{lib.CodeFile,err.Error()})
+		u.JSON(http.StatusOK, lib.GetMapData(lib.CodeFile,err.Error()))
 	}
 
 	filenameSplit := strings.Split(file.Filename, ".")

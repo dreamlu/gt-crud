@@ -81,7 +81,7 @@ func SubDate(date1, date2 time.Time) string {
 	return strconv.Itoa(y) + "年" + strconv.Itoa(m) + "月" + strconv.Itoa(d) + "日"
 }
 
-//时间格式化
+//时间格式化2006-01-02 15:04:05
 type JsonTime time.Time
 
 //实现它的json序列化方法
@@ -90,7 +90,7 @@ func (this JsonTime) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
-//时间格式化
+//时间格式化2006-01-02
 type JsonDate time.Time
 
 //实现它的json序列化方法

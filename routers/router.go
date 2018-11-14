@@ -2,10 +2,11 @@ package routers
 
 import (
 	"deercoder-gin/controllers"
+	"deercoder-gin/controllers/basic"
 	"deercoder-gin/util/file"
-	"github.com/casbin/casbin"
+	"deercoder-gin/util/lib"
+	"deercoder-gin/util/str"
 	"github.com/gin-gonic/gin"
-	"kpx_crm/controllers/basic"
 	"net/http"
 	"regexp"
 	"strings"
@@ -14,7 +15,9 @@ import (
 func SetRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
-	router := gin.Default()
+	//router := gin.Default()
+	router := gin.New()
+	str.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
 	// load the casbin model and policy from files, database is also supported.
@@ -22,7 +25,7 @@ func SetRouter() *gin.Engine {
 	//router.Use(CheckLogin())
 	//权限中间件
 	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
-	//router.Use(controllers.NewAuthorizer(e))
+	//router.Use(authz.NewAuthorizer(e))
 
 	//静态目录
 	router.Static("static", "../static")
@@ -65,14 +68,14 @@ func SetRouter() *gin.Engine {
 }
 
 /*登录失效验证*/
-func CheckLogin() gin.HandlerFunc{
+func CheckLogin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.String()
-		if !strings.Contains(path,"login") && !strings.Contains(path,"/captcha/getkey") && !strings.Contains(path,"/captcha/showimage") {
-			_,err := c.Cookie("role_id")
-			if err != nil{
+		if !strings.Contains(path, "login") && !strings.Contains(path, "/captcha/getkey") && !strings.Contains(path, "/captcha/showimage") {
+			_, err := c.Cookie("role_id")
+			if err != nil {
 				c.Abort()
-				c.JSON(http.StatusOK,lib.MapNoToken)
+				c.JSON(http.StatusOK, lib.MapNoToken)
 			}
 		}
 	}

@@ -10,7 +10,7 @@ type Userinfo struct {
 	ID         int64         `json:"id"`
 	UserID     int64         `json:"user_id"`
 	Userinfo   string        `json:"userinfo"`
-	Updatetime util.JsonTime `json:"updatetime"`
+	Updatetime util.JsonTime `json:"updatetime"` //maybe you like util.JsonDate
 }
 
 /*detail userinfo and user model*/

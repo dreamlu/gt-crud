@@ -17,7 +17,7 @@ type Basic struct {
 	Goversion  string `json:"goversion"`  //go 版本
 	Ginversion string `json:"ginversion"` //gin 版本
 	Mysql      string `json:"mysql"`      //mysql版本
-	Maxmerory  int64  `json:"maxmerory"`  //最大上传文件大小
+	Maxmerory  int64  `json:"maxmerory"`  //最大上传文件大小MB
 }
 
 func GetBasicInfo(u *gin.Context) {
@@ -28,7 +28,7 @@ func GetBasicInfo(u *gin.Context) {
 	basic.Os = runtime.GOOS
 	basic.Goversion = runtime.Version()
 	basic.Ginversion = gin.Version
-	//router := routers.SetRouter()
+	// router := routers.SetRouter()
 	basic.Maxmerory = str.MaxUploadMemory / 1024 / 1024
 	db.DB.Raw("select version() as mysql").Scan(&basic)
 

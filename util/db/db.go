@@ -1,10 +1,10 @@
 package db
 
 import (
+	"deercoder-gin/conf"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"xqd/conf"
 )
 
 var (

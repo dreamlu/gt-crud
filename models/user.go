@@ -9,10 +9,10 @@ import (
 type User struct {
 	ID   uint   `json:"id" gorm:"primary_key"`
 	Name string `json:"name"`
-	Createtime util.JsonTime `json:"createtime"`
+	Createtime util.JsonTime `json:"createtime"`	//maybe you like util.JsonDate
 }
 
-//获得用户,根据id
+// get user, by id
 func GetUserById(id string) interface{} {
 
 	db.DB.AutoMigrate(&User{})
@@ -20,27 +20,29 @@ func GetUserById(id string) interface{} {
 	return db.GetDataById(&user, id)
 }
 
-//获得用户,分页/查询
+// get user, limit and search
+// clientPage 1, everyPage 10 default
 func GetUserBySearch(args map[string][]string) interface{} {
 	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
-	db.DB.AutoMigrate(&User{})
-	var users = []*User{}
+	//db.DB.AutoMigrate(&User{})
+	//var users = []*User{}
+	var users []*User
 	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 
-//删除用户,根据id
+// delete user, by id
 func DeleteUserByid(id string) interface{} {
 
 	return db.DeleteDataByName("user", "id", id)
 }
 
-//修改用户
+// update user
 func UpdateUser(args map[string][]string) interface{} {
 
 	return db.UpdateData("user", args)
 }
 
-//创建用户
+// create user
 func CreateUser(args map[string][]string) interface{} {
 
 	return db.CreateData("user", args)

@@ -2,13 +2,13 @@ package db
 
 /*made by lucheng*/
 import (
+	"deercoder-gin/util"
+	"deercoder-gin/util/lib"
+	"deercoder-gin/util/str"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
-	"xqd/conf"
-	"xqd/util"
-	"xqd/util/lib"
 )
 
 /*select *替换, 两张表*/
@@ -82,11 +82,11 @@ func GetSqlColumnsSql(model interface{}) (sql string) {
 //========================================================================================
 
 /*两张表名,查询语句拼接,表1中有表2 id*/
-func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
+func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
-	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
-	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	clientPageStr := str.ClientPageStr
+	everyPageStr := str.EveryPageStr
 	every := ""
 
 	//尝试将select* 变为对应的字段名
@@ -126,24 +126,24 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 		sqlnolimit += table1 + "." + k + " = '" + v[0] + "' and "
 	}
 
-	clientPage, _ = strconv.Atoi(clientPageStr)
-	everyPage, _ = strconv.Atoi(everyPageStr)
+	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
+	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
 
 	sql = string([]byte(sql)[:len(sql)-4])                      //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
 	if every == "" {
-		sql += "order by " + table1 + ".id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+		sql += "order by " + table1 + ".id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	}
 
 	return sqlnolimit, sql, clientPage, everyPage
 }
 
 /*传入表名,查询语句拼接*/
-func SearchTableSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int) {
+func SearchTableSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
-	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
-	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	clientPageStr := str.ClientPageStr
+	everyPageStr := str.EveryPageStr
 	every := ""
 
 	//尝试将select* 变为对应的字段名
@@ -168,14 +168,14 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 		sql += k + " like '%" + v[0] + "%' and "
 	}
 
-	clientPage, _ = strconv.Atoi(clientPageStr)
-	everyPage, _ = strconv.Atoi(everyPageStr)
+	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
+	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
 
 	c := []byte(sql)
 	sql = string(c[:len(c)-4]) //去and
 	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
 	if every == "" {
-		sql += "order by id desc limit " + strconv.Itoa((clientPage-1)*everyPage) + "," + everyPageStr
+		sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	}
 
 	return sqlnolimit, sql, clientPage, everyPage
@@ -185,8 +185,8 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 func SearchTableSqlInclueDate(time string, tablename string, args map[string][]string) (sqlnolimimt, sql string, clientPage, everyPage int) {
 
 	//页码,每页数量
-	clientPageStr := conf.GetConfigValue("clientPage") //默认第1页
-	everyPageStr := conf.GetConfigValue("everyPage")   //默认10页
+	clientPageStr := str.ClientPageStr
+	everyPageStr := str.EveryPageStr
 	every := ""
 
 	sql = "select * from `" + tablename + "` where 1=1 and "
@@ -292,7 +292,7 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 /*==================================================================================*/
 
 //获得数据,根据sql语句,分页
-func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int) interface{} {
+func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
@@ -456,7 +456,7 @@ func GetDataBySearch(model, data interface{}, tablename string, args map[string]
 			return info
 		}
 
-		//统计页码等状态
+		// get Paper information
 		getinfo.Status = lib.CodeSuccess
 		getinfo.Msg = lib.MsgSuccess
 		getinfo.Data = data //数据

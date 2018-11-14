@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"xqd/util/lib"
+	"deercoder-gin/util/lib"
 	"regexp"
 	"strings"
 )

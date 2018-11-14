@@ -3,22 +3,22 @@ package lib
 /*made by lucheng*/
 /*分页数据信息*/
 type GetInfo struct {
-	Status int         `json:"status"`
+	Status int64       `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"` //数据,通用接口
 	Pager  Pager       `json:"pager"`
 }
 
 type Pager struct {
-	ClientPage int `json:"clientpage"` //当前页码
-	SumPage    int `json:"sumpage"`    //总页数
-	EveryPage  int `json:"everypage"`  //每一页显示的数量
+	ClientPage int64 `json:"clientpage"` //当前页码
+	SumPage    int64 `json:"sumpage"`    //总页数
+	EveryPage  int64 `json:"everypage"`  //每一页显示的数量
 }
 
 /*无分页数据信息*/
 /*分页数据信息*/
 type GetInfoN struct {
-	Status int         `json:"status"`
+	Status int64       `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"` //数据,通用接口
 }
@@ -60,7 +60,7 @@ const (
 	CodeValidator  = 255 //验证相关
 	CodeAliPay     = 262 //支付宝支付失败
 	CodeError      = 270 //通用错误信息
-	CodeChat	   = 280 //chat相关
+	CodeChat       = 280 //chat相关
 )
 
 /*约定提示信息*/
@@ -69,14 +69,14 @@ const (
 )
 
 /*错误信息,通用*/
-type MapDataError struct {
-	Status int         `json:"status"`
+type MapData struct {
+	Status int64       `json:"status"`
 	Msg    interface{} `json:"msg"`
 }
 
 /*错误信息通用,状态码及信息提示*/
-func GetMapDataError(status int, msg interface{}) MapDataError {
-	me := MapDataError{
+func GetMapData(status int64, msg interface{}) MapData{
+	me := MapData{
 		Status: status,
 		Msg:    msg,
 	}
