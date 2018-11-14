@@ -2,12 +2,12 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package controllers
+package authz
 
 import (
+	"deercoder-gin/util"
+	"deercoder-gin/util/lib"
 	"fmt"
-	"kpx_crm/util"
-	"kpx_crm/util/lib"
 	"net/http"
 	"net/url"
 	"strings"
@@ -23,7 +23,7 @@ func NewAuthorizer(e *casbin.Enforcer) gin.HandlerFunc {
 
 		if !a.CheckPermission(c.Request) {
 			c.Abort()
-			c.JSON(http.StatusOK,lib.MapNoAuth)
+			c.JSON(http.StatusOK, lib.MapNoAuth)
 		}
 	}
 }
@@ -37,8 +37,8 @@ type BasicAuthorizer struct {
 // Currently, only HTTP basic authentication is supported
 func (a *BasicAuthorizer) GetUserName(r *http.Request) string {
 	//username, _, _ := r.BasicAuth()
-	cookie,err := r.Cookie("role_id")
-	if err != nil{
+	cookie, err := r.Cookie("role_id")
+	if err != nil {
 		return "-1"
 	}
 	ss, _ := url.QueryUnescape(cookie.Value)
@@ -58,7 +58,7 @@ func (a *BasicAuthorizer) CheckPermission(r *http.Request) bool {
 	user := a.GetUserName(r)
 	method := r.Method
 	path := r.URL.Path
-	if strings.Contains(path,"/static/") || strings.Contains(path,"login"){
+	if strings.Contains(path, "/static/") || strings.Contains(path, "login") {
 		return true
 	}
 	return a.enforcer.Enforce(user, path, method)

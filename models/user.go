@@ -5,12 +5,11 @@ import (
 	"deercoder-gin/util/db"
 )
 
-/*用户*/
+/*user model*/
 type User struct {
-	ID           uint          `json:"id" gorm:"primary_key"`
-	Username     string        `json:"username"`
-	//Userpassword string        `json:"userpassword"`
-	Createtime   util.JsonTime `json:"createtime"`
+	ID   uint   `json:"id" gorm:"primary_key"`
+	Name string `json:"name"`
+	Createtime util.JsonTime `json:"createtime"`
 }
 
 //获得用户,根据id
@@ -26,7 +25,7 @@ func GetUserBySearch(args map[string][]string) interface{} {
 	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
 	db.DB.AutoMigrate(&User{})
 	var users = []*User{}
-	return db.GetDataBySearch(User{},&users, "user", args)//匿名User{}
+	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 
 //删除用户,根据id
@@ -46,20 +45,3 @@ func CreateUser(args map[string][]string) interface{} {
 
 	return db.CreateData("user", args)
 }
-
-/*//修改账号密码
-func UpdateAccount(uid, nickname, userpassword string) interface{} {
-	var info interface{}
-	var num int64 //返回影响的行数
-
-	if err == nil {
-		num, _ = res.RowsAffected()
-	}
-	if num == 0 {
-		info = db.MapError
-	} else {
-		info = db.MapUpdate
-	}
-	return info
-}
-*/
