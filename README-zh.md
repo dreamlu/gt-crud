@@ -1,6 +1,7 @@
 deercoder-gin 是一个通用的api快速开发框架示例
 
-框架构成：gin + gorm + mysql + casbin + go-ini
+框架构成：gin + gorm + mysql + casbin + go-ini  
+或许你需要下载结合[api.html](./api.html)接口文档查看测试
 
 ##### 通用原理：
 
