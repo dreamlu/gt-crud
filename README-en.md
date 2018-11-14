@@ -3,11 +3,11 @@ deercoder-gin is a common api development demo
 it can be most golang api development demo  
 fragment : gin + gorm + mysql + casbin + go-ini  
 
-#####principle：  
+##### principle：  
 1.abstract func    
 2.golang reflect interface{}  
 
-#####feature：  
+##### feature：  
 
 1.return json data  
 2.one table crud,limit  
@@ -17,7 +17,7 @@ fragment : gin + gorm + mysql + casbin + go-ini
 6.add log(waiting for better)
 7.add permission(user-->group(role)-->menu(permission)
 
-#####use demo 
+##### use demo 
 - create
 ```go
 // create user

@@ -2,12 +2,12 @@ deercoder-gin 是一个通用的api快速开发框架示例
 
 框架构成：gin + gorm + mysql + casbin + go-ini
 
-#####通用原理：
+##### 通用原理：
 
 1.封装  
 2.golang reflect interface{}  
 
-#####特点:
+##### 特点:
 
 1.返回json数据  
 2.一张表的增删改查以及分页  
@@ -17,7 +17,7 @@ deercoder-gin 是一个通用的api快速开发框架示例
 6.增加日志(定期清理待完善...)  
 7.增加权限(用户-组(角色)-权限(菜单))
 
-#####使用示例  
+##### 使用示例  
 - 新增
 ```go
 // create user
