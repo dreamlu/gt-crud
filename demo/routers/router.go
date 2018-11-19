@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/Dreamlu/deercoder-gin/controllers"
-	"github.com/Dreamlu/deercoder-gin/controllers/basic"
+	"demo/controllers"
+	"demo/controllers/basic"
 	"github.com/Dreamlu/deercoder-gin/util/file"
 	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"github.com/gin-gonic/gin"
