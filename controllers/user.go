@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/Dreamlu/deercoder-gin"
 	"github.com/Dreamlu/deercoder-gin/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,9 +16,7 @@ func GetUserById(u *gin.Context) {
 
 //用户信息分页
 func GetUserBySearch(u *gin.Context) {
-	u.Request.ParseForm()
-	values := u.Request.Form //在使用之前需要调用ParseForm方法
-	ss := models.GetUserBySearch(values)
+	ss := models.GetUserBySearch(deercoder.GetUriValues(u))
 	u.JSON(http.StatusOK, ss)
 }
 
@@ -30,9 +29,7 @@ func DeleteUserById(u *gin.Context) {
 
 //用户信息修改
 func UpdateUser(u *gin.Context) {
-	u.Request.ParseForm()
-	values := u.Request.Form //在使用之前需要调用ParseForm方法
-	ss := models.UpdateUser(values)
+	ss := models.UpdateUser(deercoder.GetUriValues(u))
 	u.JSON(http.StatusOK, ss)
 }
 
@@ -43,8 +40,3 @@ func CreateUser(u *gin.Context) {
 	ss := models.CreateUser(values)
 	u.JSON(http.StatusOK, ss)
 }
-
-/*//修改用户账号密码
-func UpdateAccount(u *gin.Context) {
-
-}*/
