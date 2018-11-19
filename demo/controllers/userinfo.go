@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/Dreamlu/deercoder-gin/models"
+	"demo/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
