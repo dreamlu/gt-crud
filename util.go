@@ -1,4 +1,4 @@
-package util
+package deercoder
 
 import (
 	"crypto/aes"

@@ -1,11 +1,9 @@
-package db
+package deercoder
 
 /*made by lucheng*/
 import (
-	"deercoder-gin/util"
-	"deercoder-gin/util/lib"
-	"deercoder-gin/util/str"
 	"fmt"
+	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"reflect"
 	"strconv"
 	"strings"
@@ -85,8 +83,8 @@ func GetSqlColumnsSql(model interface{}) (sql string) {
 func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
-	clientPageStr := str.ClientPageStr
-	everyPageStr := str.EveryPageStr
+	clientPageStr := ClientPageStr
+	everyPageStr := EveryPageStr
 	every := ""
 
 	//尝试将select* 变为对应的字段名
@@ -140,8 +138,8 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 func SearchTableSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
-	clientPageStr := str.ClientPageStr
-	everyPageStr := str.EveryPageStr
+	clientPageStr := ClientPageStr
+	everyPageStr := EveryPageStr
 	every := ""
 
 	//尝试将select* 变为对应的字段名
@@ -191,7 +189,7 @@ func GetUpdateSqlById(tablename string, args map[string][]string) (sql, id strin
 		}
 		//密码aes加密
 		if k == "userpassword" {
-			v[0] = util.AesEn(v[0])
+			v[0] = AesEn(v[0])
 		}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1)
 		sql += "`" + k + "`='" + v[0] + "',"
@@ -214,7 +212,7 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 	for k, v := range args {
 		//密码aes加密
 		if k == "userpassword" {
-			v[0] = util.AesEn(v[0])
+			v[0] = AesEn(v[0])
 		}
 		sql += "`" + k + "`,"
 		values = append(values, v[0])
@@ -397,7 +395,7 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 		getinfo.Data = data //数据
 
 		switch {
-		case strings.Contains(sql,"limit"):
+		case strings.Contains(sql, "limit"):
 			//统计页码等状态
 			getinfo.Pager.ClientPage = clientPage
 			getinfo.Pager.EveryPage = everyPage

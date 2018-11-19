@@ -1,23 +1,22 @@
 package models
 
 import (
-	"deercoder-gin/util"
-	"deercoder-gin/util/db"
+	"github.com/Dreamlu/deercoder-gin"
 )
 
 /*user model*/
 type User struct {
 	ID   uint   `json:"id" gorm:"primary_key"`
 	Name string `json:"name"`
-	Createtime util.JsonTime `json:"createtime"`	//maybe you like util.JsonDate
+	Createtime deercoder.JsonTime `json:"createtime"`	//maybe you like util.JsonDate
 }
 
 // get user, by id
 func GetUserById(id string) interface{} {
 
-	db.DB.AutoMigrate(&User{})
+	deercoder.DB.AutoMigrate(&User{})
 	var user = User{}
-	return db.GetDataById(&user, id)
+	return deercoder.GetDataById(&user, id)
 }
 
 // get user, limit and search
@@ -27,23 +26,23 @@ func GetUserBySearch(args map[string][]string) interface{} {
 	//db.DB.AutoMigrate(&User{})
 	//var users = []*User{}
 	var users []*User
-	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
+	return deercoder.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 
 // delete user, by id
 func DeleteUserByid(id string) interface{} {
 
-	return db.DeleteDataByName("user", "id", id)
+	return deercoder.DeleteDataByName("user", "id", id)
 }
 
 // update user
 func UpdateUser(args map[string][]string) interface{} {
 
-	return db.UpdateData("user", args)
+	return deercoder.UpdateData("user", args)
 }
 
 // create user
 func CreateUser(args map[string][]string) interface{} {
 
-	return db.CreateData("user", args)
+	return deercoder.CreateData("user", args)
 }

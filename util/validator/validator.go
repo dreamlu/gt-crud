@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"deercoder-gin/util/lib"
+	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"regexp"
 	"strings"
 )

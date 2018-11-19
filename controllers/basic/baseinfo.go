@@ -1,10 +1,8 @@
 package basic
 
 import (
-	"deercoder-gin/conf"
-	"deercoder-gin/util/db"
-	"deercoder-gin/util/lib"
-	"deercoder-gin/util/str"
+	"github.com/Dreamlu/deercoder-gin"
+	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"runtime"
@@ -23,14 +21,14 @@ type Basic struct {
 func GetBasicInfo(u *gin.Context) {
 	var getinfo lib.GetInfoN
 	var basic Basic
-	basic.Address = conf.GetConfigValue("domain")
-	basic.Port = conf.GetConfigValue("http_port")
+	basic.Address = deercoder.GetConfigValue("domain")
+	basic.Port = deercoder.GetConfigValue("http_port")
 	basic.Os = runtime.GOOS
 	basic.Goversion = runtime.Version()
 	basic.Ginversion = gin.Version
 	// router := routers.SetRouter()
-	basic.Maxmerory = str.MaxUploadMemory / 1024 / 1024
-	db.DB.Raw("select version() as mysql").Scan(&basic)
+	basic.Maxmerory = deercoder.MaxUploadMemory / 1024 / 1024
+	deercoder.DB.Raw("select version() as mysql").Scan(&basic)
 
 	getinfo.Data = basic
 	getinfo.Status = 200

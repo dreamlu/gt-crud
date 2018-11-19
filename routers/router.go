@@ -1,11 +1,10 @@
 package routers
 
 import (
-	"deercoder-gin/controllers"
-	"deercoder-gin/controllers/basic"
-	"deercoder-gin/util/file"
-	"deercoder-gin/util/lib"
-	"deercoder-gin/util/str"
+	"github.com/Dreamlu/deercoder-gin/controllers"
+	"github.com/Dreamlu/deercoder-gin/controllers/basic"
+	"github.com/Dreamlu/deercoder-gin/util/file"
+	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -17,7 +16,7 @@ func SetRouter() *gin.Engine {
 	// gin.DisableConsoleColor()
 	//router := gin.Default()
 	router := gin.New()
-	str.MaxUploadMemory = router.MaxMultipartMemory
+	//deercoder.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
 	// load the casbin model and policy from files, database is also supported.
