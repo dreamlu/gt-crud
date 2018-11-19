@@ -1,7 +1,6 @@
 package deercoder
 // main.go
 //import (
-//	"deercoder-gin/conf"
 //	"deercoder-gin/routers"
 //	_ "deercoder-gin/util/db"
 //	"github.com/gin-gonic/gin"
