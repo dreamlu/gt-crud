@@ -5,9 +5,9 @@
 package authz
 
 import (
-	"deercoder-gin/util"
-	"deercoder-gin/util/lib"
 	"fmt"
+	"github.com/Dreamlu/deercoder-gin/util"
+	"github.com/Dreamlu/deercoder-gin/util/lib"
 	"net/http"
 	"net/url"
 	"strings"

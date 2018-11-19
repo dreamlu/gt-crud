@@ -1,8 +1,7 @@
 package models
 
 import (
-	"deercoder-gin/util"
-	"deercoder-gin/util/db"
+	"github.com/Dreamlu/deercoder-gin"
 )
 
 /*userinfo model*/
@@ -10,7 +9,7 @@ type Userinfo struct {
 	ID         int64         `json:"id"`
 	UserID     int64         `json:"user_id"`
 	Userinfo   string        `json:"userinfo"`
-	Updatetime util.JsonTime `json:"updatetime"` //maybe you like util.JsonDate
+	Updatetime deercoder.JsonTime `json:"updatetime"` //maybe you like util.JsonDate
 }
 
 /*detail userinfo and user model*/
@@ -19,7 +18,7 @@ type UserinfoDe struct {
 	UserID     int64         `json:"user_id"`
 	UserName   string        `json:"user_name"` //table `user` + `user`.name
 	Userinfo   string        `json:"userinfo"`
-	Updatetime util.JsonTime `json:"updatetime"`
+	Updatetime deercoder.JsonTime `json:"updatetime"`
 }
 
 // user detail info
@@ -28,5 +27,5 @@ type UserinfoDe struct {
 func GetUserinfoBySearch(args map[string][]string) interface{} {
 
 	var userdetail []UserinfoDe
-	return db.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
+	return deercoder.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
 }
