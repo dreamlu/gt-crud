@@ -58,6 +58,7 @@ const (
 	CodeValidator  = 255 //验证相关
 	CodeAliPay     = 262 //支付宝支付失败
 	CodeError      = 270 //通用错误信息
+	CodeText       = 271 //全局文字错误提示
 	CodeChat       = 280 //chat相关
 )
 
