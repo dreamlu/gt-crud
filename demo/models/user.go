@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/Dreamlu/deercoder-gin"
+	"time"
 )
 
 /*user model*/
@@ -44,5 +45,6 @@ func UpdateUser(args map[string][]string) interface{} {
 // create user
 func CreateUser(args map[string][]string) interface{} {
 
+	args["createtime"] = append(args["createtime"], time.Now().Format("2006-01-02 15:04:05"))
 	return deercoder.CreateData("user", args)
 }
