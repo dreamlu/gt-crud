@@ -1,2 +1,0 @@
-GORM 2018-09-22 09:56:32
-sql/home/lu/gowork/src/deercoder-gin/controllers/basic/baseinfo.go:33480.159µs select version() as mysql[] 1
