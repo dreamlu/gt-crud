@@ -20,6 +20,30 @@ var (
 	islog					 = 0
 )
 
+// "debug" mode print all sql info
+// "sqlErr" mode print sql err and related sql to file
+func LogMode(mode string) {
+
+	DB.LogMode(true)
+	switch mode {
+	case "debug":
+	case "sqlErr":
+		//文件open
+		nowTime := time.Now().Format("2006-01-02")
+		filename := "log/"+nowTime+"-sql.log"
+		var f *os.File
+		_, err := os.Stat(filename)
+		if err != nil {
+			if os.IsNotExist(err) {//不存在，创建
+				f,_ = os.Create(filename)
+			}
+		} else {
+			f,_ = os.Open(filename)
+		}
+		DB.SetLogger(SetLogger(f))//打印错误信息和对应的sql
+	}
+}
+
 //设置文件log
 func SetLogger(f *os.File) Logger{
 	//return Logger{log.New(f, "DeerCoderSQL "+time.Now().Format("2006-01-02 15:04:05")+"\r\n", 0)}
