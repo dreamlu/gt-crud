@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"os"
-	"time"
 )
 
 var (
@@ -24,20 +22,8 @@ func init() {
 	// use name replace names
 	DB.SingularTable(true)
 	// sql print console log
-	DB.LogMode(true)
-	//文件open
-	nowTime := time.Now().Format("2006-01-02")
-	filename := "log/"+nowTime+"-sql.log"
-	var f *os.File
-	_, err = os.Stat(filename)
-	if err != nil {
-		if os.IsNotExist(err) {//不存在，创建
-			f,_ = os.Create(filename)
-		}
-	} else {
-		f,_ = os.Open(filename)
-	}
-	DB.SetLogger(SetLogger(f))//打印错误信息和对应的sql
+	// or print sql err to file
+	LogMode("sqlErr")
 
 	// connection pool
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
