@@ -7,9 +7,9 @@ import (
 
 /*user model*/
 type User struct {
-	ID   uint   `json:"id" gorm:"primary_key"`
-	Name string `json:"name"`
-	Createtime deercoder.JsonTime `json:"createtime"`	//maybe you like util.JsonDate
+	ID         uint               `json:"id" gorm:"primary_key"`
+	Name       string             `json:"name"`
+	Createtime deercoder.JsonTime `json:"createtime"` //maybe you like util.JsonDate
 }
 
 // get user, by id

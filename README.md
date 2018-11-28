@@ -16,7 +16,7 @@ fragment : gin + gorm + mysql + casbin + go-ini
 3.add two table operation(...waiting for being beeter)  
 4.add basic info about website  
 5.select replace * by reflect
-6.add log(waiting for better)
+6.add logger for gorm
 7.add permission(user-->group(role)-->menu(permission)
 
 ##### use demo 
