@@ -10,6 +10,7 @@ require (
 	github.com/go-ini/ini v1.39.0
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
+	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/jinzhu/gorm v1.9.1
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect

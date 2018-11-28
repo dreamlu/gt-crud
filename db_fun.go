@@ -471,11 +471,11 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 }
 
 //结合struct修改
-func UpdateStructData(date interface{}) interface{} {
+func UpdateStructData(data interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	dba := DB.Save(date)
+	dba := DB.Save(data)
 	num = dba.RowsAffected
 	if dba.Error != nil {
 		info = lib.GetSqlError(dba.Error.Error())
@@ -507,11 +507,11 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 }
 
 //结合struct创建
-func CreateStructData(date interface{}) interface{} {
+func CreateStructData(data interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	dba := DB.Create(date)
+	dba := DB.Create(data)
 	num = dba.RowsAffected
 
 	if dba.Error != nil {
