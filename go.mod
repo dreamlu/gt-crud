@@ -8,6 +8,8 @@ require (
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/go-ini/ini v1.39.0
+	github.com/go-playground/locales v0.12.1 // indirect
+	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible
@@ -29,6 +31,7 @@ require (
 	github.com/ugorji/go/codec v0.0.0-20181116192919-e105254e6a51 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
+	gopkg.in/go-playground/validator.v9 v9.23.0 // indirect
 	gopkg.in/ini.v1 v1.39.0 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
