@@ -13,6 +13,6 @@ func TestValidator(t *testing.T) {
 	val.AddRule("name", "用户名","required,len","0-5") //对字段name添加规则： 2-5个字符长度，必填
 	//val.AddRule("sport","list","football,swim",false) //对字段sport添加规则： 值需在列表中（football，swim),非必填
 
-	fmt.Println(val.CheckInfo("用户名"))
+	fmt.Println(val.CheckInfo())
 }
 
