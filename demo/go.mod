@@ -1,7 +1,7 @@
 module demo
 
 require (
-	github.com/Dreamlu/deercoder-gin v1.1.0
+	github.com/Dreamlu/deercoder-gin v1.1.5
 	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
 	github.com/casbin/casbin v1.7.0
 	github.com/gin-gonic/gin v1.3.0

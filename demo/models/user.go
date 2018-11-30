@@ -13,7 +13,7 @@ type User struct {
 }
 
 // get user, by id
-func GetUserById(id string) interface{} {
+func (c *User)GetById(id string) interface{} {
 
 	deercoder.DB.AutoMigrate(&User{})
 	var user = User{}
@@ -22,7 +22,7 @@ func GetUserById(id string) interface{} {
 
 // get user, limit and search
 // clientPage 1, everyPage 10 default
-func GetUserBySearch(args map[string][]string) interface{} {
+func (c *User)GetBySearch(args map[string][]string) interface{} {
 	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
 	//db.DB.AutoMigrate(&User{})
 	//var users = []*User{}
@@ -31,19 +31,19 @@ func GetUserBySearch(args map[string][]string) interface{} {
 }
 
 // delete user, by id
-func DeleteUserByid(id string) interface{} {
+func (c *User)DeleteByid(id string) interface{} {
 
 	return deercoder.DeleteDataByName("user", "id", id)
 }
 
 // update user
-func UpdateUser(args map[string][]string) interface{} {
+func (c *User)Update(args map[string][]string) interface{} {
 
 	return deercoder.UpdateData("user", args)
 }
 
 // create user
-func CreateUser(args map[string][]string) interface{} {
+func (c *User)Create(args map[string][]string) interface{} {
 
 	args["createtime"] = append(args["createtime"], time.Now().Format("2006-01-02 15:04:05"))
 	return deercoder.CreateData("user", args)
