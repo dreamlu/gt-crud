@@ -4,7 +4,7 @@ package lib
 /*分页数据信息*/
 type GetInfo struct {
 	GetInfoN
-	Pager  Pager       `json:"pager"`
+	Pager Pager `json:"pager"`
 }
 
 type Pager struct {
@@ -35,18 +35,13 @@ var MapCountErr = map[string]interface{}{"status": 211, "msg": "用户账号或�
 var MapNoCount = map[string]interface{}{"status": 211, "msg": "用户账号不存在"}
 var MapNoArgs = map[string]interface{}{"status": 223, "msg": "缺少参数"}
 
-/*缺省或验证字段*/
-var MapPhone = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "电话号码格式非法"}
-var MapEmail = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "邮箱格式非法"}
-var MapEmpty = map[string]interface{}{"status": 210, "msg": "字段提交不合法", "data": "字段内容不能为空"}
-
 /*微信小程序*/
 //var WxEcryptError = map[string]interface{}{"status": 230, "msg": "缺少参数"}
 
 /*约定状态码*/
 const (
 	CodeSuccess    = 200 //请求成功
-	CodeRequired   = 210 //必填项
+	CodeValidator  = 210 //字段验证
 	CodeSql        = 222 //数据库错误统一状态
 	CodeFile       = 224 //文件上传相关
 	CodeNoDelete   = 225 //存在外健约束(逻辑或数据库约束)
@@ -55,7 +50,6 @@ const (
 	CodeWxPay      = 242 //支付失败
 	CodeWxWithDraw = 243 //提现失败
 	CodeOrder      = 251 //订单相关
-	CodeValidator  = 255 //验证相关
 	CodeAliPay     = 262 //支付宝支付失败
 	CodeError      = 270 //通用错误信息
 	CodeText       = 271 //全局文字错误提示
@@ -74,7 +68,7 @@ type MapData struct {
 }
 
 /*错误信息通用,状态码及信息提示*/
-func GetMapData(status int64, msg interface{}) MapData{
+func GetMapData(status int64, msg interface{}) MapData {
 	me := MapData{
 		Status: status,
 		Msg:    msg,
