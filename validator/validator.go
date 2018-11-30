@@ -10,7 +10,7 @@ import (
 )
 
 type Validator struct {
-	data map[string]string //要校验的数据字典
+	data map[string][]string //要校验的数据字典
 	rule map[string]*vRule //规则列表，key为字段名
 }
 
@@ -33,7 +33,7 @@ type normalRule struct {
 }
 
 //创建校验器对象
-func NewValidator(data map[string]string) *Validator {
+func NewValidator(data map[string][]string) *Validator {
 	v := &Validator{data: data}
 	v.rule = make(map[string]*vRule)
 	return v
@@ -76,7 +76,7 @@ func (this *Validator) Check() (errs map[string]error) {
 	errs = make(map[string]error)
 	for k, v := range this.rule {
 		data, _ := this.data[k]
-		if err := v.vr.Check(data); err != nil { //调用ValidateRuler接口的Check方法来检查
+		if err := v.vr.Check(data[0]); err != nil { //调用ValidateRuler接口的Check方法来检查
 			errs[k] = err
 		}
 	}
