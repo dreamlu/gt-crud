@@ -56,14 +56,14 @@ func (this *Validator) AddExtRule(key string, rule ValidateRuler, required ...bo
 
 // 执行检查后返回信息
 // trans 翻译后的字段名
-func (this *Validator) CheckInfo(trans string) interface{} {
+func (this *Validator) CheckInfo() interface{} {
 	if err := this.Check(); err != nil {
 		//检查不通过，处理错误
 		//fmt.Println(err)
 		//return err
 		for k, _ := range this.rule {
 			if err[k] != nil{
-				return lib.GetMapData(lib.CodeValidator,err[k])
+				return lib.GetMapData(lib.CodeValidator,err[k].Error())
 			}
 		}
 	}
