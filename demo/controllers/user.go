@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"demo/models"
+	"github.com/Dreamlu/deercoder-gin/util/xss"
 	"github.com/Dreamlu/deercoder-gin/validator"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -19,6 +20,7 @@ func GetUserById(u *gin.Context) {
 func GetUserBySearch(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
+	xss.XssMap(values)
 	ss := user.GetBySearch(values)
 	u.JSON(http.StatusOK, ss)
 }
@@ -33,7 +35,8 @@ func DeleteUserById(u *gin.Context) {
 //用户信息修改
 func UpdateUser(u *gin.Context) {
 	u.Request.ParseForm()
-	values := u.Request.Form //在使用之前需要调用ParseForm方法
+	values := u.Request.Form
+	xss.XssMap(values)
 	val := validator.NewValidator(values) //验证规则
 	val.AddRule("name", "用户名","required,len","2-20")
 	info := val.CheckInfo()
@@ -49,7 +52,8 @@ func UpdateUser(u *gin.Context) {
 //新增用户信息
 func CreateUser(u *gin.Context) {
 	u.Request.ParseForm()
-	values := u.Request.Form //在使用之前需要调用ParseForm方法
+	values := u.Request.Form
+	xss.XssMap(values)	//html特殊字符转换
 
 	val := validator.NewValidator(values) //验证规则
 	val.AddRule("name", "用户名","required,len","2-20")
