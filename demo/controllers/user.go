@@ -34,6 +34,14 @@ func DeleteUserById(u *gin.Context) {
 func UpdateUser(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
+	val := validator.NewValidator(values) //验证规则
+	val.AddRule("name", "用户名","required,len","2-20")
+	info := val.CheckInfo()
+	if info != nil {
+		u.JSON(http.StatusOK, info)
+		return
+	}
+
 	ss := user.Update(values)
 	u.JSON(http.StatusOK, ss)
 }
