@@ -97,7 +97,7 @@ func (this *normalRule) Check(data string) (Err error) {
 		switch v {
 		case "len":
 			//字符串，根椐params判断长度的最大值和最小值
-			lg := len(data)
+			lg := len([]rune(data))	//fix 中英文字符数量不统一
 			args := strings.Split(this.params, "-")
 			min, _ := strconv.Atoi(args[0])
 			max, _ := strconv.Atoi(args[1])
