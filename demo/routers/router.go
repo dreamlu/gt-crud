@@ -5,6 +5,7 @@ import (
 	"demo/controllers/basic"
 	"github.com/Dreamlu/deercoder-gin/util/file"
 	"github.com/Dreamlu/deercoder-gin/util/lib"
+	"github.com/Dreamlu/deercoder-gin/util/xss"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -25,6 +26,9 @@ func SetRouter() *gin.Engine {
 	//权限中间件
 	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
 	//router.Use(authz.NewAuthorizer(e))
+
+	// xss
+	router.Use(xssMid())
 
 	//静态目录
 	router.Static("static", "../static")
@@ -80,7 +84,16 @@ func CheckLogin() gin.HandlerFunc {
 	}
 }
 
-/*跨域解决方案*/
+// xss
+func xssMid() gin.HandlerFunc{
+	return func(c *gin.Context) {
+		c.Request.ParseForm()
+		values := c.Request.PostForm
+		xss.XssMap(values)
+	}
+}
+
+/*跨域解决方案,待完善,建议nginx 解决*/
 func CorsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
