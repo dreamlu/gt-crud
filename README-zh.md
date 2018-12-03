@@ -1,8 +1,7 @@
 deercoder-gin 是一个通用的api快速开发框架示例
 
 框架构成：gin + gorm + mysql + casbin + go-ini  
-或许你需要下载结合[api.html](./api.html)接口文档查看测试
-
+或许你需要下载结合[api.html](./demo/api.html)接口文档查看测试以及查看*_test.go文件
 ##### 通用原理：
 
 1.封装  
@@ -23,37 +22,40 @@ deercoder-gin 是一个通用的api快速开发框架示例
 - 新增
 ```go
 // create user
-func CreateUser(args map[string][]string) interface{} {
+func (c *User)Create(args map[string][]string) interface{} {
 
-	return db.CreateData("user", args)
+	args["createtime"] = append(args["createtime"], time.Now().Format("2006-01-02 15:04:05"))
+	return deercoder.CreateData("user", args)
 }
 ```
 - 修改
 
 ```go
 // update user
-func UpdateUser(args map[string][]string) interface{} {
+func (c *User)Update(args map[string][]string) interface{} {
 
-	return db.UpdateData("user", args)
+	return deercoder.UpdateData("user", args)
 }
 ```
 - 删除
 ```go
 // delete user, by id
-func DeleteUserByid(id string) interface{} {
+func (c *User)DeleteByid(id string) interface{} {
 
-	return db.DeleteDataByName("user", "id", id)
+	return deercoder.DeleteDataByName("user", "id", id)
 }
 ```
 
 - 分页,搜索二合一
 ```go
 // get user, limit and search
-// clientPage(页码) 1, everyPage(当前页) 10 default
-func GetUserBySearch(args map[string][]string) interface{} {
-	
+// clientPage 1, everyPage 10 default
+func (c *User)GetBySearch(args map[string][]string) interface{} {
+	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
+	//db.DB.AutoMigrate(&User{})
+	//var users = []*User{}
 	var users []*User
-	return db.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
+	return deercoder.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 ```
 - 返回json
@@ -83,11 +85,11 @@ func GetUserBySearch(args map[string][]string) interface{} {
 - 根据id获得信息
 ```go
 // get user, by id
-func GetUserById(id string) interface{} {
+func (c *User)GetById(id string) interface{} {
 
-	db.DB.AutoMigrate(&User{})
+	deercoder.DB.AutoMigrate(&User{})
 	var user = User{}
-	return db.GetDataById(&user, id)
+	return deercoder.GetDataById(&user, id)
 }
 ```
 - 表连接,分页搜索二合一
