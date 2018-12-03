@@ -36,7 +36,13 @@ func GetUpoadFile(u *gin.Context) (filename string) {
 	}
 	path := deercoder.GetConfigValue("filepath") + filename //文件目录
 	u.SaveUploadedFile(file, path)
-	CompressImage(ftype, path) //无论成功与否
+	switch ftype {
+	case "jpeg","jpg","png":
+		CompressImage(ftype, path)
+	default:
+		//处理其他类型文件
+	}
+
 	return path
 }
 
