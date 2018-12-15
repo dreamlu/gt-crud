@@ -2,17 +2,22 @@ package deercoder
 
 import (
 	"fmt"
-	"github.com/Dreamlu/deercoder-gin"
 	"log"
 	"strconv"
-	"strings"
 	"testing"
 )
 
 type User struct {
 	ID         int64    `json:"id"`
-	Name       string   `json:"name" validate:"len=20"`
+	Name       string   `json:"name"`
 	Createtime JsonDate `json:"createtime"`
+}
+
+type UserInfo struct {
+	ID       int64  `json:"id"`
+	UserID   int64  `json:"user_id"`   //用户id
+	UserName string `json:"user_name"` //用户名
+	Userinfo string `json:"userinfo"`
 }
 
 func TestDB(t *testing.T) {
@@ -33,13 +38,12 @@ func TestDB(t *testing.T) {
 // 通用分页测试
 // 如：
 func TestSqlSearch(t *testing.T) {
-	sql := fmt.Sprintln(`select %s from userinfo a inner join xx on a.xx_id=b.id
-		where 1=1 and `,GetSqlColumnsSql(User{}))
+	sql := fmt.Sprintf(`select a.id,a.user_id,a.userinfo,b.name as user_name from userinfo a inner join user b on a.user_id=b.id where 1=1 and `)
 	sqlnolimit := `select
-		count(distinct a.id) as sum_page	
-		from venuepricets a inner join venue b on a.venue_id=b.id inner join venuer c on b.venuer_id=c.id
+		count(distinct a.id) as sum_page
+		from userinfo a inner join user b on a.user_id=b.id
 		where 1=1 and `
-	var ui []Userinfo
+	var ui []UserInfo
 
 	//页码,每页数量
 	clientPageStr := GetConfigValue("clientPage") //默认第1页
@@ -48,28 +52,42 @@ func TestSqlSearch(t *testing.T) {
 	//可定制
 	//args map[string][]string
 	//look deercoder-gin/demo
-	for k, v := range args {
-		if k == "clientPage" {
-			clientPageStr = v[0]
-			continue
-		}
-		if k == "everyPage" {
-			everyPageStr = v[0]
-			continue
-		}
-		if v[0] == "" { //条件值为空,舍弃
-			continue
-		}
-		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += "a." + k + " = '" + v[0] + "' and "
-		sqlnolimit += "a." + k + " = '" + v[0] + "' and "
-	}
+	//args is url.values
+	//for k, v := range args {
+	//	if k == "clientPage" {
+	//		clientPageStr = v[0]
+	//		continue
+	//	}
+	//	if k == "everyPage" {
+	//		everyPageStr = v[0]
+	//		continue
+	//	}
+	//	if v[0] == "" { //条件值为空,舍弃
+	//		continue
+	//	}
+	//	v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
+	//	sql += "a." + k + " = '" + v[0] + "' and "
+	//	sqlnolimit += "a." + k + " = '" + v[0] + "' and "
+	//}
 
 	clientPage, _ := strconv.ParseInt(clientPageStr, 10, 64)
 	everyPage, _ := strconv.ParseInt(everyPageStr, 10, 64)
 
 	sql = string([]byte(sql)[:len(sql)-4]) //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4])
-	sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
+	sql += "order by a.id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	log.Println(GetDataBySqlSearch(&ui, sql, sqlnolimit, clientPage, everyPage))
+	log.Println(ui)
+}
+
+//常用分页测试(两张表)
+//如:
+func TestSqlSearchV2(t *testing.T) {
+	//var ui []UserInfo
+	//
+	////args map[string][]string
+	////look deercoder-gin/demo
+	////args is url.values
+	//log.Println(GetDoubleTableDataBySearch(UserInfo{},&ui, "userinfo", "user", args))
+	//log.Println(ui)
 }

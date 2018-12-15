@@ -159,14 +159,13 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 			continue
 		}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += k + " like '%" + v[0] + "%' and "
+		sql += k + " = '" + v[0] + "' and " //change 'like' to '='
 	}
 
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
 	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
 
-	c := []byte(sql)
-	sql = string(c[:len(c)-4]) //去and
+	sql = string([]byte(sql)[:len(sql)-4]) //去and
 	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
 	if every == "" {
 		sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
