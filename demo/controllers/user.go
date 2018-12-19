@@ -8,32 +8,32 @@ import (
 	"net/http"
 )
 
-var user models.User
+var p models.User
 //根据id获得用户获取
-func GetUserById(u *gin.Context) {
+func GetById(u *gin.Context) {
 	id := u.Query("id")
-	ss := user.GetById(id)
+	ss := p.GetById(id)
 	u.JSON(http.StatusOK, ss)
 }
 
 //用户信息分页
-func GetUserBySearch(u *gin.Context) {
+func GetBySearch(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
 	xss.XssMap(values)
-	ss := user.GetBySearch(values)
+	ss := p.GetBySearch(values)
 	u.JSON(http.StatusOK, ss)
 }
 
 //用户信息删除
-func DeleteUserById(u *gin.Context) {
+func Delete(u *gin.Context) {
 	id := u.Param("id")
-	ss := user.DeleteByid(id)
+	ss := p.Delete(id)
 	u.JSON(http.StatusOK, ss)
 }
 
 //用户信息修改
-func UpdateUser(u *gin.Context) {
+func Update(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)
@@ -45,12 +45,12 @@ func UpdateUser(u *gin.Context) {
 		return
 	}
 
-	ss := user.Update(values)
+	ss := p.Update(values)
 	u.JSON(http.StatusOK, ss)
 }
 
 //新增用户信息
-func CreateUser(u *gin.Context) {
+func Create(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)	//html特殊字符转换
@@ -63,6 +63,6 @@ func CreateUser(u *gin.Context) {
 		return
 	}
 
-	ss := user.Create(values)
+	ss := p.Create(values)
 	u.JSON(http.StatusOK, ss)
 }
