@@ -23,7 +23,7 @@ func init() {
 	DB.SingularTable(true)
 	// sql print console log
 	// or print sql err to file
-	LogMode("sqlErr")
+	LogMode("debug") // or sqlErr
 
 	// connection pool
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.

@@ -31,7 +31,7 @@ func (c *User)GetBySearch(args map[string][]string) interface{} {
 }
 
 // delete user, by id
-func (c *User)DeleteByid(id string) interface{} {
+func (c *User)Delete(id string) interface{} {
 
 	return deercoder.DeleteDataByName("user", "id", id)
 }
