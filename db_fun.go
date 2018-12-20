@@ -159,7 +159,7 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 			continue
 		}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += k + " = '" + v[0] + "' and " //change 'like' to '='
+		sql += k + " = '" + v[0] + "' and "          //change 'like' to '='
 	}
 
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
@@ -523,7 +523,7 @@ func CreateDataResID(tablename string, args map[string][]string) interface{} {
 	num := dba.RowsAffected
 
 	var value Value
-	tx.Raw("select max(id) as value from ?",tablename).Scan(&value)
+	tx.Raw("select max(id) as value from " + tablename).Scan(&value)
 
 	if dba.Error != nil {
 		info = lib.GetSqlError(dba.Error.Error())
