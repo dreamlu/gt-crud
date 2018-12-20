@@ -505,6 +505,42 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 	return info
 }
 
+/*创建数据,通用*/
+// 返回id,事务,慎用
+// 业务少可用
+func CreateDataResID(tablename string, args map[string][]string) interface{} {
+	var info interface{}
+	//开启事务
+	tx := DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	sql := GetInsertSql(tablename, args)
+	dba := tx.Exec(sql)
+	num := dba.RowsAffected
+
+	var value Value
+	tx.Raw("select max(id) as value from ?",tablename).Scan(&value)
+
+	if dba.Error != nil {
+		info = lib.GetSqlError(dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapError
+	} else {
+		info = map[string]interface{}{"status": 201, "msg": "创建成功", "id": value.Value}
+	}
+
+	if tx.Error != nil {
+		tx.Rollback()
+	}
+
+	tx.Commit()
+	return info
+}
+
 //结合struct创建
 func CreateStructData(data interface{}) interface{} {
 	var info interface{}
