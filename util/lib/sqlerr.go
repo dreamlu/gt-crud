@@ -11,8 +11,8 @@ func GetSqlError(error string) (info interface{}) {
 		info = MapNoResult
 	case strings.Contains(error, "Duplicate entry"):
 		error = strings.Replace(error, "Error 1062: Duplicate entry", "", -1)
-		error = strings.Replace(error, "for key 'name'", "", -1)
-		error = "已存在相同数据:" + error
+		errors := strings.Split(error, "for key")
+		error = "已存在相同数据:" + errors[0]
 		info = map[string]interface{}{"status":CodeText, "msg":error}
 	case strings.Contains(error, "Data too long"):
 		error = "存在字段范围过长"
