@@ -6,18 +6,18 @@ import (
 
 /*userinfo model*/
 type Userinfo struct {
-	ID         int64         `json:"id"`
-	UserID     int64         `json:"user_id"`
-	Userinfo   string        `json:"userinfo"`
+	ID         int64              `json:"id"`
+	UserID     int64              `json:"user_id"`
+	Userinfo   string             `json:"userinfo"`
 	Updatetime deercoder.JsonTime `json:"updatetime"` //maybe you like util.JsonDate
 }
 
 /*detail userinfo and user model*/
 type UserinfoDe struct {
-	ID         int64         `json:"id"`
-	UserID     int64         `json:"user_id"`
-	UserName   string        `json:"user_name"` //table `user` + `user`.name
-	Userinfo   string        `json:"userinfo"`
+	ID         int64              `json:"id"`
+	UserID     int64              `json:"user_id"`
+	UserName   string             `json:"user_name"` //table `user` + `user`.name
+	Userinfo   string             `json:"userinfo"`
 	Updatetime deercoder.JsonTime `json:"updatetime"`
 }
 

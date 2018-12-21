@@ -10,9 +10,10 @@ func GetSqlError(error string) (info interface{}) {
 	case error == "record not found":
 		info = MapNoResult
 	case strings.Contains(error, "Duplicate entry"):
-		error = strings.Replace(error, "Error 1062: Duplicate entry", "", -1)
-		errors := strings.Split(error, "for key")
-		error = "已存在相同数据:" + errors[0]
+		//error = strings.Replace(error, "Error 1062: Duplicate entry", "", -1)
+		errors := strings.Split(error, "for key ")
+		//error = "已存在相同数据:" + errors[0]
+		error = strings.Trim(errors[1],"'") //自定义数据库唯一约束名
 		info = map[string]interface{}{"status":CodeText, "msg":error}
 	case strings.Contains(error, "Data too long"):
 		error = "存在字段范围过长"
