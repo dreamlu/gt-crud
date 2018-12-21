@@ -59,6 +59,29 @@ func SetRouter() *gin.Engine {
 			usercount.GET("/search", controllers.GetUserinfoBySearch)
 		}
 	}
+	//组的路由,version
+	v2 := router.Group("/api/v2")
+	{
+		v := v2
+		//网站基本信息
+		v.GET("/basic/basic", basic.GetBasicInfo)
+		//文件上传
+		v.POST("/file/upload", file.UpoadFile)
+		//用户
+		user := v.Group("/user")
+		{
+			user.GET("/search", controllers.GetBySearch)
+			user.GET("/id", controllers.GetById)
+			user.DELETE("/delete/:id", controllers.Delete)
+			user.POST("/create", controllers.Create)
+			user.PATCH("/update", controllers.Update)
+		}
+		//用户账户数据
+		usercount := v.Group("/userinfo")
+		{
+			usercount.GET("/search", controllers.GetUserinfoBySearch)
+		}
+	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
