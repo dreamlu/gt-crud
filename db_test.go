@@ -30,7 +30,7 @@ func TestDB(t *testing.T) {
 	ss := CreateStructData(&user)
 	fmt.Println(ss)
 
-	user.ID = 8
+	user.ID = 8 //0
 	ss = UpdateStructData(&user)
 	fmt.Println(ss)
 }
