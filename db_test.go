@@ -91,3 +91,10 @@ func TestSqlSearchV2(t *testing.T) {
 	//log.Println(GetDoubleTableDataBySearch(UserInfo{},&ui, "userinfo", "user", args))
 	//log.Println(ui)
 }
+
+//select 数据存在验证
+func TestValidateData(t *testing.T) {
+	sql := "select *from `user` where id=1"
+	ss := ValidateData(sql)
+	log.Println(ss)
+}

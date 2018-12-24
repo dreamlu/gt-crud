@@ -34,6 +34,7 @@ var MapExistOrNo = map[string]interface{}{"status": 220, "msg": "数据无变化
 var MapCountErr = map[string]interface{}{"status": 211, "msg": "用户账号或密码错误"}
 var MapNoCount = map[string]interface{}{"status": 211, "msg": "用户账号不存在"}
 var MapNoArgs = map[string]interface{}{"status": 223, "msg": "缺少参数"}
+var MapValidate = map[string]interface{}{"status": 217, "msg": "验证成功"}
 
 /*微信小程序*/
 //var WxEcryptError = map[string]interface{}{"status": 230, "msg": "缺少参数"}
