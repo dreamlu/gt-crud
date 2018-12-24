@@ -112,7 +112,7 @@ func (this *normalRule) Check(data string) (Err error) {
 				return errors.New(fmt.Sprintln(this.trans, "为必填项"))
 			}
 		case "phone":
-			if b, _ := regexp.MatchString(`^(1[3|4|5|8][0-9]\d{4,8})$`, data); !b {
+			if b, _ := regexp.MatchString(`^1[3-9]\d{9}$`, data); !b {
 				return errors.New(fmt.Sprintln("手机号格式非法"))
 			}
 		case "email":

@@ -558,3 +558,22 @@ func CreateStructData(data interface{}) interface{} {
 	}
 	return info
 }
+
+//select检查是否存在
+func ValidateData(sql string) interface{} {
+	var info interface{}
+	var num int64 //返回影响的行数
+
+	var ve Value
+	dba := DB.Raw(sql).Scan(&ve)
+	num = dba.RowsAffected
+
+	if dba.Error != nil {
+		info = lib.GetSqlError(dba.Error.Error())
+	} else if num == 0 && dba.Error == nil {
+		info = lib.MapError
+	} else {
+		info = lib.MapValidate
+	}
+	return info
+}
