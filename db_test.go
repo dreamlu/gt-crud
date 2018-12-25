@@ -94,7 +94,21 @@ func TestSqlSearchV2(t *testing.T) {
 
 //select 数据存在验证
 func TestValidateData(t *testing.T) {
-	sql := "select *from `user` where id=1"
+	sql := "select *from `user` where id=2"
 	ss := ValidateData(sql)
 	log.Println(ss)
+}
+
+//分页搜索中key测试
+func TestGetSearchSql(t *testing.T) {
+
+	var args = make(map[string][]string)
+	args["key"] = append(args["key"],"梦 嘿,伙计")
+	sqlnolimit,sql,_,_ := GetSearchSql(User{},"user",args)
+	log.Println("SQLNOLIMIT:",sqlnolimit,"\nSQL:",sql)
+
+	// 两张表，待重新测试
+	sqlnolimit,sql,_,_ = GetDoubleSearchSql(UserInfo{},"userinfo","user",args)
+	log.Println("SQLNOLIMIT==>2:",sqlnolimit,"\nSQL==>2:",sql)
+
 }
