@@ -1,63 +1,65 @@
-### deercoder-gin
-deercoder-gin is a common api development demo  
-[chinese doc](README-zh.md)
+deercoder-gin 是一个通用的api快速开发框架示例  
+[english doc](README-en.md)
 
-it can be most golang api development demo  
-fragment : gin + gorm + mysql + casbin + go-ini  
+框架构成：gin + gorm + mysql + casbin + go-ini  
+或许你需要下载结合[api.html](./demo/api.html)接口文档查看测试以及查看*_test.go文件
+##### 通用原理：
 
-##### principle：  
-1.abstract func    
+1.封装  
 2.golang reflect interface{}  
 
-##### feature：  
+##### 特点:
 
-1.return json data  
-2.one table crud,limit  
-3.add two table operation(...waiting for being beeter)  
-4.add basic info about website  
-5.select replace * by reflect 
-6.add logger for gorm 
-7.add permission(user-->group(role)-->menu(permission) 
-8.add validator 
+1.返回json数据  
+2.一张表的增删改查以及分页  
+3.增加多张表连接操作(...waiting for being beeter)  
+4.增加网站基本信息接口  
+5.select * 的优化(反射替换*为具体字段名)  
+6.优化自定义gorm日志(存储错误sql以及相关error) 
+7.增加权限(用户-组(角色)-权限(菜单)) 
+8.增加参数验证 
 
-##### use demo 
-- create
+##### 使用示例  
+- 新增
 ```go
 // create user
-func CreateUser(args map[string][]string) interface{} {
+func (c *User)Create(args map[string][]string) interface{} {
 
-	return db.CreateData("user", args)
+	args["createtime"] = append(args["createtime"], time.Now().Format("2006-01-02 15:04:05"))
+	return deercoder.CreateData("user", args)
 }
 ```
-- update
+- 修改
 
 ```go
 // update user
-func UpdateUser(args map[string][]string) interface{} {
+func (c *User)Update(args map[string][]string) interface{} {
 
-	return db.UpdateData("user", args)
+	return deercoder.UpdateData("user", args)
 }
 ```
-- delete
+- 删除
 ```go
 // delete user, by id
-func DeleteUserByid(id string) interface{} {
+func (c *User)DeleteByid(id string) interface{} {
 
-	return db.DeleteDataByName("user", "id", id)
+	return deercoder.DeleteDataByName("user", "id", id)
 }
 ```
 
-- get information, limit and search
+- 分页,搜索二合一
 ```go
 // get user, limit and search
-// clientPage(page num) 1, everyPage(every page num) 10 default
-func GetUserBySearch(args map[string][]string) interface{} {
-	
+// clientPage 1, everyPage 10 default
+func (c *User)GetBySearch(args map[string][]string) interface{} {
+	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
+	//db.DB.AutoMigrate(&User{})
+	//var users = []*User{}
 	var users []*User
-	return db.GetDataBySearch(User{}, &users, "user", args) // anonymous User{}
+	return deercoder.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
 }
 ```
-- return json
+- 返回json
 ```go
 {
     "status":200,
@@ -81,22 +83,22 @@ func GetUserBySearch(args map[string][]string) interface{} {
     }
 }
 ```
-- get information by id
+- 根据id获得信息
 ```go
 // get user, by id
-func GetUserById(id string) interface{} {
+func (c *User)GetById(id string) interface{} {
 
-	db.DB.AutoMigrate(&User{})
+	deercoder.DB.AutoMigrate(&User{})
 	var user = User{}
-	return db.GetDataById(&user, id)
+	return deercoder.GetDataById(&user, id)
 }
 ```
-- get some data from two tables
+- 表连接,分页搜索二合一
 ```go
 // user detail info
 // include table `user` and `userinfo` data
 // maybe you need to build detail info like model UserinfoBK
-func GetUserinfoBySearch(args map[string][]string) interface{} { //inner join 
+func GetUserinfoBySearch(args map[string][]string) interface{} {//inner join 
 
 	var userdetail []UserinfoDe
 	return db.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)

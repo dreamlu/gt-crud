@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-/*select *替换, 两张表*/
+// select *替换
+// 两张表
 func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
@@ -27,31 +28,34 @@ func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql stri
 	return sql
 }
 
-/*根据model中表模型的json标签获取表字段,增加select where 条件 关键字查询*/
-//尝试单条件搜索全部,多条件搜索关系为且
-func GetSearchSqlByKey(model interface{}, keys []string) (sql string) {
-	typ := reflect.TypeOf(model)
-	//var buffer bytes.Buffer
+//// 根据model中表模型的json标签获取表字段
+//// 增加select where 条件 关键字查询
+//// 尝试单条件搜索全部,多条件搜索关系为且
+//func GetSearchSqlByKey(model interface{}, keys []string) (sql string) {
+//	typ := reflect.TypeOf(model)
+//	//var buffer bytes.Buffer
+//
+//	for _, v := range keys {
+////		sql += "("
+////
+////		for i := 0; i < typ.NumField(); i++ {
+////			tag := typ.Field(i).Tag.Get("json")
+////			//buffer.WriteString("`"+tag + "`,")
+////			sql += "`" + tag + "` like binary '%" + v + "%' or "
+////		}
+////		sql = string([]byte(sql)[:len(sql)-3]) //去掉or
+////		//多条件and关系
+////		sql += ") and "
+////	}
+//
+//	sql = string([]byte(sql)[:len(sql)-4]) //去掉and
+//	return sql
+//}
 
-	for _, v := range keys {
-		sql += "("
-
-		for i := 0; i < typ.NumField(); i++ {
-			tag := typ.Field(i).Tag.Get("json")
-			//buffer.WriteString("`"+tag + "`,")
-			sql += "`" + tag + "` like binary '%" + v + "%' or "
-		}
-		sql = string([]byte(sql)[:len(sql)-3]) //去掉or
-		//多条件and关系
-		sql += ") and "
-	}
-
-	sql = string([]byte(sql)[:len(sql)-4]) //去掉and
-	return sql
-}
-
-/*根据model中表模型的json标签获取表字段,将select* 中'*'变为对应的字段名,增加别名,表连接问题*/
-func GetColumnsSql(model interface{}, alias string) (sql string) {
+// 根据model中表模型的json标签获取表字段
+// 将select* 中'*'变为对应的字段名
+// 增加别名,表连接问题
+func GetColAliasSql(model interface{}, alias string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
@@ -63,8 +67,9 @@ func GetColumnsSql(model interface{}, alias string) (sql string) {
 	return sql
 }
 
-/*根据model中表模型的json标签获取表字段,将select* 变为对应的字段名*/
-func GetSqlColumnsSql(model interface{}) (sql string) {
+// 根据model中表模型的json标签获取表字段
+// 将select* 变为对应的字段名
+func GetColSql(model interface{}) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
@@ -79,13 +84,16 @@ func GetSqlColumnsSql(model interface{}) (sql string) {
 //=======================================语句拼接==========================================
 //========================================================================================
 
-/*两张表名,查询语句拼接,表1中有表2 id*/
-func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+// 两张表名,查询语句拼接
+// 表1中有表2 id
+func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
 	clientPageStr := ClientPageStr
 	everyPageStr := EveryPageStr
 	every := ""
+	// 关键字key搜索
+	key := ""
 
 	//尝试将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from "+table1+" "+
@@ -105,6 +113,12 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 			continue
 		case "every":
 			every = v[0]
+			continue
+		case "key":
+			key = v[0]
+			// 待重写
+			sql, sqlnolimit = lib.GetDoubleKeySql(sql, sqlnolimit, key, model , table1, table2)
+			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
 			continue
 		case "":
 			continue
@@ -134,16 +148,20 @@ func SearchDoubleTableSql(model interface{}, table1, table2 string, args map[str
 	return sqlnolimit, sql, clientPage, everyPage
 }
 
-/*传入表名,查询语句拼接*/
-func SearchTableSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+// 传入表名,查询语句拼接
+// 单张表
+func GetSearchSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
 	clientPageStr := ClientPageStr
 	everyPageStr := EveryPageStr
 	every := ""
+	// 关键字key搜索
+	key := ""
 
 	//尝试将select* 变为对应的字段名
-	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetSqlColumnsSql(model), tablename)
+	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetColSql(model), tablename)
+	sqlnolimit = fmt.Sprintf("select count(id) as sum_page from `%s` where 1=1 and ", tablename)
 	for k, v := range args {
 		switch k {
 		case "clientPage":
@@ -155,18 +173,23 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 		case "every":
 			every = v[0]
 			continue
+		case "key":
+			key = v[0]
+			sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model, tablename)
+			continue
 		case "":
 			continue
 		}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
 		sql += k + " = '" + v[0] + "' and "          //change 'like' to '='
+		sqlnolimit += k + " = '" + v[0] + "' and "
 	}
 
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
 	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
 
 	sql = string([]byte(sql)[:len(sql)-4]) //去and
-	sqlnolimit = strings.Replace(sql, GetSqlColumnsSql(model), "count(id) as sum_page", -1)
+	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
 	if every == "" {
 		sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	}
@@ -174,11 +197,9 @@ func SearchTableSql(model interface{}, tablename string, args map[string][]strin
 	return sqlnolimit, sql, clientPage, everyPage
 }
 
-/*
-传入数据库表名
-更新语句拼接
-*/
-func GetUpdateSqlById(tablename string, args map[string][]string) (sql, id string) {
+// 传入数据库表名
+// 更新语句拼接
+func GetUpdateSql(tablename string, args map[string][]string) (sql, id string) {
 
 	sql = "update `" + tablename + "` set "
 	for k, v := range args {
@@ -186,10 +207,10 @@ func GetUpdateSqlById(tablename string, args map[string][]string) (sql, id strin
 			id = v[0]
 			continue
 		}
-		//密码aes加密
-		if k == "userpassword" {
-			v[0] = AesEn(v[0])
-		}
+		////密码aes加密
+		//if k == "password" {
+		//	v[0] = AesEn(v[0])
+		//}
 		v[0] = strings.Replace(v[0], "'", "\\'", -1)
 		sql += "`" + k + "`='" + v[0] + "',"
 	}
@@ -199,20 +220,18 @@ func GetUpdateSqlById(tablename string, args map[string][]string) (sql, id strin
 	return sql, id
 }
 
-/*
-传入数据库表名
-插入语句拼接
-*/
+// 传入数据库表名
+// 插入语句拼接
 func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 
 	//sql拼接
 	var values []string
 	sql = "insert `" + tablename + "`("
 	for k, v := range args {
-		//密码aes加密
-		if k == "userpassword" {
-			v[0] = AesEn(v[0])
-		}
+		////密码aes加密
+		//if k == "password" {
+		//	v[0] = AesEn(v[0])
+		//}
 		sql += "`" + k + "`,"
 		values = append(values, v[0])
 	}
@@ -233,7 +252,7 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 /*==========================增删改查通用=========made=by=lucheng======================*/
 /*==================================================================================*/
 
-//获得数据,根据sql语句,无分页
+// 获得数据,根据sql语句,无分页
 func GetDataBySql(data interface{}, sql string, args ...string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
@@ -256,7 +275,7 @@ func GetDataBySql(data interface{}, sql string, args ...string) interface{} {
 	return info
 }
 
-//获得数据,根据name条件
+// 获得数据,根据name条件
 func GetDataByName(data interface{}, name, value string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
@@ -279,8 +298,8 @@ func GetDataByName(data interface{}, name, value string) interface{} {
 	return info
 }
 
-//查询数据约定,表名_字段名(若有重复)
-//获得数据,根据id,两张表连接尝试
+// 查询数据约定,表名_字段名(若有重复)
+// 获得数据,根据id,两张表连接尝试
 func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
 	sql := fmt.Sprintf("select %s from "+table1+" "+
 		"inner join "+table2+" "+
@@ -298,7 +317,7 @@ func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 stri
 	return GetDataBySql(data, sql, id)
 }
 
-//获得数据,根据id
+// 获得数据,根据id
 func GetDataById(data interface{}, id string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
@@ -321,27 +340,27 @@ func GetDataById(data interface{}, id string) interface{} {
 	return info
 }
 
-//获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
-//如table2中查询,字段用table2_+"字段名",table1字段查询不变
+// 获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
+// 如table2中查询,字段用table2_+"字段名",table1字段查询不变
 func GetLeftDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
 	//级联表的查询
-	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
+	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, args)
 	sql = strings.Replace(sql, "inner join", "left join", -1)
 	sqlnolimit = strings.Replace(sqlnolimit, "inner join", "left join", -1)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
-//获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
-//如table2中查询,字段用table2_+"字段名",table1字段查询不变
+// 获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
+// 如table2中查询,字段用table2_+"字段名",table1字段查询不变
 func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
 	//级联表的查询以及
-	sqlnolimit, sql, clientPage, everyPage := SearchDoubleTableSql(model, table1, table2, args)
+	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, args)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
-//获得数据,根据sql语句,分页
+// 获得数据,根据sql语句,分页
 func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
@@ -406,15 +425,15 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 	return info
 }
 
-//获得数据,分页/查询
+// 获得数据,分页/查询
 func GetDataBySearch(model, data interface{}, tablename string, args map[string][]string) interface{} {
 
-	sqlnolimit, sql, clientPage, everyPage := SearchTableSql(model, tablename, args)
+	sqlnolimit, sql, clientPage, everyPage := GetSearchSql(model, tablename, args)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
-/*删除通用,任意参数*/
+// 删除通用,任意参数
 func DeleteDataByName(tablename string, key, value string) interface{} {
 	var info interface{}
 	sql := "delete from `" + tablename + "` where " + key + "=?"
@@ -433,7 +452,7 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 	return info
 }
 
-/*修改数据,通用*/
+// 修改数据,通用
 func UpdateDataBySql(sql string, args ...string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
@@ -450,12 +469,12 @@ func UpdateDataBySql(sql string, args ...string) interface{} {
 	return info
 }
 
-/*修改数据,通用*/
+// 修改数据,通用
 func UpdateData(tablename string, args map[string][]string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	sql, _ := GetUpdateSqlById(tablename, args)
+	sql, _ := GetUpdateSql(tablename, args)
 
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
@@ -469,7 +488,7 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 	return info
 }
 
-//结合struct修改
+// 结合struct修改
 func UpdateStructData(data interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
@@ -486,7 +505,7 @@ func UpdateStructData(data interface{}) interface{} {
 	return info
 }
 
-/*创建数据,通用*/
+// 创建数据,通用
 func CreateData(tablename string, args map[string][]string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
@@ -505,7 +524,7 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 	return info
 }
 
-/*创建数据,通用*/
+// 创建数据,通用
 // 返回id,事务,慎用
 // 业务少可用
 func CreateDataResID(tablename string, args map[string][]string) interface{} {
@@ -541,7 +560,7 @@ func CreateDataResID(tablename string, args map[string][]string) interface{} {
 	return info
 }
 
-//结合struct创建
+// 结合struct创建
 func CreateStructData(data interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
@@ -559,7 +578,7 @@ func CreateStructData(data interface{}) interface{} {
 	return info
 }
 
-//select检查是否存在
+// select检查是否存在
 func ValidateData(sql string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
