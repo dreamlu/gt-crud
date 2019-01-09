@@ -13,7 +13,7 @@ var (
 func init() {
 	var err error
 	//database, initialize once
-	DB, err = gorm.Open("mysql", GetConfigValue("db.user")+":"+GetConfigValue("db.password")+"@/"+GetConfigValue("db.name")+"?charset=utf8&parseTime=True&loc=Local")
+	DB, err = gorm.Open("mysql", GetConfigValue("db.user")+":"+GetConfigValue("db.password")+"@"+GetConfigValue("db.password")+"/"+GetConfigValue("db.name")+"?charset=utf8&parseTime=True&loc=Local")
 	//defer DB.Close()
 	if err != nil {
 		fmt.Println(err)
