@@ -17,7 +17,8 @@ fragment : gin + gorm + mysql + casbin + go-ini
 5.select replace * by reflect 
 6.add logger for gorm 
 7.add permission(user-->group(role)-->menu(permission) 
-8.add validator 
+8.add validator  
+9.add mysql remote connection  
 
 ##### use demo 
 - create
