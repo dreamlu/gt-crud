@@ -29,9 +29,6 @@ func SetRouter() *gin.Engine {
 	// xss
 	//router.Use(xssMid())
 
-	//静态目录
-	router.Static("static", "../static")
-
 	// Ping test
 	router.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
@@ -63,6 +60,12 @@ func SetRouter() *gin.Engine {
 	v2 := router.Group("/api/v2")
 	{
 		v := v2
+
+		// 静态目录
+		// relativePath:请求路径
+		// root:静态文件所在目录
+		v.Static("static", "static")
+
 		//网站基本信息
 		v.GET("/basic/basic", basic.GetBasicInfo)
 		//文件上传
