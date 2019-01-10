@@ -116,8 +116,8 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[strin
 			continue
 		case "key":
 			key = v[0]
-			// 待重写
-			sql, sqlnolimit = lib.GetDoubleKeySql(sql, sqlnolimit, key, model , table1, table2)
+			// 多表搜索
+			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model , table1+":"+table1, table2+":"+table2)
 			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
 			continue
 		case "":

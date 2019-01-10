@@ -46,11 +46,15 @@ func GetKeySql(sql, sqlnolimit string, key string, model interface{}, alias stri
 	return sql, sqlnolimit
 }
 
-// 两张表， 表1包含表2 id
+// 多张表, 第一个表为主表
 // key search sql
-func GetDoubleKeySql(sql, sqlnolimit string, key string, model interface{}, tablel, table2 string) (sqlkey, sqlnolimitkey string) {
+// tables [table1:table1_alias]
+// searModel : 搜索字段模型
+func GetMoreKeySql(sql, sqlnolimit string, key string, searModel interface{}, tables ...string) (sqlkey, sqlnolimitkey string) {
 
-	tags := GetTags(model)
+	// 搜索字段
+	tags := GetTags(searModel)
+	// 多表
 	keys := strings.Split(key, " ") //空格隔开
 	for _, key := range keys {
 		if key == "" {
@@ -63,18 +67,26 @@ func GetDoubleKeySql(sql, sqlnolimit string, key string, model interface{}, tabl
 			// 排除id结尾字段
 			// 排除date,time结尾字段
 			case !strings.HasSuffix(tag, "id") && !strings.HasSuffix(tag, "date") && !strings.HasSuffix(tag, "time"):
-				// 表2
-				if strings.Contains(tag, table2+"_") && !strings.Contains(tag, table2+"_id") {
-					sql += "`"+ table2 + "`.`" + string([]byte(tag)[len(table2)+1:]) + "` like binary '%" + key + "%' or "
-					sqlnolimit += "`"+ table2 + "`.`" + string([]byte(tag)[len(table2)+1:]) + "` like binary '%" + key + "%' or "
-					continue
+
+				// 多表判断
+				for _, v := range tables {
+					ts := strings.Split(v, ":")
+					table := ts[0]
+					alias := ts[1]
+					if strings.Contains(tag, table+"_") && !strings.Contains(tag, table+"_id") {
+						sql += "`" + alias + "`.`" + string([]byte(tag)[len(table)+1:]) + "` like binary '%" + key + "%' or "
+						sqlnolimit += "`" + alias + "`.`" + string([]byte(tag)[len(table)+1:]) + "` like binary '%" + key + "%' or "
+						goto into
+					}
 				}
 
-				// 表1
-				sql += "`" + tablel + "`.`" + tag + "` like binary '%" + key + "%' or "
-				sqlnolimit += "`" + tablel + "`.`" + tag + "` like binary '%" + key + "%' or "
+				// 主表
+				ts := strings.Split(tables[0], ":")
+				alias := ts[1]
+				sql += "`" + alias + "`.`" + tag + "` like binary '%" + key + "%' or "
+				sqlnolimit += "`" + alias + "`.`" + tag + "` like binary '%" + key + "%' or "
 			}
-
+		into:
 		}
 		sql = string([]byte(sql)[:len(sql)-4]) + ") and "
 		sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) + ") and "
