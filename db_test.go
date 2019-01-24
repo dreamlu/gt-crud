@@ -124,3 +124,14 @@ func TestGetDataBySql(t *testing.T) {
 	//DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)
 	//fmt.Println(user)
 }
+
+// (待测试)
+// 通用增删该查测试
+func TestCRUD(t *testing.T) {
+	var args = make(map[string][]string)
+	args["name"] = append(args["name"],"梦 嘿,伙计")
+
+	//var crud DbCrudImpl
+	var db DBCrud = new(DbCrudImpl)
+	db.Create(args)
+}

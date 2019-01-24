@@ -1,13 +1,16 @@
 package deercoder
 
-import (
-	"github.com/gin-gonic/gin"
-)
+// db database
+type DataBase interface {
+	//nothing
+}
 
-// return values
-// type map[string][]string
-func GetUriValues(u *gin.Context) map[string][]string {
-	u.Request.ParseForm()
-	values := u.Request.Form //need to ParseForm
-	return values
+// common crud
+type DBCrud interface {
+	// crud and search id
+	Create(args map[string][]string) interface{}
+	Update(args map[string][]string) interface{}
+	Delete(id string) interface{}
+	GetBySearch(args map[string][]string) interface{}
+	GetByID(id string) interface{}
 }
