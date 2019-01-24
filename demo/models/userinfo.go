@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/Dreamlu/deercoder-gin"
+	"github.com/dreamlu/deercoder-gin"
 )
 
 /*userinfo model*/

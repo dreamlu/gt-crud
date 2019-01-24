@@ -3,7 +3,7 @@ package deercoder
 /*made by lucheng*/
 import (
 	"fmt"
-	"github.com/Dreamlu/deercoder-gin/util/lib"
+	"github.com/dreamlu/deercoder-gin/util/lib"
 	"reflect"
 	"strconv"
 	"strings"

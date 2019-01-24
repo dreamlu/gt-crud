@@ -3,8 +3,8 @@ package routers
 import (
 	"demo/controllers"
 	"demo/controllers/basic"
-	"github.com/Dreamlu/deercoder-gin/util/file"
-	"github.com/Dreamlu/deercoder-gin/util/lib"
+	"github.com/dreamlu/deercoder-gin/util/file"
+	"github.com/dreamlu/deercoder-gin/util/lib"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
@@ -19,15 +19,12 @@ func SetRouter() *gin.Engine {
 	//deercoder.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
-	// load the casbin model and policy from files, database is also supported.
 	//登录失效验证
 	//router.Use(CheckLogin())
 	//权限中间件
+	// load the casbin model and policy from files, database is also supported.
 	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
 	//router.Use(authz.NewAuthorizer(e))
-
-	// xss
-	//router.Use(xssMid())
 
 	// Ping test
 	router.GET("/ping", func(c *gin.Context) {

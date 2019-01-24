@@ -113,6 +113,7 @@ func TestGetSearchSql(t *testing.T) {
 
 }
 
+// 通用sql以及参数
 func TestGetDataBySql(t *testing.T) {
 	var sql = "select id,name,createtime from `user` where id = ? and name = ?"
 
@@ -120,6 +121,6 @@ func TestGetDataBySql(t *testing.T) {
 	GetDataBySql(&user, sql, "1", "梦")
 	fmt.Println(user)
 
-	DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)
-	fmt.Println(user)
+	//DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)
+	//fmt.Println(user)
 }

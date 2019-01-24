@@ -1,9 +1,9 @@
 package file
 
 import (
-	"github.com/Dreamlu/deercoder-gin"
-	"github.com/Dreamlu/deercoder-gin/util/lib"
-	"github.com/Dreamlu/resize"
+	"github.com/dreamlu/deercoder-gin"
+	"github.com/dreamlu/deercoder-gin/util/lib"
+	"github.com/dreamlu/resize"
 	"github.com/gin-gonic/gin"
 	"image"
 	"image/jpeg"
