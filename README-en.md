@@ -19,7 +19,8 @@ fragment : gin + gorm + mysql + casbin + go-ini
 7.add permission(user-->group(role)-->menu(permission) 
 8.add validator  
 9.add mysql remote connection  
-10.add more table key 'like binary' search
+10.add more table key 'like binary' search  
+11.add session(cookie/redis)  
 
 ##### use demo 
 - create
