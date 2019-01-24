@@ -80,8 +80,8 @@ func TestSqlSearch(t *testing.T) {
 	log.Println(ui)
 }
 
-//常用分页测试(两张表)
-//如:
+// 常用分页测试(两张表)
+// 如:
 func TestSqlSearchV2(t *testing.T) {
 	//var ui []UserInfo
 	//
@@ -92,14 +92,14 @@ func TestSqlSearchV2(t *testing.T) {
 	//log.Println(ui)
 }
 
-//select 数据存在验证
+// select 数据存在验证
 func TestValidateData(t *testing.T) {
 	sql := "select *from `user` where id=2"
 	ss := ValidateData(sql)
 	log.Println(ss)
 }
 
-//分页搜索中key测试
+// 分页搜索中key测试
 func TestGetSearchSql(t *testing.T) {
 
 	var args = make(map[string][]string)
@@ -111,4 +111,15 @@ func TestGetSearchSql(t *testing.T) {
 	sqlnolimit,sql,_,_ = GetDoubleSearchSql(UserInfo{},"userinfo","user",args)
 	log.Println("SQLNOLIMIT==>2:",sqlnolimit,"\nSQL==>2:",sql)
 
+}
+
+func TestGetDataBySql(t *testing.T) {
+	var sql = "select id,name,createtime from `user` where id = ? and name = ?"
+
+	var user User
+	GetDataBySql(&user, sql, "1", "梦")
+	fmt.Println(user)
+
+	DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)
+	fmt.Println(user)
 }
