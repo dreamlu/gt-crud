@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"demo/models"
-	"github.com/Dreamlu/deercoder-gin/util/xss"
-	"github.com/Dreamlu/deercoder-gin/validator"
+	"github.com/dreamlu/deercoder-gin/util/xss"
+	"github.com/dreamlu/deercoder-gin/validator"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

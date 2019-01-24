@@ -2,7 +2,7 @@ package main
 
 import (
 	"demo/routers"
-	"github.com/Dreamlu/deercoder-gin"
+	"github.com/dreamlu/deercoder-gin"
 	"github.com/gin-gonic/gin"
 )
 

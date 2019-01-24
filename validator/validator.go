@@ -3,7 +3,7 @@ package validator
 import (
 	"errors"
 	"fmt"
-	"github.com/Dreamlu/deercoder-gin/util/lib"
+	"github.com/dreamlu/deercoder-gin/util/lib"
 	"regexp"
 	"strconv"
 	"strings"
