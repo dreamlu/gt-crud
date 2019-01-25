@@ -1,34 +1,42 @@
 package deercoder
 
 // implment DBCrud
-type DbCrudImpl struct {
-	// nothing
+type DbCrud struct {
+	// attributes
+	Tables    string      // table name
+	Model     interface{} // table model, like User{}
+	ModelData interface{} // table model data, like var user User{}, it is 'user'
 }
 
-func (db *DbCrudImpl) Create(args map[string][]string) interface{} {
+// create
+func (c *DbCrud) Create(args map[string][]string) interface{} {
 
-	return nil
+	return CreateData(c.Tables, args)
+}
+// update
+func (c *DbCrud) Update(args map[string][]string) interface{} {
+
+	return UpdateData(c.Tables, args)
 }
 
-func (db *DbCrudImpl) Update(args map[string][]string) interface{} {
+// delete
+func (c *DbCrud) Delete(id string) interface{} {
 
-	return nil
+	return DeleteDataByName(c.Tables, "id", id)
 }
 
-func (db *DbCrudImpl) Delete(id string) interface{} {
+// search
+// pager info
+// clientPage : default 1
+// everyPage : default 10
+func (c *DbCrud) GetBySearch(args map[string][]string) interface{} {
 
-	return nil
+	return GetDataBySearch(c.Model, c.ModelData, c.Tables, args)
 }
 
-func (db *DbCrudImpl) GetBySearch(args map[string][]string) interface{} {
+// by id
+func (c *DbCrud) GetByID(id string) interface{} {
 
-	return nil//CreateData("user", args)
-}
-
-func (db *DbCrudImpl) GetByID(id string) interface{} {
-
-	//DB.AutoMigrate(&User{})
-	//var user = User{}
-	//return GetDataById(&user, id)
-	return nil
+	//DB.AutoMigrate(&c.Model)
+	return GetDataById(c.ModelData, id)
 }
