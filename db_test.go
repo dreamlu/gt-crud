@@ -125,13 +125,40 @@ func TestGetDataBySql(t *testing.T) {
 	//fmt.Println(user)
 }
 
-// (待测试)
 // 通用增删该查测试
 func TestCRUD(t *testing.T) {
 	var args = make(map[string][]string)
-	args["name"] = append(args["name"],"梦 嘿,伙计")
+	args["name"] = append(args["name"],"梦")
 
-	//var crud DbCrudImpl
-	var db DBCrud = new(DbCrudImpl)
-	db.Create(args)
+	// var crud DbCrud
+	// must use AutoMigrate
+	// get by id
+	DB.AutoMigrate(&User{})
+	var user User
+	var db  = DbCrud{"user", nil,&user}
+	info := db.GetByID("1")
+	log.Println(info, "\n[User Info]:",user)
+
+	// get by search
+	var users []*User
+	db = DbCrud{"user", User{},&users}
+	db.GetBySearch(args)
+	log.Println("\n[User Info]:",users)
+
+	// delete
+	info = db.Delete("12")
+	log.Println(info)
+
+	// update
+	args["id"] = append(args["id"],"4")
+	args["name"][0] = "梦4"
+	info = db.Update(args)
+	log.Println(info)
+
+	// create
+	var args2 = make(map[string][]string)
+	args2["name"] = append(args2["name"],"梦c")
+	//db  = DbCrud{"user", nil,&user}
+	info = db.Create(args2)
+	log.Println(info)
 }

@@ -1,7 +1,11 @@
-deercoder-gin 是一个通用的api快速开发框架示例  
-[english doc](README-en.md)
+deercoder-gin 是一个通用的api快速开发框架工具  
+[English Doc](README-en.md)
 
-框架构成：gin + gorm + mysql + casbin + go-ini  
+#####框架构成  
+| 路由 | orm  | 数据库 | 权限   | 配置    |
+| --- | ---- | ----  | ------ | ------ |
+| gin | gorm | mysql | casbin | go-ini | 
+
 或许你需要下载结合[api.html](./demo/api.html)接口文档查看测试以及查看*_test.go文件
 ##### 通用原理：
 
@@ -17,11 +21,12 @@ deercoder-gin 是一个通用的api快速开发框架示例
 | 增加网站基本信息接口 |  
 | select * 的优化(反射替换*为具体字段名) |
 | 优化自定义gorm日志(存储错误sql以及相关error) |  
-| 增加权限(用户-组(角色)-权限(菜单)) |
+| 增加权限(用户-组(角色)-权限(菜单))(待优化) |
 | 增加参数验证 |
 | 增加mysql远程连接 |
 | 增加多表key模糊搜索 |
 | session(cookie/redis) |
+| 更多数据库支持(待完善) |
 
 ##### 使用示例  
 - 新增
