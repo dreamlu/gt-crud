@@ -1,74 +1,101 @@
 package lib
 
-/*made by lucheng*/
-/*分页数据信息*/
+// status and msg
+const (
+	Status = "status"
+	Msg    = "msg"
+)
+
+// 约定状态码
+// 或 通过GetMapData()自定义
+const (
+	CodeSuccess    = 200 // 请求成功
+	CodeCreate     = 201 // 创建成功
+	CodeNoAuth     = 203 // 请求非法
+	CodeNoResult   = 204 // 暂无数据
+	CodeUpdate     = 206 // 修改成功
+	CodeDelete     = 209 // 删除成功
+	CodeValidator  = 210 // 字段验证
+	CodeCount      = 211 // 账号相关
+	CodeCaptcha    = 214 // 验证码
+	CodeValidate   = 217 // 验证成功
+	CodeExistOrNo  = 220 // 数据无变化
+	CodeSql        = 222 // 数据库错误统一状态
+	CodeLackArgs   = 223 // 缺少参数
+	CodeFile       = 224 // 文件上传相关
+	CodeNoDelete   = 225 // 存在外健约束(逻辑或数据库约束)
+	CodeEcrypt     = 230 // 数据解密失败
+	CodeWx         = 240 // 微信小程序相关
+	CodeWxPay      = 242 // 微信支付相关
+	CodeWxWithDraw = 243 // 微信提现相关
+	CodeOrder      = 251 // 订单相关
+	CodeAliPay     = 262 // 支付宝支付相关
+	CodeText       = 271 // 全局文字提示
+	CodeChat       = 280 // chat相关
+	CodeError      = 500 // 系统繁忙
+)
+
+// 约定提示信息
+const (
+	MsgSuccess   = "请求成功"
+	MsgCreate    = "创建成功"
+	MsgNoAuth    = "请求非法"
+	MsgNoResult  = "暂无数据"
+	MsgDelete    = "删除成功"
+	MsgUpdate    = "修改成功"
+	MsgError     = "系统繁忙"
+	MsgCaptcha   = "验证码验证失败"
+	MsgExistOrNo = "数据无变化"
+	MsgCountErr  = "用户账号或密码错误"
+	MsgNoCount   = "用户账号不存在"
+	MsgLackArgs  = "缺少参数"
+	MsgValidate  = "验证成功"
+)
+
+// 约定提示信息
+var (
+	MapError     = map[string]interface{}{Status: CodeError, Msg: MsgError}
+	MapUpdate    = map[string]interface{}{Status: CodeUpdate, Msg: MsgUpdate}
+	MapDelete    = map[string]interface{}{Status: CodeDelete, Msg: MsgDelete}
+	MapCreate    = map[string]interface{}{Status: CodeCreate, Msg: MsgCreate}
+	MapNoResult  = map[string]interface{}{Status: CodeNoResult, Msg: MsgNoResult}
+	MapNoAuth    = map[string]interface{}{Status: CodeNoAuth, Msg: MsgNoAuth}
+	MapCaptcha   = map[string]interface{}{Status: CodeCaptcha, Msg: MsgCaptcha}
+	MapExistOrNo = map[string]interface{}{Status: CodeExistOrNo, Msg: MsgExistOrNo} //指数据修改没有变化 或者 给的条件值不存在
+	MapCountErr  = map[string]interface{}{Status: CodeCount, Msg: MsgCountErr}
+	MapNoCount   = map[string]interface{}{Status: CodeCount, Msg: MsgNoCount}
+	MapLackArgs  = map[string]interface{}{Status: CodeLackArgs, Msg: MsgLackArgs}
+	MapValidate  = map[string]interface{}{Status: CodeValidate, Msg: MsgValidate}
+)
+
+// 分页数据信息
 type GetInfo struct {
 	GetInfoN
 	Pager Pager `json:"pager"`
 }
 
+// pager info
 type Pager struct {
 	ClientPage int64 `json:"clientpage"` //当前页码
-	SumPage    int64 `json:"sumpage"`    //总页数
+	SumPage    int64 `json:"sumpage"`    //数据总数量
 	EveryPage  int64 `json:"everypage"`  //每一页显示的数量
 }
 
-/*无分页数据信息*/
-/*分页数据信息*/
+// 无分页数据信息
+// 分页数据信息
 type GetInfoN struct {
 	Status int64       `json:"status"`
 	Msg    string      `json:"msg"`
 	Data   interface{} `json:"data"` //数据,通用接口
 }
 
-/*全局变量*/
-var MapError = map[string]interface{}{"status": 500, "msg": "系统繁忙"}
-var MapUpdate = map[string]interface{}{"status": 206, "msg": "修改成功"}
-var MapDelete = map[string]interface{}{"status": 209, "msg": "删除成功"}
-var MapCreate = map[string]interface{}{"status": 201, "msg": "创建成功"}
-var MapNoResult = map[string]interface{}{"status": 204, "msg": "暂无数据"}
-var MapNoAuth = map[string]interface{}{"status": 203, "msg": "请求非法"}
-var MapNoToken = map[string]interface{}{"status": 213, "msg": "用户凭证失效,请重新登录"}
-var MapCaptcha = map[string]interface{}{"status": 214, "msg": "验证码验证失败"}
-var MapExistOrNo = map[string]interface{}{"status": 220, "msg": "数据无变化"} //指数据修改没有变化 或者 给的条件值不存在
-var MapCountErr = map[string]interface{}{"status": 211, "msg": "用户账号或密码错误"}
-var MapNoCount = map[string]interface{}{"status": 211, "msg": "用户账号不存在"}
-var MapNoArgs = map[string]interface{}{"status": 223, "msg": "缺少参数"}
-var MapValidate = map[string]interface{}{"status": 217, "msg": "验证成功"}
-
-/*微信小程序*/
-//var WxEcryptError = map[string]interface{}{"status": 230, "msg": "缺少参数"}
-
-/*约定状态码*/
-const (
-	CodeSuccess    = 200 //请求成功
-	CodeValidator  = 210 //字段验证
-	CodeSql        = 222 //数据库错误统一状态
-	CodeFile       = 224 //文件上传相关
-	CodeNoDelete   = 225 //存在外健约束(逻辑或数据库约束)
-	CodeEcrypt     = 230 //数据解密失败
-	CodeWx         = 240 //小程序相关
-	CodeWxPay      = 242 //支付失败
-	CodeWxWithDraw = 243 //提现失败
-	CodeOrder      = 251 //订单相关
-	CodeAliPay     = 262 //支付宝支付失败
-	CodeError      = 270 //通用错误信息
-	CodeText       = 271 //全局文字错误提示
-	CodeChat       = 280 //chat相关
-)
-
-/*约定提示信息*/
-const (
-	MsgSuccess = "请求成功"
-)
-
-/*错误信息,通用*/
+// 信息,通用
 type MapData struct {
 	Status int64       `json:"status"`
 	Msg    interface{} `json:"msg"`
 }
 
-/*错误信息通用,状态码及信息提示*/
+// 信息通用,状态码及信息提示
 func GetMapData(status int64, msg interface{}) MapData {
 	me := MapData{
 		Status: status,

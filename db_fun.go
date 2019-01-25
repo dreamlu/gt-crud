@@ -21,7 +21,6 @@ func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql stri
 			sql += table2 + ".`" + string([]byte(tag)[len(table2)+1:]) + "` as " + tag + "," //string([]byte(tag)[len(table2+1-1):])
 			continue
 		}
-
 		sql += table1 + ".`" + tag + "`,"
 	}
 	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
@@ -277,7 +276,7 @@ func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) 
 
 // left join
 // 查询数据约定,表名_字段名(若有重复)
-// 获得数据,根据id,两张表连接尝试
+// 获得数据,根据id,两张表连接
 func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
 
 	sql := fmt.Sprintf("select %s from `%s` left join `%s` "+
