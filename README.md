@@ -1,7 +1,7 @@
 deercoder-gin 是一个通用的api快速开发框架工具  
 [English Doc](README-en.md)
 
-#####框架构成  
+##### 框架构成:  
 | 路由 | orm  | 数据库 | 权限   | 配置    |
 | --- | ---- | ----  | ------ | ------ |
 | gin | gorm | mysql | casbin | go-ini | 

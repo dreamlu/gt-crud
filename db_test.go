@@ -1,3 +1,4 @@
+// author:  dreamlu
 package deercoder
 
 import (
@@ -156,9 +157,9 @@ func TestCRUD(t *testing.T) {
 	log.Println(info)
 
 	// create
-	var args2 = make(map[string][]string)
-	args2["name"] = append(args2["name"],"梦c")
-	//db  = DbCrud{"user", nil,&user}
-	info = db.Create(args2)
-	log.Println(info)
+	//var args2 = make(map[string][]string)
+	//args2["name"] = append(args2["name"],"梦c")
+	////db  = DbCrud{"user", nil,&user}
+	//info = db.Create(args2)
+	//log.Println(info)
 }

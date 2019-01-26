@@ -1,3 +1,4 @@
+// author:  dreamlu
 package xss
 
 import (
