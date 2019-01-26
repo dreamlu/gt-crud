@@ -1,3 +1,4 @@
+// author:  dreamlu
 package deercoder
 
 /*made by lucheng*/
@@ -10,8 +11,34 @@ import (
 )
 
 // select *替换
+// 多表
+// tables : table name / table alias name
+// 主表放在tables中第一个，紧接着为主表关联的外键表名(无顺序)
+func GetMoreableColumnSQL(model interface{}, tables string) (sql string) {
+	//typ := reflect.TypeOf(model)
+	//
+	//// var buffer bytes.Buffer
+	//for i := 0; i < typ.NumField(); i++ {
+	//	// tables
+	//	for _,v := range tables {
+	//
+	//	}
+	//	tag := typ.Field(i).Tag.Get("json")
+	//	// table2的数据处理,去除table2_id
+	//	if strings.Contains(tag, table2+"_") && !strings.Contains(tag, table2+"_id") {
+	//		sql += table2 + ".`" + string([]byte(tag)[len(table2)+1:]) + "` as " + tag + "," //string([]byte(tag)[len(table2+1-1):])
+	//		continue
+	//	}
+	//	sql += table1 + ".`" + tag + "`,"
+	//}
+	//sql = string([]byte(sql)[:len(sql)-1]) //去点,
+	//return sql
+}
+
+
+// select *替换
 // 两张表
-func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql string) {
+func GetDoubleTableColumnSQL(model interface{}, table1, table2 string) (sql string) {
 	typ := reflect.TypeOf(model)
 	//var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
@@ -30,12 +57,12 @@ func GetDoubleTableColumnsql(model interface{}, table1, table2 string) (sql stri
 // 根据model中表模型的json标签获取表字段
 // 将select* 中'*'变为对应的字段名
 // 增加别名,表连接问题
-func GetColAliasSql(model interface{}, alias string) (sql string) {
+func GetColAliasSQL(model interface{}, alias string) (sql string) {
 	typ := reflect.TypeOf(model)
-	//var buffer bytes.Buffer
+	// var buffer bytes.Buffer
 	for i := 0; i < typ.NumField(); i++ {
 		tag := typ.Field(i).Tag.Get("json")
-		//buffer.WriteString("`"+tag + "`,")
+		// buffer.WriteString("`"+tag + "`,")
 		sql += alias + ".`" + tag + "`,"
 	}
 	sql = string([]byte(sql)[:len(sql)-1]) //去掉点,
@@ -56,7 +83,7 @@ func GetColSql(model interface{}) (sql string) {
 	return sql
 }
 
-//=======================================语句拼接==========================================
+//=======================================sql语句处理==========================================
 //========================================================================================
 
 // 两张表名,查询语句拼接
@@ -71,7 +98,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[strin
 	var key string
 
 	//select* 变为对应的字段名
-	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnsql(model, table1, table2), table1, table2, table1, table2, table2)
+	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2)
 
 	sqlnolimit = fmt.Sprintf("select count(%s.id) as sum_page from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", table1, table1, table2, table1, table2, table2)
 	for k, v := range args {
@@ -269,7 +296,7 @@ func GetDataByName(data interface{}, name, value string) interface{} {
 // 获得数据,根据id,两张表连接尝试
 func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
 	sql := fmt.Sprintf("select %s from `%s` inner join `%s` "+
-		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnsql(model, table1, table2), table1, table2, table1, table2, table2, table1)
+		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2, table1)
 
 	return GetDataBySql(data, sql, id)
 }
@@ -280,7 +307,7 @@ func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) 
 func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
 
 	sql := fmt.Sprintf("select %s from `%s` left join `%s` "+
-		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnsql(model, table1, table2), table1, table2, table1, table2, table2, table1)
+		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2, table1)
 
 	return GetDataBySql(data, sql, id)
 }
@@ -383,15 +410,14 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 	var info interface{}
 	sql := fmt.Sprintf("delete from `%s` where %s=?", tablename, key)
 
-	//sql = string([]byte(sql)[:len(sql)-5])
 	dba := DB.Exec(sql, value)
-
 	num := dba.RowsAffected
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapExistOrNo
-	} else {
+	default:
 		info = lib.MapDelete
 	}
 	return info
@@ -407,11 +433,12 @@ func UpdateDataBySql(sql string, args ...interface{}) interface{} {
 
 	dba := DB.Exec(sql, value[:]...)
 	num = dba.RowsAffected
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapExistOrNo
-	} else {
+	default:
 		info = lib.MapUpdate
 	}
 	return info
@@ -426,11 +453,12 @@ func UpdateData(tablename string, args map[string][]string) interface{} {
 
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapExistOrNo
-	} else {
+	default:
 		info = lib.MapUpdate
 	}
 	return info
@@ -443,11 +471,12 @@ func UpdateStructData(data interface{}) interface{} {
 
 	dba := DB.Save(data)
 	num = dba.RowsAffected
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapExistOrNo
-	} else {
+	default:
 		info = lib.MapUpdate
 	}
 	return info
@@ -497,7 +526,7 @@ func CreateDataResID(tablename string, args map[string][]string) interface{} {
 	} else if num == 0 && dba.Error == nil {
 		info = lib.MapError
 	} else {
-		info = map[string]interface{}{"status": 201, "msg": "创建成功", "id": value.Value}
+		info = map[string]interface{}{lib.Status: lib.CodeCreate, lib.Msg: lib.MsgCreate, "id": value.Value}
 	}
 
 	if tx.Error != nil {
