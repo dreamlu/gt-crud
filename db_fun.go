@@ -1,8 +1,8 @@
 // author:  dreamlu
 package deercoder
 
-/*made by lucheng*/
 import (
+	"bytes"
 	"fmt"
 	"github.com/dreamlu/deercoder-gin/util/lib"
 	"reflect"
@@ -10,31 +10,33 @@ import (
 	"strings"
 )
 
-// select *替换
-// 多表
+//======================return tag=============================
+//=============================================================
+
+// select * replace
+// select more tables
 // tables : table name / table alias name
 // 主表放在tables中第一个，紧接着为主表关联的外键表名(无顺序)
-func GetMoreableColumnSQL(model interface{}, tables string) (sql string) {
-	//typ := reflect.TypeOf(model)
-	//
-	//// var buffer bytes.Buffer
-	//for i := 0; i < typ.NumField(); i++ {
-	//	// tables
-	//	for _,v := range tables {
-	//
-	//	}
-	//	tag := typ.Field(i).Tag.Get("json")
-	//	// table2的数据处理,去除table2_id
-	//	if strings.Contains(tag, table2+"_") && !strings.Contains(tag, table2+"_id") {
-	//		sql += table2 + ".`" + string([]byte(tag)[len(table2)+1:]) + "` as " + tag + "," //string([]byte(tag)[len(table2+1-1):])
-	//		continue
-	//	}
-	//	sql += table1 + ".`" + tag + "`,"
-	//}
-	//sql = string([]byte(sql)[:len(sql)-1]) //去点,
-	//return sql
-}
+func GetMoreTableColumnSQL(model interface{}, tables ...string) (sql string) {
+	typ := reflect.TypeOf(model)
 
+	for i := 0; i < typ.NumField(); i++ {
+		tag := typ.Field(i).Tag.Get("json")
+		// foreign tables column
+		for _, v := range tables {
+			// tables
+			switch {
+			case !strings.Contains(tag, v+"_id") && strings.Contains(tag, v+"_"):
+				sql += "`" + v + "`.`" + string([]byte(tag)[len(v)+1:]) + "` as " + tag + ","
+				goto into
+			}
+		}
+		sql += "`" + tables[0] + "`.`" + tag + "`,"
+	into:
+	}
+	sql = string([]byte(sql)[:len(sql)-1]) //去点,
+	return sql
+}
 
 // select *替换
 // 两张表
@@ -84,7 +86,106 @@ func GetColSql(model interface{}) (sql string) {
 }
 
 //=======================================sql语句处理==========================================
-//========================================================================================
+//===========================================================================================
+
+// More Table
+// params: innerTables is inner join tables
+// params: leftTables is left join tables
+// return: select sql
+// table1 as main table, include other tables_id(foreign key)
+func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables []string, leftTables []string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+
+	var (
+		clientPageStr = ClientPageStr // page number
+		everyPageStr  = EveryPageStr  // Number of pages per page
+		every         = ""            // if every != "", it will return all data
+		key           = ""            // key like binary search
+		tables        = innerTables   // all tables
+		buf           bytes.Buffer    // sql bytes connect
+	)
+
+	tables = append(tables, leftTables...)
+	// sql and sqlCount
+	buf.WriteString("select ")
+	buf.WriteString(GetMoreTableColumnSQL(model, tables[:]...))
+	buf.WriteString(" from ")
+	buf.WriteString(tables[0])
+	// inner join
+	for i := 1; i < len(innerTables); i++ {
+		buf.WriteString(" inner join `")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("` on `")
+		buf.WriteString(tables[0])
+		buf.WriteString("`.")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("_id=`")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("`.id ")
+		//sql += " inner join ·" + innerTables[i] + "`"
+	}
+	// left join
+	for i := 0; i < len(leftTables); i++ {
+		buf.WriteString(" left join `")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("` on `")
+		buf.WriteString(tables[0])
+		buf.WriteString("`.")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("_id=`")
+		buf.WriteString(innerTables[i])
+		buf.WriteString("`.id ")
+		//sql += " inner join ·" + innerTables[i] + "`"
+	}
+	buf.WriteString(" where 1=1 and ")
+
+	//select* 变为对应的字段名
+	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2)
+
+	sqlnolimit = fmt.Sprintf("select count(%s.id) as sum_page from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", table1, table1, table2, table1, table2, table2)
+	for k, v := range args {
+		switch k {
+		case "clientPage":
+			clientPageStr = v[0]
+			continue
+		case "everyPage":
+			everyPageStr = v[0]
+			continue
+		case "every":
+			every = v[0]
+			continue
+		case "key":
+			key = v[0]
+			// 多表搜索
+			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, table1+":"+table1, table2+":"+table2)
+			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
+			continue
+		case "":
+			continue
+		}
+
+		//表2值查询
+		if strings.Contains(k, table2+"_") && !strings.Contains(k, table2+"_id") {
+			sql += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and " //string([]byte(tag)[len(table2+1-1):])
+			sqlnolimit += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and "
+			continue
+		}
+
+		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
+		sql += table1 + "." + k + " = '" + v[0] + "' and "
+		sqlnolimit += table1 + "." + k + " = '" + v[0] + "' and "
+	}
+
+	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
+	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
+
+	sql = string([]byte(sql)[:len(sql)-4])                      //去and
+	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
+	if every == "" {
+		sql += "order by " + table1 + ".id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
+	}
+
+	return sqlnolimit, sql, clientPage, everyPage
+}
 
 // 两张表名,查询语句拼接
 // 表1中有表2 id
@@ -115,7 +216,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[strin
 		case "key":
 			key = v[0]
 			// 多表搜索
-			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model , table1+":"+table1, table2+":"+table2)
+			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, table1+":"+table1, table2+":"+table2)
 			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
 			continue
 		case "":
@@ -186,7 +287,7 @@ func GetSearchSql(model interface{}, tablename string, args map[string][]string)
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
 	everyPage, _ = strconv.ParseInt(everyPageStr, 10, 64)
 
-	sql = string([]byte(sql)[:len(sql)-4]) //去and
+	sql = string([]byte(sql)[:len(sql)-4])                      //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
 	if every == "" {
 		sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
@@ -205,7 +306,7 @@ func GetUpdateSql(tablename string, args map[string][]string) (sql, id string) {
 			id = v[0]
 			continue
 		}
-		v[0] = strings.Replace(v[0], "'", "\\'", -1)//转义
+		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
 		sql += "`" + k + "`='" + v[0] + "',"
 	}
 	//c := []byte(sql)
@@ -358,7 +459,7 @@ func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, 
 // 获得数据,根据sql语句,分页
 // args : sql参数'？'
 // sql, sqlnolimit args 相同, 共用args
-func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64, args...interface{}) interface{} {
+func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64, args ...interface{}) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
