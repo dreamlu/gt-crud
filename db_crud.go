@@ -51,3 +51,16 @@ func (c *DbCrud) GetMoreBySearch(params map[string][]string) interface{} {
 
 	return GetMoreDataBySearch(c.Model, c.ModelData, params, c.InnerTables, c.LeftTables)
 }
+
+
+// common sql
+// through sql get data
+func (c *DbCrud) GetDataBySQL(sql string, args ...string) interface{} {
+
+	return GetDataBySql(c.ModelData, sql, args)
+}
+
+func (c *DbCrud) GetDataBySearchSQL(sql, sqlnolimit string, args ...string) interface{} {
+
+	return GetDataBySqlSearch(c.ModelData, sql, sqlnolimit, clientPage, everyPage, args)
+}
