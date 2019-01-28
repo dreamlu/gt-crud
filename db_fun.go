@@ -162,7 +162,7 @@ func GetMoreSearchSQL(model interface{}, params map[string][]string, innerTables
 			for _, v := range tablens {
 				v += ":" + v
 			}
-			// 多表搜索
+			// more tables key search
 			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, tablens[:]...)
 			continue
 		case "":
