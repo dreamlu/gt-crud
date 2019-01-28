@@ -21,6 +21,25 @@ type UserInfo struct {
 	Userinfo string `json:"userinfo"`
 }
 
+// order
+type Order struct {
+	ID         int64 `json:"id"`
+	UserID     int64 `json:"user_id"`     // user id
+	ServiceID  int64 `json:"service_id"`  // service table id
+	CreateTime int64 `json:"create_time"` // createtime
+}
+
+// order detail
+type OrderD struct {
+	ID          int64  `json:"id"`
+	UserID      int64  `json:"user_id"`      // user id
+	UserName    string `json:"user_name"`    // user table column name
+	ServiceID   int64  `json:"service_id"`   // service table id
+	ServiceName string `json:"service_name"` // service table column `name`
+	Createtime  JsonTime  `json:"createtime"`   // createtime
+
+}
+
 func TestDB(t *testing.T) {
 
 	var user = User{
@@ -104,13 +123,13 @@ func TestValidateData(t *testing.T) {
 func TestGetSearchSql(t *testing.T) {
 
 	var args = make(map[string][]string)
-	args["key"] = append(args["key"],"梦 嘿,伙计")
-	sqlnolimit,sql,_,_ := GetSearchSql(User{},"user",args)
-	log.Println("SQLNOLIMIT:",sqlnolimit,"\nSQL:",sql)
+	args["key"] = append(args["key"], "梦 嘿,伙计")
+	sqlnolimit, sql, _, _ := GetSearchSql(User{}, "user", args)
+	log.Println("SQLNOLIMIT:", sqlnolimit, "\nSQL:", sql)
 
 	// 两张表，待重新测试
-	sqlnolimit,sql,_,_ = GetDoubleSearchSql(UserInfo{},"userinfo","user",args)
-	log.Println("SQLNOLIMIT==>2:",sqlnolimit,"\nSQL==>2:",sql)
+	sqlnolimit, sql, _, _ = GetDoubleSearchSql(UserInfo{}, "userinfo", "user", args)
+	log.Println("SQLNOLIMIT==>2:", sqlnolimit, "\nSQL==>2:", sql)
 
 }
 
@@ -129,29 +148,36 @@ func TestGetDataBySql(t *testing.T) {
 // 通用增删该查测试
 func TestCRUD(t *testing.T) {
 	var args = make(map[string][]string)
-	args["name"] = append(args["name"],"梦")
+	args["name"] = append(args["name"], "梦")
 
 	// var crud DbCrud
 	// must use AutoMigrate
 	// get by id
 	DB.AutoMigrate(&User{})
 	var user User
-	var db  = DbCrud{"user", nil,&user}
+	var db = DbCrud{
+		Table:     "user",
+		ModelData: &user,
+	}
 	info := db.GetByID("1")
-	log.Println(info, "\n[User Info]:",user)
+	log.Println(info, "\n[User Info]:", user)
 
 	// get by search
 	var users []*User
-	db = DbCrud{"user", User{},&users}
+	db = DbCrud{
+		Table:     "user",
+		Model:     User{},
+		ModelData: &users,
+	}
 	db.GetBySearch(args)
-	log.Println("\n[User Info]:",users)
+	log.Println("\n[User Info]:", users)
 
 	// delete
 	info = db.Delete("12")
 	log.Println(info)
 
 	// update
-	args["id"] = append(args["id"],"4")
+	args["id"] = append(args["id"], "4")
 	args["name"][0] = "梦4"
 	info = db.Update(args)
 	log.Println(info)
@@ -162,4 +188,16 @@ func TestCRUD(t *testing.T) {
 	////db  = DbCrud{"user", nil,&user}
 	//info = db.Create(args2)
 	//log.Println(info)
+
+	// get more search
+	var params = make(map[string][]string)
+	var or []*OrderD
+	db = DbCrud{
+		InnerTables: []string{"order", "user"},
+		LeftTables:  []string{"service"},
+		Model:       OrderD{},
+		ModelData:   &or,
+	}
+	db.GetMoreBySearch(params)
+	log.Println("\n[User Info]:", or[0])
 }
