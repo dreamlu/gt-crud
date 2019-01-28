@@ -1,6 +1,13 @@
 #### 后端开发规范设计  
 deercoder-gin 是一个通用的api快速开发工具  
 
+##### 所需基础知识:  
+| 知识   | 链接 | 
+| ---   | ---- |
+| go基础 |  [go链接](https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/preface.md) |
+| gin   | [gin](https://github.com/gin-gonic/gin) |
+| mysql | mysql语法 |
+
 ##### 工具构成:  
 | 路由 | orm  | 数据库 | 权限   | 配置    |
 | --- | ---- | ----  | ------ | ------ |
@@ -17,7 +24,7 @@ deercoder-gin 是一个通用的api快速开发工具
 | ------ |
 | 返回json数据 |  
 | 一张表的增删改查以及分页 |   
-| 增加多张表连接操作(...waiting for being beeter) |  
+| 多张表连接操作 |  
 | 增加网站基本信息接口 |  
 | select * 的优化(反射替换*为具体字段名) |
 | 优化自定义gorm日志(存储错误sql以及相关error) |  

@@ -1,38 +1,41 @@
 // author:  dreamlu
 package deercoder
 
-// implment DBCrud
+// implement DBCrud
 type DbCrud struct {
 	// attributes
-	Tables    string      // table name
-	Model     interface{} // table model, like User{}
-	ModelData interface{} // table model data, like var user User{}, it is 'user'
+	InnerTables []string    // inner join tables
+	LeftTables  []string    // left join tables
+	Table      string      // table name
+	Model       interface{} // table model, like User{}
+	ModelData   interface{} // table model data, like var user User{}, it is 'user'
 }
 
 // create
-func (c *DbCrud) Create(args map[string][]string) interface{} {
+func (c *DbCrud) Create(params map[string][]string) interface{} {
 
-	return CreateData(c.Tables, args)
+	return CreateData(c.Table, params)
 }
-// update
-func (c *DbCrud) Update(args map[string][]string) interface{} {
 
-	return UpdateData(c.Tables, args)
+// update
+func (c *DbCrud) Update(params map[string][]string) interface{} {
+
+	return UpdateData(c.Table, params)
 }
 
 // delete
 func (c *DbCrud) Delete(id string) interface{} {
 
-	return DeleteDataByName(c.Tables, "id", id)
+	return DeleteDataByName(c.Table, "id", id)
 }
 
 // search
 // pager info
 // clientPage : default 1
 // everyPage : default 10
-func (c *DbCrud) GetBySearch(args map[string][]string) interface{} {
+func (c *DbCrud) GetBySearch(params map[string][]string) interface{} {
 
-	return GetDataBySearch(c.Model, c.ModelData, c.Tables, args)
+	return GetDataBySearch(c.Model, c.ModelData, c.Table, params)
 }
 
 // by id
@@ -40,4 +43,11 @@ func (c *DbCrud) GetByID(id string) interface{} {
 
 	//DB.AutoMigrate(&c.Model)
 	return GetDataById(c.ModelData, id)
+}
+
+// the same as search
+// more tables
+func (c *DbCrud) GetMoreBySearch(params map[string][]string) interface{} {
+
+	return GetMoreDataBySearch(c.Model, c.ModelData, params, c.InnerTables, c.LeftTables)
 }

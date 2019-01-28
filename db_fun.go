@@ -93,7 +93,7 @@ func GetColSql(model interface{}) (sql string) {
 // params: leftTables is left join tables
 // return: select sql
 // table1 as main table, include other tables_id(foreign key)
-func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables []string, leftTables []string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+func GetMoreSearchSQL(model interface{}, params map[string][]string, innerTables []string, leftTables []string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	var (
 		clientPageStr = ClientPageStr // page number
@@ -107,9 +107,13 @@ func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables [
 	tables = append(tables, leftTables...)
 	// sql and sqlCount
 	buf.WriteString("select ")
-	buf.WriteString(GetMoreTableColumnSQL(model, tables[:]...))
-	buf.WriteString(" from ")
+	buf.WriteString("count(`")
 	buf.WriteString(tables[0])
+	buf.WriteString("`.id) as sum_page ")
+	//buf.WriteString(GetMoreTableColumnSQL(model, tables[:]...))
+	buf.WriteString("from `")
+	buf.WriteString(tables[0])
+	buf.WriteString("`")
 	// inner join
 	for i := 1; i < len(innerTables); i++ {
 		buf.WriteString(" inner join `")
@@ -126,23 +130,22 @@ func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables [
 	// left join
 	for i := 0; i < len(leftTables); i++ {
 		buf.WriteString(" left join `")
-		buf.WriteString(innerTables[i])
+		buf.WriteString(leftTables[i])
 		buf.WriteString("` on `")
 		buf.WriteString(tables[0])
 		buf.WriteString("`.")
-		buf.WriteString(innerTables[i])
+		buf.WriteString(leftTables[i])
 		buf.WriteString("_id=`")
-		buf.WriteString(innerTables[i])
+		buf.WriteString(leftTables[i])
 		buf.WriteString("`.id ")
 		//sql += " inner join ·" + innerTables[i] + "`"
 	}
 	buf.WriteString(" where 1=1 and ")
 
 	//select* 变为对应的字段名
-	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2)
-
-	sqlnolimit = fmt.Sprintf("select count(%s.id) as sum_page from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", table1, table1, table2, table1, table2, table2)
-	for k, v := range args {
+	sqlnolimit = buf.String()
+	sql = strings.Replace(sqlnolimit, "count(`"+tables[0]+"`.id) as sum_page", GetMoreTableColumnSQL(model, tables[:]...), 1)
+	for k, v := range params {
 		switch k {
 		case "clientPage":
 			clientPageStr = v[0]
@@ -155,24 +158,31 @@ func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables [
 			continue
 		case "key":
 			key = v[0]
+			var tablens = tables
+			for _, v := range tablens {
+				v += ":" + v
+			}
 			// 多表搜索
-			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, table1+":"+table1, table2+":"+table2)
-			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
+			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, tablens[:]...)
 			continue
 		case "":
 			continue
 		}
 
-		//表2值查询
-		if strings.Contains(k, table2+"_") && !strings.Contains(k, table2+"_id") {
-			sql += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and " //string([]byte(tag)[len(table2+1-1):])
-			sqlnolimit += table2 + ".`" + string([]byte(k)[len(table2)+1:]) + "`" + " = '" + v[0] + "' and "
-			continue
+		// other tables, except tables[0]
+		for _, table := range tables[1:] {
+			switch {
+			case !strings.Contains(table, table+"_id") && strings.Contains(table, table+"_"):
+				v[0] = strings.Replace(v[0], "'", "\\'", -1)
+				sql += "`" + table + "`.`" + string([]byte(k)[len(v)+1:]) + "`" + " = '" + v[0] + "' and "
+				sqlnolimit += "`" + table + "`.`" + string([]byte(k)[len(v)+1:]) + "`" + " = '" + v[0] + "' and "
+				goto into
+			}
 		}
-
-		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += table1 + "." + k + " = '" + v[0] + "' and "
-		sqlnolimit += table1 + "." + k + " = '" + v[0] + "' and "
+		v[0] = strings.Replace(v[0], "'", "\\'", -1)
+		sql += "`" + tables[0] + "`." + k + " = '" + v[0] + "' and "
+		sqlnolimit += "`" + tables[0] + "`." + k + " = '" + v[0] + "' and "
+	into:
 	}
 
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
@@ -181,7 +191,7 @@ func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables [
 	sql = string([]byte(sql)[:len(sql)-4])                      //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4]) //去and
 	if every == "" {
-		sql += "order by " + table1 + ".id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
+		sql += "order by `" + tables[0] + "`.id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	}
 
 	return sqlnolimit, sql, clientPage, everyPage
@@ -189,7 +199,7 @@ func GetMoreSearchSQL(model interface{}, args map[string][]string, innerTables [
 
 // 两张表名,查询语句拼接
 // 表1中有表2 id
-func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+func GetDoubleSearchSql(model interface{}, table1, table2 string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
 	clientPageStr := ClientPageStr
@@ -202,7 +212,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[strin
 	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2)
 
 	sqlnolimit = fmt.Sprintf("select count(%s.id) as sum_page from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", table1, table1, table2, table1, table2, table2)
-	for k, v := range args {
+	for k, v := range params {
 		switch k {
 		case "clientPage":
 			clientPageStr = v[0]
@@ -249,7 +259,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, args map[strin
 
 // 传入表名,查询语句拼接
 // 单张表
-func GetSearchSql(model interface{}, tablename string, args map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+func GetSearchSql(model interface{}, tablename string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
 	//页码,每页数量
 	clientPageStr := ClientPageStr
@@ -261,7 +271,7 @@ func GetSearchSql(model interface{}, tablename string, args map[string][]string)
 	//将select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetColSql(model), tablename)
 	sqlnolimit = fmt.Sprintf("select count(id) as sum_page from `%s` where 1=1 and ", tablename)
-	for k, v := range args {
+	for k, v := range params {
 		switch k {
 		case "clientPage":
 			clientPageStr = v[0]
@@ -298,10 +308,10 @@ func GetSearchSql(model interface{}, tablename string, args map[string][]string)
 
 // 传入数据库表名
 // 更新语句拼接
-func GetUpdateSql(tablename string, args map[string][]string) (sql, id string) {
+func GetUpdateSql(tablename string, params map[string][]string) (sql, id string) {
 
 	sql = "update `" + tablename + "` set "
-	for k, v := range args {
+	for k, v := range params {
 		if k == "id" {
 			id = v[0]
 			continue
@@ -317,12 +327,12 @@ func GetUpdateSql(tablename string, args map[string][]string) (sql, id string) {
 
 // 传入数据库表名
 // 插入语句拼接
-func GetInsertSql(tablename string, args map[string][]string) (sql string) {
+func GetInsertSql(tablename string, params map[string][]string) (sql string) {
 
 	//sql拼接
 	var values []string
 	sql = "insert `" + tablename + "`("
-	for k, v := range args {
+	for k, v := range params {
 		sql += "`" + k + "`,"
 		values = append(values, v[0])
 	}
@@ -338,9 +348,9 @@ func GetInsertSql(tablename string, args map[string][]string) (sql string) {
 	return sql
 }
 
-/*==================================================================================*/
-/*==========================增删改查通用=========made=by=lucheng======================*/
-/*==================================================================================*/
+// ===================================================================================
+// ==========================common crud=========made=by=lucheng======================
+// ===================================================================================
 
 // 获得数据,根据sql语句,无分页
 func GetDataBySql(data interface{}, sql string, args ...interface{}) interface{} {
@@ -436,22 +446,34 @@ func GetDataById(data interface{}, id string) interface{} {
 	return info
 }
 
+// More Table
+// params: innerTables is inner join tables
+// params: leftTables is left join tables
+// return: search info
+// table1 as main table, include other tables_id(foreign key)
+func GetMoreDataBySearch(model, data interface{}, params map[string][]string, innerTables []string, leftTables []string, args ...interface{}) interface{} {
+	// more table search
+	sqlnolimit, sql, clientPage, everyPage := GetMoreSearchSQL(model, params, innerTables, leftTables)
+
+	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
+}
+
 // 获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
 // 如table2中查询,字段用table2_+"字段名",table1字段查询不变
-func GetLeftDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
+func GetLeftDoubleTableDataBySearch(model, data interface{}, table1, table2 string, params map[string][]string) interface{} {
 	//级联表的查询
-	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, args)
-	sql = strings.Replace(sql, "inner join", "left join", -1)
-	sqlnolimit = strings.Replace(sqlnolimit, "inner join", "left join", -1)
+	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, params)
+	sql = strings.Replace(sql, "inner join", "left join", 1)
+	sqlnolimit = strings.Replace(sqlnolimit, "inner join", "left join", 1)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 // 获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
 // 如table2中查询,字段用table2_+"字段名",table1字段查询不变
-func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, args map[string][]string) interface{} {
+func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, params map[string][]string) interface{} {
 	//级联表的查询以及
-	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, args)
+	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, params)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
@@ -486,12 +508,11 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 		getinfo.Data = data //数据
 
 		switch {
-		case strings.Contains(sql, "limit"):
-			//统计页码等状态
+		case strings.Contains(sql, "limit"): // maintain pager
 			getinfo.Pager.ClientPage = clientPage
 			getinfo.Pager.EveryPage = everyPage
 			info = getinfo
-		default:
+		default: // remove pager
 			info = getinfo.GetInfoN
 		}
 	}
@@ -499,9 +520,9 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 }
 
 // 获得数据,分页/查询
-func GetDataBySearch(model, data interface{}, tablename string, args map[string][]string) interface{} {
+func GetDataBySearch(model, data interface{}, tablename string, params map[string][]string) interface{} {
 
-	sqlnolimit, sql, clientPage, everyPage := GetSearchSql(model, tablename, args)
+	sqlnolimit, sql, clientPage, everyPage := GetSearchSql(model, tablename, params)
 
 	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
@@ -546,11 +567,11 @@ func UpdateDataBySql(sql string, args ...interface{}) interface{} {
 }
 
 // 修改数据,通用
-func UpdateData(tablename string, args map[string][]string) interface{} {
+func UpdateData(tablename string, params map[string][]string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	sql, _ := GetUpdateSql(tablename, args)
+	sql, _ := GetUpdateSql(tablename, params)
 
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
@@ -584,11 +605,11 @@ func UpdateStructData(data interface{}) interface{} {
 }
 
 // 创建数据,通用
-func CreateData(tablename string, args map[string][]string) interface{} {
+func CreateData(tablename string, params map[string][]string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	sql := GetInsertSql(tablename, args)
+	sql := GetInsertSql(tablename, params)
 	dba := DB.Exec(sql)
 	num = dba.RowsAffected
 
@@ -605,7 +626,7 @@ func CreateData(tablename string, args map[string][]string) interface{} {
 // 创建数据,通用
 // 返回id,事务,慎用
 // 业务少可用
-func CreateDataResID(tablename string, args map[string][]string) interface{} {
+func CreateDataResID(tablename string, params map[string][]string) interface{} {
 	var info interface{}
 	//开启事务
 	tx := DB.Begin()
@@ -615,7 +636,7 @@ func CreateDataResID(tablename string, args map[string][]string) interface{} {
 		}
 	}()
 
-	sql := GetInsertSql(tablename, args)
+	sql := GetInsertSql(tablename, params)
 	dba := tx.Exec(sql)
 	num := dba.RowsAffected
 
