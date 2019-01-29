@@ -22,10 +22,11 @@ type UserinfoDe struct {
 	Updatetime deercoder.JsonTime `json:"updatetime"`
 }
 
+// old, please see order.go
 // user detail info
 // include table `user` and `userinfo` data
 // maybe you need to build detail info like model UserinfoBK
-func GetUserinfoBySearch(args map[string][]string) interface{} {
+func GetUserInfoBySearch(args map[string][]string) interface{} {
 
 	var userdetail []UserinfoDe
 	return deercoder.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)

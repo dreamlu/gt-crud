@@ -11,6 +11,6 @@ import (
 func GetUserinfoBySearch(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form
-	ss := models.GetUserinfoBySearch(values)
+	ss := models.GetUserInfoBySearch(values)
 	u.JSON(http.StatusOK, ss)
 }

@@ -60,6 +60,11 @@ func SetRouter() *gin.Engine {
 		{
 			usercount.GET("/search", controllers.GetUserinfoBySearch)
 		}
+		//订单数据
+		orders := v.Group("/order")
+		{
+			orders.GET("/search", controllers.GetOrderBySearch)
+		}
 	}
 	//组的路由,version
 	v2 := router.Group("/api/v2")
@@ -108,7 +113,7 @@ func CheckLogin() gin.HandlerFunc {
 			_, err := c.Cookie("uid")	// may be use session
 			if err != nil {
 				c.Abort()
-				c.JSON(http.StatusOK, lib.MapNoToken)
+				c.JSON(http.StatusOK, lib.MapNoAuth)
 			}
 		}
 	}

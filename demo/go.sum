@@ -9,6 +9,8 @@ github.com/denisenkom/go-mssqldb v0.0.0-20190121005146-b04fd42d9952 h1:b5OnbZD49
 github.com/denisenkom/go-mssqldb v0.0.0-20190121005146-b04fd42d9952/go.mod h1:xN/JuLBIz4bjkxNmByTiV1IbhfnYb6oo99phBn4Eqhc=
 github.com/dreamlu/deercoder-gin v1.1.17 h1:ier/9OzsUf2UT316GCZPE89XEAqZyF90WVRzgMfZ3zc=
 github.com/dreamlu/deercoder-gin v1.1.17/go.mod h1:8cCmT6rJee6xWKnJGiMO/mI/f0DMFvjzbtKbnU5aDVI=
+github.com/dreamlu/deercoder-gin v1.2.1 h1:ZHm9QpkII5IYZq6meLMVWPWjVtzGuP9GX3RF4taW1AU=
+github.com/dreamlu/deercoder-gin v1.2.1/go.mod h1:8cCmT6rJee6xWKnJGiMO/mI/f0DMFvjzbtKbnU5aDVI=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646 h1:xHdtHvnCl8+HI3N47/YRkFOi7Bee/MCFRVTfU1WV4Xo=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646/go.mod h1:eki9RCc1wSN9m8lOBvgKtNmNOnSF6s8f+wIGt8RTxWA=
 github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 h1:Yzb9+7DPaBjB8zlTR87/ElzFsnQfuHnVUVqpZZIcV5Y=

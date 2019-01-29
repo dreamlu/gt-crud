@@ -20,8 +20,7 @@ func getPrefix(prefixOptions ...string) string {
 	return prefix
 }
 
-// Register the standard HandlerFuncs from the net/http/pprof // author:  dreamlu
-package with
+// Register the standard HandlerFuncs from the net/http/pprof
 // the provided gin.Engine. prefixOptions is a optional. If not prefixOptions,
 // the default path prefix is used, otherwise first prefixOptions will be path prefix.
 func Register(r *gin.Engine, prefixOptions ...string) {
