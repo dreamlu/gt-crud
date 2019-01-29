@@ -14,6 +14,6 @@ func GetOrderBySearch(u *gin.Context) {
 	u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
 	xss.XssMap(values)
-	ss := q.GetBySearch(values)
+	ss := q.GetMoreBySearch(values)
 	u.JSON(http.StatusOK, ss)
 }

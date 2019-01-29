@@ -23,7 +23,7 @@ type OrderD struct {
 
 // get order, limit and search
 // clientPage 1, everyPage 10 default
-func (c *Order) GetBySearch(params map[string][]string) interface{} {
+func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 	var or []*OrderD
 	db = deercoder.DbCrud{
 		InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table

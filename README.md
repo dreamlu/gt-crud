@@ -35,88 +35,124 @@ deercoder-gin 是一个通用的api快速开发工具
 | session(cookie/redis) |
 | 更多数据库支持(待完善) |
 
-##### 使用示例  
-- 新增
-```go
-// create user
-func (c *User)Create(args map[string][]string) interface{} {
+##### 使用  
+- [安装使用](#安装使用)
+- [API 使用](#api-examples)
+    - [Create](#create)
+    - [Update](#update)
+    - [Delete](#delete)
+    - [GetBySearch](#getbysearch)
+    - [GetByID](#getbyid) 
+    - [GetMoreBySearch](#getmorebysearch)
+    - [GetDataBySQL](#getdatabysql)
+    - [GetDataBySearchSQL](#getdatabysearchsql)
+    - [DeleteBySQL](#deletebysql)
+    - [UpdateBySQL](#updatebysql)
+    - [CreateBySQL](#createbysql)
+    
 
-	args["createtime"] = append(args["createtime"], time.Now().Format("2006-01-02 15:04:05"))
-	return deercoder.CreateData("user", args)
+#### 安装使用  
+1.下载demo  
+2.全局替换demo为你的项目名  
+3.go build  
+
+### API Examples  
+#### Create
+```go
+// dbcrud
+var db = deercoder.DbCrud{
+	Model: User{},		// model
+	Table:"user",		// table name
+}
+
+// create user
+func (c *User)Create(params map[string][]string) interface{} {
+
+	params["createtime"] = append(params["createtime"], time.Now().Format("2006-01-02 15:04:05"))
+	return db.Create(params)
 }
 ```
-- 修改
 
+#### Update
 ```go
 // update user
-func (c *User)Update(args map[string][]string) interface{} {
+func (c *User)Update(params map[string][]string) interface{} {
 
-	return deercoder.UpdateData("user", args)
+	return db.Update(params)
 }
 ```
-- 删除
+
+#### Delete
 ```go
 // delete user, by id
-func (c *User)DeleteByid(id string) interface{} {
+func (c *User)Delete(id string) interface{} {
 
-	return deercoder.DeleteDataByName("user", "id", id)
+	return db.Delete(id)
 }
 ```
 
-- 分页,搜索二合一
+#### GetBySearch
 ```go
 // get user, limit and search
 // clientPage 1, everyPage 10 default
-func (c *User)GetBySearch(args map[string][]string) interface{} {
-	//相当于注册类型,https://github.com/jinzhu/gorm/issues/857
-	//db.DB.AutoMigrate(&User{})
-	//var users = []*User{}
+func (c *User)GetBySearch(params map[string][]string) interface{} {
 	var users []*User
-	return deercoder.GetDataBySearch(User{}, &users, "user", args) //匿名User{}
+	db.ModelData = &users
+	return db.GetBySearch(params)
 }
 ```
-- 返回json
-```go
-{
-    "status":200,
-    "msg":"请求成功",
-    "data":[
-        {
-            "id":8,
-            "name":"梦",
-            "createtime":"2018-08-08 00:00:00"
-        },
-        {
-            "id":7,
-            "name":"梦",
-            "createtime":"2018-08-08 00:00:00"
-        }
-    ],
-    "pager":{
-        "clientpage":1,
-        "sumpage":6,
-        "everypage":2
-    }
-}
-```
-- 根据id获得信息
+
+#### GetByID
 ```go
 // get user, by id
-func (c *User)GetById(id string) interface{} {
+func (c *User)GetByID(id string) interface{} {
 
-	deercoder.DB.AutoMigrate(&User{})
-	var user = User{}
-	return deercoder.GetDataById(&user, id)
+	var user User	// not use *User
+	db.ModelData = &user
+	return db.GetByID(id)
 }
 ```
-- 表连接,分页搜索二合一
-```go
-// user detail info
-// include table `user` and `userinfo` data
-// maybe you need to build detail info like model UserinfoBK
-func GetUserinfoBySearch(args map[string][]string) interface{} {//inner join 
 
-	var userdetail []UserinfoDe
-	return db.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
+#### GetMoreBySearch
+```go
+// get order, limit and search
+// clientPage 1, everyPage 10 default
+func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
+	var or []*OrderD
+	db = deercoder.DbCrud{
+		InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table
+		LeftTables:  []string{"service"},       // left join tables
+		Model:       OrderD{},                  // order model
+		ModelData:   &or,                       // model value
+	}
+	return db.GetMoreBySearch(params)
 }
+
+```
+
+#### GetDataBySQL
+```go
+// like UpdateBySQL
+```
+
+#### GetDataBySearchSQL
+```go
+// like UpdateBySQL
+```
+
+#### DeleteBySQL
+```go
+// like UpdateBySQL
+```
+
+#### UpdateBySQL
+```go
+var db = DbCrud{}
+sql := "update `user` set name=? where id=?"
+log.Println("[Info]:", db.UpdateBySQL(sql,"梦sql", 1))
+```
+
+#### CreateBySQL
+```go
+// like UpdateBySQL
 ```

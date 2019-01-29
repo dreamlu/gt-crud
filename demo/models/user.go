@@ -20,7 +20,7 @@ var db = deercoder.DbCrud{
 }
 
 // get user, by id
-func (c *User)GetById(id string) interface{} {
+func (c *User)GetByID(id string) interface{} {
 
 	var user User	// not use *User
 	db.ModelData = &user
