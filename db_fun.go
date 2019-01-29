@@ -158,9 +158,9 @@ func GetMoreSearchSQL(model interface{}, params map[string][]string, innerTables
 			continue
 		case "key":
 			key = v[0]
-			var tablens = tables
-			for _, v := range tablens {
-				v += ":" + v
+			var tablens = append(tables, tables[:]...)
+			for k, v := range tablens {
+				tablens[k] += ":" + v
 			}
 			// more tables key search
 			sql, sqlnolimit = lib.GetMoreKeySQL(sql, sqlnolimit, key, model, tablens[:]...)

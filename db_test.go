@@ -37,7 +37,6 @@ type OrderD struct {
 	ServiceID   int64  `json:"service_id"`   // service table id
 	ServiceName string `json:"service_name"` // service table column `name`
 	Createtime  JsonTime  `json:"createtime"`   // createtime
-
 }
 
 func TestDB(t *testing.T) {
