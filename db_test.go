@@ -115,7 +115,7 @@ func TestSqlSearchV2(t *testing.T) {
 // select 数据存在验证
 func TestValidateData(t *testing.T) {
 	sql := "select *from `user` where id=2"
-	ss := ValidateData(sql)
+	ss := ValidateSQL(sql)
 	log.Println(ss)
 }
 
@@ -124,7 +124,7 @@ func TestGetSearchSql(t *testing.T) {
 
 	var args = make(map[string][]string)
 	args["key"] = append(args["key"], "梦 嘿,伙计")
-	sqlnolimit, sql, _, _ := GetSearchSql(User{}, "user", args)
+	sqlnolimit, sql, _, _ , _:= GetSearchSQL(User{}, "user", args)
 	log.Println("SQLNOLIMIT:", sqlnolimit, "\nSQL:", sql)
 
 	// 两张表，待重新测试
@@ -146,7 +146,7 @@ func TestGetDataBySql(t *testing.T) {
 }
 
 // 通用增删该查测试
-func TestCRUD(t *testing.T) {
+func TestCrud(t *testing.T) {
 	var args = make(map[string][]string)
 	args["name"] = append(args["name"], "梦")
 
@@ -169,6 +169,7 @@ func TestCRUD(t *testing.T) {
 		Model:     User{},
 		ModelData: &users,
 	}
+	args["name"][0] = "梦4"
 	db.GetBySearch(args)
 	log.Println("\n[User Info]:", users)
 
@@ -200,4 +201,11 @@ func TestCRUD(t *testing.T) {
 	}
 	db.GetMoreBySearch(params)
 	log.Println("\n[User Info]:", or[0])
+}
+
+// 通用增删改查sql测试
+func TestCrudSQL(t *testing.T) {
+	var db = DbCrud{}
+	sql := "update `user` set name=? where id=?"
+	log.Println("[Info]:", db.UpdateBySQL(sql,"梦sql", 1))
 }

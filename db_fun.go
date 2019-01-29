@@ -163,7 +163,7 @@ func GetMoreSearchSQL(model interface{}, params map[string][]string, innerTables
 				v += ":" + v
 			}
 			// more tables key search
-			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, tablens[:]...)
+			sql, sqlnolimit = lib.GetMoreKeySQL(sql, sqlnolimit, key, model, tablens[:]...)
 			continue
 		case "":
 			continue
@@ -201,12 +201,12 @@ func GetMoreSearchSQL(model interface{}, params map[string][]string, innerTables
 // 表1中有表2 id
 func GetDoubleSearchSql(model interface{}, table1, table2 string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
 
-	//页码,每页数量
-	clientPageStr := ClientPageStr
-	everyPageStr := EveryPageStr
-	var every string
-	// 关键字key搜索
-	var key string
+	var (
+		clientPageStr = ClientPageStr // page number
+		everyPageStr  = EveryPageStr  // Number of pages per page
+		every         = ""            // if every != "", it will return all data
+		key           = ""            // key like binary search
+	)
 
 	//select* 变为对应的字段名
 	sql = fmt.Sprintf("select %s from `%s` inner join `%s` on `%s`.%s_id=%s.id where 1=1 and ", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2)
@@ -226,7 +226,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, params map[str
 		case "key":
 			key = v[0]
 			// 多表搜索
-			sql, sqlnolimit = lib.GetMoreKeySql(sql, sqlnolimit, key, model, table1+":"+table1, table2+":"+table2)
+			sql, sqlnolimit = lib.GetMoreKeySQL(sql, sqlnolimit, key, model, table1+":"+table1, table2+":"+table2)
 			//sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model , table2)
 			continue
 		case "":
@@ -259,16 +259,16 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, params map[str
 
 // 传入表名,查询语句拼接
 // 单张表
-func GetSearchSql(model interface{}, tablename string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64) {
+func GetSearchSQL(model interface{}, tablename string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64, args []interface{}) {
 
-	//页码,每页数量
-	clientPageStr := ClientPageStr
-	everyPageStr := EveryPageStr
-	every := ""
-	// 关键字key搜索
-	key := ""
+	var (
+		clientPageStr = ClientPageStr // page number
+		everyPageStr  = EveryPageStr  // Number of pages per page
+		every         = ""            // if every != "", it will return all data
+		key           = ""            // key like binary search
+	)
 
-	//将select* 变为对应的字段名
+	//select* replace
 	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetColSql(model), tablename)
 	sqlnolimit = fmt.Sprintf("select count(id) as sum_page from `%s` where 1=1 and ", tablename)
 	for k, v := range params {
@@ -284,14 +284,16 @@ func GetSearchSql(model interface{}, tablename string, params map[string][]strin
 			continue
 		case "key":
 			key = v[0]
-			sql, sqlnolimit = lib.GetKeySql(sql, sqlnolimit, key, model, tablename)
+			sql, sqlnolimit = lib.GetKeySQL(sql, sqlnolimit, key, model, tablename)
 			continue
 		case "":
 			continue
 		}
-		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += k + " = '" + v[0] + "' and "          //change 'like' to '='
-		sqlnolimit += k + " = '" + v[0] + "' and "
+
+		//v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
+		sql += k + " = ? and "
+		sqlnolimit += k + " = ? and "
+		args = append(args, v[0])	// args
 	}
 
 	clientPage, _ = strconv.ParseInt(clientPageStr, 10, 64)
@@ -303,65 +305,80 @@ func GetSearchSql(model interface{}, tablename string, params map[string][]strin
 		sql += "order by id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
 	}
 
-	return sqlnolimit, sql, clientPage, everyPage
+	return sqlnolimit, sql, clientPage, everyPage, args
 }
 
 // 传入数据库表名
 // 更新语句拼接
-func GetUpdateSql(tablename string, params map[string][]string) (sql, id string) {
+func GetUpdateSQL(table string, params map[string][]string) (sql string, args []interface{}) {
 
-	sql = "update `" + tablename + "` set "
+	// sql connect
+	var (
+		id  string       // id
+		buf bytes.Buffer // sql bytes connect
+	)
+	buf.WriteString("update `")
+	buf.WriteString(table)
+	buf.WriteString("` set ")
 	for k, v := range params {
 		if k == "id" {
 			id = v[0]
 			continue
 		}
-		v[0] = strings.Replace(v[0], "'", "\\'", -1) //转义
-		sql += "`" + k + "`='" + v[0] + "',"
+		buf.WriteString("`")
+		buf.WriteString(k)
+		buf.WriteString("` = ?,")
+		args = append(args, v[0])
 	}
-	//c := []byte(sql)
-	sql = string([]byte(sql)[:len(sql)-1]) + " where id=" + id //去掉点
-	//sql += " where id=" + id
-	return sql, id
+	args = append(args, id)
+	sql = string(buf.Bytes()[:buf.Len()-1]) + " where id = ?"
+	return sql, args
 }
 
 // 传入数据库表名
 // 插入语句拼接
-func GetInsertSql(tablename string, params map[string][]string) (sql string) {
+func GetInsertSQL(table string, params map[string][]string) (sql string, args []interface{}) {
 
-	//sql拼接
-	var values []string
-	sql = "insert `" + tablename + "`("
+	// sql connect
+	var (
+		sqlv string
+		buf  bytes.Buffer // sql bytes connect
+	)
+	buf.WriteString("insert `")
+	buf.WriteString(table)
+	buf.WriteString("`(")
+	//sql = "insert `" + tablename + "`("
+
 	for k, v := range params {
-		sql += "`" + k + "`,"
-		values = append(values, v[0])
+		buf.WriteString("`")
+		buf.WriteString(k)
+		buf.WriteString("`,")
+
+		args = append(args, v[0])
+		sqlv += "?,"
 	}
-	sql = string([]byte(sql)[:len(sql)-1]) + ") value(" //去掉点
+	//sql = buf.Bytes()[:buf.Len()-1]
+	sql = buf.String()
+	sql = string([]byte(sql)[:len(sql)-1]) + ") value(" + sqlv
+	sql = string([]byte(sql)[:len(sql)-1]) + ")" // remove ','
 
-	for _, v := range values {
-		v = strings.Replace(v, "'", "\\'", -1) //转义
-		sql += "'" + v + "',"
-	}
-
-	sql = string([]byte(sql)[:len(sql)-1]) + ")" //去掉点
-
-	return sql
+	return sql, args
 }
 
 // ===================================================================================
 // ==========================common crud=========made=by=lucheng======================
 // ===================================================================================
 
+// get
+// relation get
+////////////////
+
 // 获得数据,根据sql语句,无分页
 func GetDataBySql(data interface{}, sql string, args ...interface{}) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
-	// 完善可变长参数赋值问题
-	var value []interface{}
-	value = append(value, args[:]...)
-
-	dba := DB.Raw(sql, value[:]...).Scan(data)
+	dba := DB.Raw(sql, args[:]...).Scan(data)
 	num := dba.RowsAffected
 
 	//有数据是返回相应信息
@@ -424,7 +441,7 @@ func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 stri
 }
 
 // 获得数据,根据id
-func GetDataById(data interface{}, id string) interface{} {
+func GetDataByID(data interface{}, id string) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
@@ -486,11 +503,11 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
 
-	// 完善可变长参数赋值问题
-	var value []interface{}
-	value = append(value, args[:]...)
+	//// 完善可变长参数赋值问题
+	//var value []interface{}
+	//value = append(value, args[:]...)
 
-	dba := DB.Raw(sqlnolimit, value[:]...).Scan(&getinfo.Pager)
+	dba := DB.Raw(sqlnolimit, args[:]...).Scan(&getinfo.Pager)
 	num := getinfo.Pager.SumPage
 	if dba.Error != nil {
 		info = lib.GetSqlError(dba.Error.Error())
@@ -498,7 +515,7 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 		info = lib.MapNoResult
 	} else {
 		//DB.Debug().Find(&dest)
-		dba = DB.Raw(sql, value[:]...).Scan(data)
+		dba = DB.Raw(sql, args[:]...).Scan(data)
 		if dba.Error != nil {
 			info = lib.GetSqlError(dba.Error.Error())
 			return info
@@ -522,18 +539,21 @@ func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 // 获得数据,分页/查询
 func GetDataBySearch(model, data interface{}, tablename string, params map[string][]string) interface{} {
 
-	sqlnolimit, sql, clientPage, everyPage := GetSearchSql(model, tablename, params)
+	sqlnolimit, sql, clientPage, everyPage, args := GetSearchSQL(model, tablename, params)
 
-	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
+	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage, args[:]...)
 }
 
-// 删除通用,任意参数
-func DeleteDataByName(tablename string, key, value string) interface{} {
-	var info interface{}
-	sql := fmt.Sprintf("delete from `%s` where %s=?", tablename, key)
+// delete
+///////////////////
 
-	dba := DB.Exec(sql, value)
-	num := dba.RowsAffected
+// delete by sql
+func DeleteDataBySQL(sql string, args ...interface{}) interface{} {
+	var info interface{}
+	var num int64 //返回影响的行数
+
+	dba := DB.Exec(sql, args[:]...)
+	num = dba.RowsAffected
 	switch {
 	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
@@ -545,15 +565,22 @@ func DeleteDataByName(tablename string, key, value string) interface{} {
 	return info
 }
 
+// 删除通用,任意参数
+func DeleteDataByName(tablename string, key, value string) interface{} {
+	sql := fmt.Sprintf("delete from `%s` where %s=?", tablename, key)
+
+	return DeleteDataBySQL(sql, value)
+}
+
+// update
+///////////////////
+
 // 修改数据,通用
-func UpdateDataBySql(sql string, args ...interface{}) interface{} {
+func UpdateDataBySQL(sql string, args ...interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	var value []interface{}
-	value = append(value, args[:]...)
-
-	dba := DB.Exec(sql, value[:]...)
+	dba := DB.Exec(sql, args[:]...)
 	num = dba.RowsAffected
 	switch {
 	case dba.Error != nil:
@@ -568,22 +595,10 @@ func UpdateDataBySql(sql string, args ...interface{}) interface{} {
 
 // 修改数据,通用
 func UpdateData(tablename string, params map[string][]string) interface{} {
-	var info interface{}
-	var num int64 //返回影响的行数
 
-	sql, _ := GetUpdateSql(tablename, params)
+	sql, args := GetUpdateSQL(tablename, params)
 
-	dba := DB.Exec(sql)
-	num = dba.RowsAffected
-	switch {
-	case dba.Error != nil:
-		info = lib.GetSqlError(dba.Error.Error())
-	case num == 0 && dba.Error == nil:
-		info = lib.MapExistOrNo
-	default:
-		info = lib.MapUpdate
-	}
-	return info
+	return UpdateDataBySQL(sql, args[:]...)
 }
 
 // 结合struct修改
@@ -604,23 +619,33 @@ func UpdateStructData(data interface{}) interface{} {
 	return info
 }
 
-// 创建数据,通用
-func CreateData(tablename string, params map[string][]string) interface{} {
+// create
+////////////////////
+
+// Create data by sql
+func CreateDataBySQL(sql string, args ...interface{}) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
-	sql := GetInsertSql(tablename, params)
-	dba := DB.Exec(sql)
+	dba := DB.Exec(sql, args[:]...)
 	num = dba.RowsAffected
-
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapError
-	} else {
+	default:
 		info = lib.MapCreate
 	}
 	return info
+}
+
+// 创建数据,通用
+func CreateData(tablename string, params map[string][]string) interface{} {
+
+	sql, args := GetInsertSQL(tablename, params)
+
+	return CreateDataBySQL(sql, args[:]...)
 }
 
 // 创建数据,通用
@@ -636,18 +661,19 @@ func CreateDataResID(tablename string, params map[string][]string) interface{} {
 		}
 	}()
 
-	sql := GetInsertSql(tablename, params)
-	dba := tx.Exec(sql)
+	sql, args := GetInsertSQL(tablename, params)
+	dba := tx.Exec(sql, args[:]...)
 	num := dba.RowsAffected
 
 	var value Value
-	tx.Raw("select max(id) as value from " + tablename).Scan(&value)
+	tx.Raw("select max(id) as value from `%s`", tablename).Scan(&value)
 
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapError
-	} else {
+	default:
 		info = map[string]interface{}{lib.Status: lib.CodeCreate, lib.Msg: lib.MsgCreate, "id": value.Value}
 	}
 
@@ -667,30 +693,31 @@ func CreateStructData(data interface{}) interface{} {
 	dba := DB.Create(data)
 	num = dba.RowsAffected
 
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapError
-	} else {
+	default:
 		info = lib.MapCreate
 	}
 	return info
 }
 
 // select检查是否存在
-func ValidateData(sql string) interface{} {
+func ValidateSQL(sql string) interface{} {
 	var info interface{}
 	var num int64 //返回影响的行数
 
 	var ve Value
 	dba := DB.Raw(sql).Scan(&ve)
 	num = dba.RowsAffected
-
-	if dba.Error != nil {
+	switch {
+	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	} else if num == 0 && dba.Error == nil {
+	case num == 0 && dba.Error == nil:
 		info = lib.MapError
-	} else {
+	default:
 		info = lib.MapValidate
 	}
 	return info
