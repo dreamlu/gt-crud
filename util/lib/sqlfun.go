@@ -19,7 +19,7 @@ func GetTags(model interface{}) (tags []string) {
 }
 
 // key search sql
-func GetKeySql(sql, sqlnolimit string, key string, model interface{}, alias string) (sqlkey, sqlnolimitkey string) {
+func GetKeySQL(sql, sqlnolimit string, key string, model interface{}, alias string) (sqlkey, sqlnolimitkey string) {
 
 	tags := GetTags(model)
 	keys := strings.Split(key, " ") //空格隔开
@@ -51,7 +51,7 @@ func GetKeySql(sql, sqlnolimit string, key string, model interface{}, alias stri
 // key search sql
 // tables [table1:table1_alias]
 // searModel : 搜索字段模型
-func GetMoreKeySql(sql, sqlnolimit string, key string, searModel interface{}, tables ...string) (sqlkey, sqlnolimitkey string) {
+func GetMoreKeySQL(sql, sqlnolimit string, key string, searModel interface{}, tables ...string) (sqlkey, sqlnolimitkey string) {
 
 	// 搜索字段
 	tags := GetTags(searModel)

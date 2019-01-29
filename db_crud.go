@@ -6,9 +6,13 @@ type DbCrud struct {
 	// attributes
 	InnerTables []string    // inner join tables
 	LeftTables  []string    // left join tables
-	Table      string      // table name
+	Table       string      // table name
 	Model       interface{} // table model, like User{}
 	ModelData   interface{} // table model data, like var user User{}, it is 'user'
+
+	// pager info
+	ClientPage  int64       // page number
+	EveryPage   int64       // Number of pages per page
 }
 
 // create
@@ -42,7 +46,7 @@ func (c *DbCrud) GetBySearch(params map[string][]string) interface{} {
 func (c *DbCrud) GetByID(id string) interface{} {
 
 	//DB.AutoMigrate(&c.Model)
-	return GetDataById(c.ModelData, id)
+	return GetDataByID(c.ModelData, id)
 }
 
 // the same as search
@@ -52,15 +56,36 @@ func (c *DbCrud) GetMoreBySearch(params map[string][]string) interface{} {
 	return GetMoreDataBySearch(c.Model, c.ModelData, params, c.InnerTables, c.LeftTables)
 }
 
+// common sql
+// through sql get data
+func (c *DbCrud) GetDataBySQL(sql string, args ...interface{}) interface{} {
+
+	return GetDataBySql(c.ModelData, sql, args[:]...)
+}
 
 // common sql
 // through sql get data
-func (c *DbCrud) GetDataBySQL(sql string, args ...string) interface{} {
+// args not include limit ?, ?
+// args is sql and sqlnolimit common params
+func (c *DbCrud) GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} {
 
-	return GetDataBySql(c.ModelData, sql, args)
+	return GetDataBySqlSearch(c.ModelData, sql, sqlnolimit, c.ClientPage, c.EveryPage, args)
 }
 
-func (c *DbCrud) GetDataBySearchSQL(sql, sqlnolimit string, args ...string) interface{} {
+// delete by sql
+func (c *DbCrud) DeleteBySQL(sql string, args ...interface{}) interface{} {
 
-	return GetDataBySqlSearch(c.ModelData, sql, sqlnolimit, clientPage, everyPage, args)
+	return DeleteDataBySQL(sql, args[:]...)
+}
+
+// update by sql
+func (c *DbCrud) UpdateBySQL(sql string, args ...interface{}) interface{} {
+
+	return UpdateDataBySQL(sql, args[:]...)
+}
+
+// create by sql
+func (c *DbCrud) CreateBySQL(sql string, args ...interface{}) interface{} {
+
+	return CreateDataBySQL(sql, args[:]...)
 }

@@ -19,8 +19,13 @@ type DBCruder interface {
 	GetByID(id string) interface{}                        // by id
 	GetMoreBySearch(args map[string][]string) interface{} // more search
 
+	// common sql data
 	// through sql, get the data
-	GetDataBySQL(sql string, args ...string) interface{}                   // single data
-	// page limit ?, ?
-	GetDataBySearchSQL(sql, sqlnolimit string, args ...string) interface{} // more data
+	GetDataBySQL(sql string, args ...interface{}) interface{} // single data
+	// page limit ?,?
+	// args not include limit ?,?
+	GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} // more data
+	DeleteBySQL(sql string, args ...interface{}) interface{}
+	UpdateBySQL(sql string, args ...interface{}) interface{}
+	CreateBySQL(sql string, args ...interface{}) interface{}
 }

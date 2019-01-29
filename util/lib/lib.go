@@ -77,9 +77,9 @@ type GetInfo struct {
 
 // pager info
 type Pager struct {
-	ClientPage int64 `json:"clientpage"` //当前页码
-	SumPage    int64 `json:"sumpage"`    //数据总数量
-	EveryPage  int64 `json:"everypage"`  //每一页显示的数量
+	ClientPage int64 `json:"client_page"` //当前页码
+	SumPage    int64 `json:"sum_page"`    //数据总数量
+	EveryPage  int64 `json:"every_page"`  //每一页显示的数量
 }
 
 // 无分页数据信息
