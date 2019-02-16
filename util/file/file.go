@@ -10,6 +10,7 @@ import (
 	"image/png"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -19,6 +20,8 @@ func GetUpoadFile(u *gin.Context) (filename string) {
 
 	fname := u.PostForm("fname") //指定文件名
 	file, err := u.FormFile("file")
+	width := u.PostForm("width")   // 图片宽度
+	height := u.PostForm("height") // 图片高度
 	if err != nil {
 		u.JSON(http.StatusOK, lib.MapData{lib.CodeFile, err.Error()})
 	}
@@ -36,7 +39,13 @@ func GetUpoadFile(u *gin.Context) (filename string) {
 	}
 	path := deercoder.GetConfigValue("filepath") + filename //文件目录
 	u.SaveUploadedFile(file, path)
-	CompressImage(ftype, path) //无论成功与否
+	switch ftype {
+	case "jpeg","jpg","png":
+		CompressImage(ftype, path, width, height)
+	default:
+		//处理其他类型文件
+	}
+
 	return path
 }
 
@@ -48,7 +57,7 @@ func UpoadFile(u *gin.Context) {
 }
 
 //图片压缩
-func CompressImage(imagetype, path string) error {
+func CompressImage(imagetype, path, width, height string) error {
 	//图片压缩
 	var img image.Image
 	ImgFile, err := os.Open(path)
@@ -69,7 +78,15 @@ func CompressImage(imagetype, path string) error {
 		}
 	}
 
-	m := resize.Resize(0, 0, img, resize.Lanczos3)
+	wid, err := strconv.ParseUint(width, 10, 64)
+	if err != nil {
+		wid = 0
+	}
+	hei, err := strconv.ParseUint(height, 10, 64)
+	if err != nil {
+		hei = 0
+	}
+	m := resize.Resize(uint(wid), uint(hei), img, resize.Lanczos3)
 
 	out, err := os.Create(path)
 	if err != nil {
