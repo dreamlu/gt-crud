@@ -26,14 +26,15 @@ deercoder-gin 是一个通用的api快速开发工具
 | 一张表的增删改查以及分页 |   
 | 多张表连接操作 |  
 | 增加网站基本信息接口 |  
-| select * 的优化(反射替换*为具体字段名) |
-| 优化自定义gorm日志(存储错误sql以及相关error) |  
-| 增加权限(用户-组(角色)-权限(菜单))(待优化) |
+| select `*`优化<br>反射替换*为具体字段名 |
+| 优化自定义gorm日志<br>存储错误sql以及相关error |  
+| 增加权限<br>用户-组(角色)-权限(菜单)(待优化) |
 | 增加参数验证 |
 | 增加mysql远程连接 |
 | 增加多表key模糊搜索 |
 | session(cookie/redis) |
 | 更多数据库支持(待完善) |
+| conf/app.conf 多开发模式支持 |
 
 ##### 使用  
 - [安装使用](#安装使用)
@@ -49,6 +50,7 @@ deercoder-gin 是一个通用的api快速开发工具
     - [DeleteBySQL](#deletebysql)
     - [UpdateBySQL](#updatebysql)
     - [CreateBySQL](#createbysql)
+    - [GetDevModeConfig](#getdevmodeconfig)
     
 
 #### 安装使用  
@@ -155,4 +157,17 @@ log.Println("[Info]:", db.UpdateBySQL(sql,"梦sql", 1))
 #### CreateBySQL
 ```go
 // like UpdateBySQL
+```
+
+- 多模式配置文件  
+> 配置方式: conf/app.conf 中 `devMode = dev` 对应conf/app-`dev`.conf  
+
+#### GetDevModeConfig
+```go
+// devMode test
+// app.conf devMode = dev
+// test the app-dev.conf value
+func TestDevMode(t *testing.T)  {
+	log.Println("config read test: ", GetDevModeConfig("db.host"))
+}
 ```

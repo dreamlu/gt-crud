@@ -65,8 +65,8 @@ func TestSqlSearch(t *testing.T) {
 	var ui []UserInfo
 
 	//页码,每页数量
-	clientPageStr := GetConfigValue("clientPage") //默认第1页
-	everyPageStr := GetConfigValue("everyPage")   //默认10页
+	clientPageStr := GetDevModeConfig("clientPage") //默认第1页
+	everyPageStr := GetDevModeConfig("everyPage")   //默认10页
 
 	//可定制
 	//args map[string][]string

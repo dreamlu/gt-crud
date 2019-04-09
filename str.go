@@ -1,14 +1,14 @@
 // author:  dreamlu
 package deercoder
 
-/*max upload file size*/
+// max upload file size
 var MaxUploadMemory int64
 
-//page thing
-var ClientPageStr = GetConfigValue("clientPage")
-var EveryPageStr = GetConfigValue("everyPage")
+// page thing
+var ClientPageStr = GetDevModeConfig("clientPage")
+var EveryPageStr = GetDevModeConfig("everyPage")
 
-//struct value
+// struct value
 type Value struct {
 	Value string `json:"value"`
 }
