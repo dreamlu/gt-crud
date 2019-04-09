@@ -60,7 +60,7 @@ func (c *DbCrud) GetMoreBySearch(params map[string][]string) interface{} {
 // through sql get data
 func (c *DbCrud) GetDataBySQL(sql string, args ...interface{}) interface{} {
 
-	return GetDataBySql(c.ModelData, sql, args[:]...)
+	return GetDataBySQL(c.ModelData, sql, args[:]...)
 }
 
 // common sql
@@ -69,7 +69,7 @@ func (c *DbCrud) GetDataBySQL(sql string, args ...interface{}) interface{} {
 // args is sql and sqlnolimit common params
 func (c *DbCrud) GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} {
 
-	return GetDataBySqlSearch(c.ModelData, sql, sqlnolimit, c.ClientPage, c.EveryPage, args)
+	return GetDataBySQLSearch(c.ModelData, sql, sqlnolimit, c.ClientPage, c.EveryPage, args)
 }
 
 // delete by sql

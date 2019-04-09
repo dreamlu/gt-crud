@@ -95,7 +95,7 @@ func TestSqlSearch(t *testing.T) {
 	sql = string([]byte(sql)[:len(sql)-4]) //去and
 	sqlnolimit = string([]byte(sqlnolimit)[:len(sqlnolimit)-4])
 	sql += "order by a.id desc limit " + strconv.FormatInt((clientPage-1)*everyPage, 10) + "," + everyPageStr
-	log.Println(GetDataBySqlSearch(&ui, sql, sqlnolimit, clientPage, everyPage))
+	log.Println(GetDataBySQLSearch(&ui, sql, sqlnolimit, clientPage, everyPage))
 	log.Println(ui)
 }
 
@@ -137,7 +137,7 @@ func TestGetDataBySql(t *testing.T) {
 	var sql = "select id,name,createtime from `user` where id = ? and name = ?"
 
 	var user User
-	GetDataBySql(&user, sql, "1", "梦")
+	GetDataBySQL(&user, sql, "1", "梦")
 	fmt.Println(user)
 
 	//DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)

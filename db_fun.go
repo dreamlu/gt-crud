@@ -374,7 +374,7 @@ func GetInsertSQL(table string, params map[string][]string) (sql string, args []
 ////////////////
 
 // 获得数据,根据sql语句,无分页
-func GetDataBySql(data interface{}, sql string, args ...interface{}) interface{} {
+func GetDataBySQL(data interface{}, sql string, args ...interface{}) interface{} {
 	var info interface{}
 	var getinfo lib.GetInfoN
 
@@ -422,22 +422,21 @@ func GetDataByName(data interface{}, name, value string) interface{} {
 // inner join
 // 查询数据约定,表名_字段名(若有重复)
 // 获得数据,根据id,两张表连接尝试
-func GetDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
+func GetDoubleTableDataByID(model, data interface{}, id, table1, table2 string) interface{} {
 	sql := fmt.Sprintf("select %s from `%s` inner join `%s` "+
 		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2, table1)
 
-	return GetDataBySql(data, sql, id)
+	return GetDataBySQL(data, sql, id)
 }
 
 // left join
 // 查询数据约定,表名_字段名(若有重复)
 // 获得数据,根据id,两张表连接
-func GetLeftDoubleTableDataById(model, data interface{}, id, table1, table2 string) interface{} {
+func GetLeftDoubleTableDataByID(model, data interface{}, id, table1, table2 string) interface{} {
 
-	sql := fmt.Sprintf("select %s from `%s` left join `%s` "+
-		"on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2, table1)
+	sql := fmt.Sprintf("select %s from `%s` left join `%s` on `%s`.%s_id=`%s`.id where `%s`.id=? limit 1", GetDoubleTableColumnSQL(model, table1, table2), table1, table2, table1, table2, table2, table1)
 
-	return GetDataBySql(data, sql, id)
+	return GetDataBySQL(data, sql, id)
 }
 
 // 获得数据,根据id
@@ -472,7 +471,7 @@ func GetMoreDataBySearch(model, data interface{}, params map[string][]string, in
 	// more table search
 	sqlnolimit, sql, clientPage, everyPage := GetMoreSearchSQL(model, params, innerTables, leftTables)
 
-	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
+	return GetDataBySQLSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 // 获得数据,分页/查询,遵循一定查询规则,两张表,使用left join
@@ -483,7 +482,7 @@ func GetLeftDoubleTableDataBySearch(model, data interface{}, table1, table2 stri
 	sql = strings.Replace(sql, "inner join", "left join", 1)
 	sqlnolimit = strings.Replace(sqlnolimit, "inner join", "left join", 1)
 
-	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
+	return GetDataBySQLSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 // 获得数据,分页/查询,遵循一定查询规则,两张表,默认inner join
@@ -492,13 +491,13 @@ func GetDoubleTableDataBySearch(model, data interface{}, table1, table2 string, 
 	//级联表的查询以及
 	sqlnolimit, sql, clientPage, everyPage := GetDoubleSearchSql(model, table1, table2, params)
 
-	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage)
+	return GetDataBySQLSearch(data, sql, sqlnolimit, clientPage, everyPage)
 }
 
 // 获得数据,根据sql语句,分页
 // args : sql参数'？'
 // sql, sqlnolimit args 相同, 共用args
-func GetDataBySqlSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64, args ...interface{}) interface{} {
+func GetDataBySQLSearch(data interface{}, sql, sqlnolimit string, clientPage, everyPage int64, args ...interface{}) interface{} {
 	var info interface{}
 	//dest = dest.(reflect.TypeOf(dest).Elem())//type != type?
 	var getinfo lib.GetInfo
@@ -541,7 +540,7 @@ func GetDataBySearch(model, data interface{}, tablename string, params map[strin
 
 	sqlnolimit, sql, clientPage, everyPage, args := GetSearchSQL(model, tablename, params)
 
-	return GetDataBySqlSearch(data, sql, sqlnolimit, clientPage, everyPage, args[:]...)
+	return GetDataBySQLSearch(data, sql, sqlnolimit, clientPage, everyPage, args[:]...)
 }
 
 // delete

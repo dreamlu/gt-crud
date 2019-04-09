@@ -44,7 +44,7 @@ const (
 	MsgNoResult  = "暂无数据"
 	MsgDelete    = "删除成功"
 	MsgUpdate    = "修改成功"
-	MsgError     = "系统繁忙"
+	MsgError     = "未知错误"
 	MsgCaptcha   = "验证码验证失败"
 	MsgExistOrNo = "数据无变化"
 	MsgCountErr  = "用户账号或密码错误"
@@ -101,6 +101,26 @@ func GetMapData(status int64, msg interface{}) MapData {
 	me := MapData{
 		Status: status,
 		Msg:    msg,
+	}
+	return me
+}
+
+// 信息成功通用
+func GetMapDataSuccess(data interface{}) GetInfoN {
+	me := GetInfoN{
+		Status: CodeSuccess,
+		Msg:    MsgSuccess,
+		Data:   data,
+	}
+	return me
+}
+
+// 信息失败通用
+func GetMapDataError(data interface{}) GetInfoN {
+	me := GetInfoN{
+		Status: CodeError,
+		Msg:    MsgError,
+		Data:   data,
 	}
 	return me
 }
