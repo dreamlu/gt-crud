@@ -19,9 +19,10 @@ const (
 	CodeValidator  = 210 // 字段验证
 	CodeCount      = 211 // 账号相关
 	CodeCaptcha    = 214 // 验证码
-	CodeValidate   = 217 // 验证成功
+	CodeValSuccess = 217 // 验证成功
+	CodeValError   = 218 // 验证失败
 	CodeExistOrNo  = 220 // 数据无变化
-	CodeSql        = 222 // 数据库错误统一状态
+	CodeSQL        = 222 // 数据库相关
 	CodeLackArgs   = 223 // 缺少参数
 	CodeFile       = 224 // 文件上传相关
 	CodeNoDelete   = 225 // 存在外健约束(逻辑或数据库约束)
@@ -38,41 +39,45 @@ const (
 
 // 约定提示信息
 const (
-	MsgSuccess   = "请求成功"
-	MsgCreate    = "创建成功"
-	MsgNoAuth    = "请求非法"
-	MsgNoResult  = "暂无数据"
-	MsgDelete    = "删除成功"
-	MsgUpdate    = "修改成功"
-	MsgError     = "未知错误"
-	MsgCaptcha   = "验证码验证失败"
-	MsgExistOrNo = "数据无变化"
-	MsgCountErr  = "用户账号或密码错误"
-	MsgNoCount   = "用户账号不存在"
-	MsgLackArgs  = "缺少参数"
-	MsgValidate  = "验证成功"
+	MsgSuccess    = "请求成功"
+	MsgCreate     = "创建成功"
+	MsgNoAuth     = "请求非法"
+	MsgNoResult   = "暂无数据"
+	MsgDelete     = "删除成功"
+	MsgUpdate     = "修改成功"
+	MsgError      = "未知错误"
+	MsgCaptcha    = "验证码验证失败"
+	MsgExistOrNo  = "数据无变化"
+	MsgCountErr   = "用户账号或密码错误"
+	MsgNoCount    = "用户账号不存在"
+	MsgLackArgs   = "缺少参数"
+	MsgValSuccess = "验证成功"
+	MsgValError   = "验证失败"
+	MsgFile       = "上传成功"
 )
 
 // 约定提示信息
 var (
-	MapError     = map[string]interface{}{Status: CodeError, Msg: MsgError}
-	MapUpdate    = map[string]interface{}{Status: CodeUpdate, Msg: MsgUpdate}
-	MapDelete    = map[string]interface{}{Status: CodeDelete, Msg: MsgDelete}
-	MapCreate    = map[string]interface{}{Status: CodeCreate, Msg: MsgCreate}
-	MapNoResult  = map[string]interface{}{Status: CodeNoResult, Msg: MsgNoResult}
-	MapNoAuth    = map[string]interface{}{Status: CodeNoAuth, Msg: MsgNoAuth}
-	MapCaptcha   = map[string]interface{}{Status: CodeCaptcha, Msg: MsgCaptcha}
-	MapExistOrNo = map[string]interface{}{Status: CodeExistOrNo, Msg: MsgExistOrNo} //指数据修改没有变化 或者 给的条件值不存在
-	MapCountErr  = map[string]interface{}{Status: CodeCount, Msg: MsgCountErr}
-	MapNoCount   = map[string]interface{}{Status: CodeCount, Msg: MsgNoCount}
-	MapLackArgs  = map[string]interface{}{Status: CodeLackArgs, Msg: MsgLackArgs}
-	MapValidate  = map[string]interface{}{Status: CodeValidate, Msg: MsgValidate}
+	MapSuccess    = GetMapData(CodeSuccess, MsgSuccess)       // 请求成功
+	MapError      = GetMapData(CodeError, MsgError)           // 通用失败
+	MapUpdate     = GetMapData(CodeUpdate, MsgUpdate)         // 修改成功
+	MapDelete     = GetMapData(CodeDelete, MsgDelete)         // 删除成功
+	MapCreate     = GetMapData(CodeCreate, MsgCreate)         // 创建成功
+	MapNoResult   = GetMapData(CodeNoResult, MsgNoResult)     // 暂无数据
+	MapNoAuth     = GetMapData(CodeNoAuth, MsgNoAuth)         // 请求非法
+	MapCaptcha    = GetMapData(CodeCaptcha, MsgCaptcha)       // 验证码验证失败
+	MapExistOrNo  = GetMapData(CodeExistOrNo, MsgExistOrNo)   // 指数据修改没有变化 或者 给的条件值不存在
+	MapCountErr   = GetMapData(CodeCount, MsgCountErr)        // 用户账号密码错误
+	MapNoCount    = GetMapData(CodeCount, MsgNoCount)         // 用户账号不存在
+	MapLackArgs   = GetMapData(CodeLackArgs, MsgLackArgs)     // 缺少参数
+	MapValSuccess = GetMapData(CodeValSuccess, MsgValSuccess) // 验证成功
+	MapValError   = GetMapData(CodeValError, MsgValError)     // 验证失败
 )
 
 // 分页数据信息
-type GetInfo struct {
-	GetInfoN
-	Pager Pager `json:"pager"`
+type GetInfoPager struct {
+	GetInfo
+	Pager Pager
 }
 
 // pager info
@@ -84,10 +89,9 @@ type Pager struct {
 
 // 无分页数据信息
 // 分页数据信息
-type GetInfoN struct {
-	Status int64       `json:"status"`
-	Msg    string      `json:"msg"`
-	Data   interface{} `json:"data"` //数据,通用接口
+type GetInfo struct {
+	MapData MapData
+	Data    interface{} `json:"data"` //数据,通用接口
 }
 
 // 信息,通用
@@ -105,22 +109,63 @@ func GetMapData(status int64, msg interface{}) MapData {
 	return me
 }
 
-// 信息成功通用
-func GetMapDataSuccess(data interface{}) GetInfoN {
-	me := GetInfoN{
-		Status: CodeSuccess,
-		Msg:    MsgSuccess,
-		Data:   data,
+// 信息成功通用(成功通用, 无分页)
+func GetMapDataSuccess(data interface{}) GetInfo {
+	me := GetInfo{
+		MapData: MapSuccess,
+		Data:    data,
+	}
+	return me
+}
+
+// 信息分页通用(成功通用, 分页)
+func GetMapDataPager(data interface{}, clientPage, everyPage, sumPage int64) GetInfoPager {
+	me := GetInfoPager{
+		GetInfo: GetMapDataSuccess(data),
+		Pager: Pager{
+			ClientPage: clientPage,
+			EveryPage:  everyPage,
+			SumPage:    sumPage,
+		},
 	}
 	return me
 }
 
 // 信息失败通用
-func GetMapDataError(data interface{}) GetInfoN {
-	me := GetInfoN{
-		Status: CodeError,
-		Msg:    MsgError,
-		Data:   data,
+func GetMapDataError(data interface{}) GetInfo {
+	me := GetInfo{
+		MapData: MapError,
+		Data:    data,
+	}
+	return me
+}
+
+// 无分页通用
+func GetInfoData(data interface{}, mapData MapData) GetInfo {
+	me := GetInfo{
+		MapData: mapData,
+		Data:    data,
+	}
+	return me
+}
+
+// 分页通用
+// 无分页数据
+// 统一返回GetInfoPager 分页格式用
+func GetInfoPagerData(data interface{}, mapData MapData, pager Pager) GetInfoPager {
+	me := GetInfoPager{
+		GetInfo: GetInfoData(data, mapData),
+		Pager:   pager,
+	}
+	return me
+}
+
+// 分页通用
+// 无分页数据
+// 统一返回GetInfoPager 分页格式用
+func GetInfoPagerDataNil(data interface{}, mapData MapData) GetInfoPager {
+	me := GetInfoPager{
+		GetInfo: GetInfoData(data, mapData),
 	}
 	return me
 }

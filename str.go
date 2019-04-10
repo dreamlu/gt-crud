@@ -12,3 +12,9 @@ var EveryPageStr = GetDevModeConfig("everyPage")
 type Value struct {
 	Value string `json:"value"`
 }
+
+
+// ID struct
+type ID struct {
+	ID int64 `json:"id"`
+}

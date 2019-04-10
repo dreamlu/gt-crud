@@ -13,13 +13,13 @@ var p models.User
 //根据id获得用户获取
 func GetById(u *gin.Context) {
 	id := u.Query("id")
-	ss := p.GetById(id)
+	ss := p.GetByID(id)
 	u.JSON(http.StatusOK, ss)
 }
 
 //用户信息分页
 func GetBySearch(u *gin.Context) {
-	u.Request.ParseForm()
+	_ = u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
 	xss.XssMap(values)
 	ss := p.GetBySearch(values)
@@ -35,7 +35,7 @@ func Delete(u *gin.Context) {
 
 //用户信息修改
 func Update(u *gin.Context) {
-	u.Request.ParseForm()
+	_ = u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)
 	val := validator.NewValidator(values) //验证规则
@@ -52,7 +52,7 @@ func Update(u *gin.Context) {
 
 //新增用户信息
 func Create(u *gin.Context) {
-	u.Request.ParseForm()
+	_ = u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)	//html特殊字符转换
 

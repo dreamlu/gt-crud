@@ -35,5 +35,10 @@ func GetDevModeConfig(key string) string {
 
 	// mode config file
 	// get devMode value
-	return Config(key, "conf/app-"+devMode+".conf")
+	value := Config(key, "conf/app-"+devMode+".conf")
+	if "" == value{
+		// read the default config
+		value = GetConfigValue(key)
+	}
+	return value
 }
