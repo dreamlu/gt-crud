@@ -77,7 +77,7 @@ var (
 // 分页数据信息
 type GetInfoPager struct {
 	GetInfo
-	Pager Pager
+	Pager
 }
 
 // pager info
@@ -90,8 +90,8 @@ type Pager struct {
 // 无分页数据信息
 // 分页数据信息
 type GetInfo struct {
-	MapData MapData
-	Data    interface{} `json:"data"` //数据,通用接口
+	MapData
+	Data interface{} `json:"data"` //数据,通用接口
 }
 
 // 信息,通用
