@@ -42,16 +42,20 @@ type OrderD struct {
 func TestDB(t *testing.T) {
 
 	var user = User{
-		Name: "测试",
+		Name: "测试xx",
 		//Createtime:JsonDate(time.Now()),
 	}
 
-	ss := CreateStructData(&user)
-	fmt.Println(ss)
+	ss := CreateDataJ(&user)
+	log.Println(ss)
+
+	// return create id
+	id := CreateDataJResID(&user)
+	log.Println("user id: ",id)
 
 	user.ID = 8 //0
 	ss = UpdateStructData(&user)
-	fmt.Println(ss)
+	log.Println(ss)
 }
 
 // 通用分页测试
@@ -138,10 +142,10 @@ func TestGetDataBySql(t *testing.T) {
 
 	var user User
 	GetDataBySQL(&user, sql, "1", "梦")
-	fmt.Println(user)
+	log.Println(user)
 
 	//DB.Raw(sql, []interface{}{1, "梦"}[:]...).Scan(&user)
-	//fmt.Println(user)
+	//log.Println(user)
 }
 
 // 通用增删该查测试

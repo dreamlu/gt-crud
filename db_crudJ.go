@@ -3,7 +3,7 @@ package deercoder
 
 // implement DBCrud
 // form data
-type DbCrud struct {
+type DbCrudJ struct {
 	// attributes
 	InnerTables []string    // inner join tables
 	LeftTables  []string    // left join tables
@@ -17,19 +17,19 @@ type DbCrud struct {
 }
 
 // create
-func (c *DbCrud) Create(params map[string][]string) interface{} {
+func (c *DbCrudJ) Create(data interface{}) interface{} {
 
-	return CreateData(c.Table, params)
+	return CreateDataJ(data)
 }
 
 // update
-func (c *DbCrud) Update(params map[string][]string) interface{} {
+func (c *DbCrudJ) Update(data interface{}) interface{} {
 
-	return UpdateData(c.Table, params)
+	return UpdateDataJ(data)
 }
 
 // delete
-func (c *DbCrud) Delete(id string) interface{} {
+func (c *DbCrudJ) Delete(id string) interface{} {
 
 	return DeleteDataByName(c.Table, "id", id)
 }
@@ -38,13 +38,13 @@ func (c *DbCrud) Delete(id string) interface{} {
 // pager info
 // clientPage : default 1
 // everyPage : default 10
-func (c *DbCrud) GetBySearch(params map[string][]string) interface{} {
+func (c *DbCrudJ) GetBySearch(params map[string][]string) interface{} {
 
 	return GetDataBySearch(c.Model, c.ModelData, c.Table, params)
 }
 
 // by id
-func (c *DbCrud) GetByID(id string) interface{} {
+func (c *DbCrudJ) GetByID(id string) interface{} {
 
 	//DB.AutoMigrate(&c.Model)
 	return GetDataByID(c.ModelData, id)
@@ -52,14 +52,14 @@ func (c *DbCrud) GetByID(id string) interface{} {
 
 // the same as search
 // more tables
-func (c *DbCrud) GetMoreBySearch(params map[string][]string) interface{} {
+func (c *DbCrudJ) GetMoreBySearch(params map[string][]string) interface{} {
 
 	return GetMoreDataBySearch(c.Model, c.ModelData, params, c.InnerTables, c.LeftTables)
 }
 
 // common sql
 // through sql get data
-func (c *DbCrud) GetDataBySQL(sql string, args ...interface{}) interface{} {
+func (c *DbCrudJ) GetDataBySQL(sql string, args ...interface{}) interface{} {
 
 	return GetDataBySQL(c.ModelData, sql, args[:]...)
 }
@@ -68,25 +68,25 @@ func (c *DbCrud) GetDataBySQL(sql string, args ...interface{}) interface{} {
 // through sql get data
 // args not include limit ?, ?
 // args is sql and sqlnolimit common params
-func (c *DbCrud) GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} {
+func (c *DbCrudJ) GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} {
 
 	return GetDataBySQLSearch(c.ModelData, sql, sqlnolimit, c.ClientPage, c.EveryPage, args)
 }
 
 // delete by sql
-func (c *DbCrud) DeleteBySQL(sql string, args ...interface{}) interface{} {
+func (c *DbCrudJ) DeleteBySQL(sql string, args ...interface{}) interface{} {
 
 	return DeleteDataBySQL(sql, args[:]...)
 }
 
 // update by sql
-func (c *DbCrud) UpdateBySQL(sql string, args ...interface{}) interface{} {
+func (c *DbCrudJ) UpdateBySQL(sql string, args ...interface{}) interface{} {
 
 	return UpdateDataBySQL(sql, args[:]...)
 }
 
 // create by sql
-func (c *DbCrud) CreateBySQL(sql string, args ...interface{}) interface{} {
+func (c *DbCrudJ) CreateBySQL(sql string, args ...interface{}) interface{} {
 
 	return CreateDataBySQL(sql, args[:]...)
 }

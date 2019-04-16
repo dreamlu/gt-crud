@@ -35,6 +35,7 @@ deercoder-gin 是一个通用的api快速开发工具
 | session(cookie/redis) |
 | 更多数据库支持(待完善) |
 | conf/app.conf 多开发模式支持 |
+| 请求方式json/form data(待测试) |
 
 ##### 使用  
 - [安装使用](#安装使用)

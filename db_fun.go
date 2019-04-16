@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/dreamlu/deercoder-gin/util/lib"
+	rf "github.com/dreamlu/deercoder-gin/util/reflect"
 	"reflect"
 	"strconv"
 	"strings"
@@ -668,8 +669,30 @@ func CreateDataResID(tablename string, params map[string][]string) (info lib.Get
 	return info
 }
 
-// 结合struct创建
-func CreateStructData(data interface{}) (info lib.MapData) {
+// select检查是否存在
+func ValidateSQL(sql string) (info lib.MapData) {
+	var num int64 //返回影响的行数
+
+	var ve Value
+	dba := DB.Raw(sql).Scan(&ve)
+	num = dba.RowsAffected
+	switch {
+	case dba.Error != nil:
+		info = lib.GetSqlError(dba.Error.Error())
+	case num == 0 && dba.Error == nil:
+		info = lib.MapValError
+	default:
+		info = lib.MapValSuccess
+	}
+	return info
+}
+
+//==============================================================
+// json处理(struct data)
+//==============================================================
+
+// create
+func CreateDataJ(data interface{}) (info lib.MapData) {
 	var num int64 //返回影响的行数
 
 	dba := DB.Create(data)
@@ -686,20 +709,40 @@ func CreateStructData(data interface{}) (info lib.MapData) {
 	return info
 }
 
-// select检查是否存在
-func ValidateSQL(sql string) (info lib.MapData) {
+// create
+// return insert id
+func CreateDataJResID(data interface{}) (info lib.GetInfo) {
 	var num int64 //返回影响的行数
 
-	var ve Value
-	dba := DB.Raw(sql).Scan(&ve)
+	dba := DB.Create(data)
 	num = dba.RowsAffected
+
+	switch {
+	case dba.Error != nil:
+		info = lib.GetInfoData(nil, lib.GetSqlError(dba.Error.Error()))
+	case num == 0 && dba.Error == nil:
+		info = lib.GetInfoData(nil, lib.MapError)
+	default:
+		id,_ := rf.GetDataByFieldName(data, "ID")
+		info = lib.GetInfoData(map[string]interface{}{"id": id}, lib.MapCreate)
+	}
+	return info
+}
+
+// update
+func UpdateDataJ(data interface{}) (info lib.MapData) {
+	var num int64 //返回影响的行数
+
+	dba := DB.Create(data)
+	num = dba.RowsAffected
+
 	switch {
 	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
 	case num == 0 && dba.Error == nil:
-		info = lib.MapValError
+		info = lib.MapError
 	default:
-		info = lib.MapValSuccess
+		info = lib.MapCreate
 	}
 	return info
 }
