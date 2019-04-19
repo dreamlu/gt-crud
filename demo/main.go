@@ -15,5 +15,5 @@ func main() {
 	r := routers.SetRouter()
 	//pprof.Register(r)
 	// Listen and Server in 0.0.0.0:8080
-	r.Run(":" + deercoder.GetConfigValue("http_port"))
+	_ = r.Run(":" + deercoder.GetConfigValue("http_port"))
 }

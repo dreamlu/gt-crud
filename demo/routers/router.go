@@ -4,6 +4,7 @@ package routers
 import (
 	"demo/controllers"
 	"demo/controllers/basic"
+	"github.com/dreamlu/deercoder-gin"
 	"github.com/dreamlu/deercoder-gin/util/file"
 	"github.com/dreamlu/deercoder-gin/util/lib"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func SetRouter() *gin.Engine {
 	// gin.DisableConsoleColor()
 	//router := gin.Default()
 	router := gin.New()
-	//deercoder.MaxUploadMemory = router.MaxMultipartMemory
+	deercoder.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
 	//登录失效验证
@@ -54,6 +55,13 @@ func SetRouter() *gin.Engine {
 			user.DELETE("/delete/:id", controllers.Delete)
 			user.POST("/create", controllers.Create)
 			user.PATCH("/update", controllers.Update)
+
+			// json
+			user.GET("/searchJ", controllers.GetBySearchJ)
+			user.GET("/idJ", controllers.GetByIdJ)
+			user.DELETE("/deleteJ/:id", controllers.DeleteJ)
+			user.POST("/createJ", controllers.CreateJ)
+			user.PATCH("/updateJ", controllers.UpdateJ)
 		}
 		//用户账户数据
 		usercount := v.Group("/userinfo")

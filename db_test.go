@@ -31,12 +31,12 @@ type Order struct {
 
 // order detail
 type OrderD struct {
-	ID          int64  `json:"id"`
-	UserID      int64  `json:"user_id"`      // user id
-	UserName    string `json:"user_name"`    // user table column name
-	ServiceID   int64  `json:"service_id"`   // service table id
-	ServiceName string `json:"service_name"` // service table column `name`
-	Createtime  JsonTime  `json:"createtime"`   // createtime
+	ID          int64    `json:"id"`
+	UserID      int64    `json:"user_id"`      // user id
+	UserName    string   `json:"user_name"`    // user table column name
+	ServiceID   int64    `json:"service_id"`   // service table id
+	ServiceName string   `json:"service_name"` // service table column `name`
+	Createtime  JsonTime `json:"createtime"`   // createtime
 }
 
 func TestDB(t *testing.T) {
@@ -51,7 +51,7 @@ func TestDB(t *testing.T) {
 
 	// return create id
 	id := CreateDataJResID(&user)
-	log.Println("user id: ",id)
+	log.Println("user id: ", id)
 
 	user.ID = 8 //0
 	ss = UpdateStructData(&user)
@@ -127,7 +127,7 @@ func TestGetSearchSql(t *testing.T) {
 
 	var args = make(map[string][]string)
 	args["key"] = append(args["key"], "梦 嘿,伙计")
-	sqlnolimit, sql, _, _ , _:= GetSearchSQL(User{}, "user", args)
+	sqlnolimit, sql, _, _, _ := GetSearchSQL(User{}, "user", args)
 	log.Println("SQLNOLIMIT:", sqlnolimit, "\nSQL:", sql)
 
 	// 两张表，待重新测试
@@ -210,5 +210,5 @@ func TestCrud(t *testing.T) {
 func TestCrudSQL(t *testing.T) {
 	var db = DbCrud{}
 	sql := "update `user` set name=? where id=?"
-	log.Println("[Info]:", db.UpdateBySQL(sql,"梦sql", 1))
+	log.Println("[Info]:", db.UpdateBySQL(sql, "梦sql", 1))
 }

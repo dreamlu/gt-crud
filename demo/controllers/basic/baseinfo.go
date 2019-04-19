@@ -20,7 +20,6 @@ type Basic struct {
 }
 
 func GetBasicInfo(u *gin.Context) {
-	var getinfo lib.GetInfoN
 	var basic Basic
 	basic.Address = deercoder.GetConfigValue("domain")
 	basic.Port = deercoder.GetConfigValue("http_port")
@@ -31,8 +30,5 @@ func GetBasicInfo(u *gin.Context) {
 	basic.Maxmerory = deercoder.MaxUploadMemory / 1024 / 1024
 	deercoder.DB.Raw("select version() as mysql").Scan(&basic)
 
-	getinfo.Data = basic
-	getinfo.Status = 200
-	getinfo.Msg = "请求成功"
-	u.JSON(http.StatusOK, getinfo)
+	u.JSON(http.StatusOK, lib.GetMapDataSuccess(basic))
 }

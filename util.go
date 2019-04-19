@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"database/sql/driver"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -17,16 +18,16 @@ import (
 
 var commonIV = []byte{0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f}
 
-//aes加密,返回16进制数据
+// aes加密,返回16进制数据
 func AesEn(s string) string {
-	//需要去加密的字符串
+	// 需要去加密的字符串
 	plaintext := []byte(s)
-	//如果传入加密串的话，plaint就是传入的字符串
+	// 如果传入加密串的话，plaint就是传入的字符串
 	if len(os.Args) > 1 {
 		plaintext = []byte(os.Args[1])
 	}
 
-	//aes的加密字符串,经测试,任意32位字符
+	// aes的加密字符串,经测试,任意32位字符
 	key_text := "astaxie12798akljzmknm.ahkjkljl;k"
 	if len(os.Args) > 2 {
 		key_text = os.Args[2]
@@ -41,7 +42,7 @@ func AesEn(s string) string {
 		os.Exit(-1)
 	}
 
-	//加密字符串
+	// 加密字符串
 	cfb := cipher.NewCFBEncrypter(c, commonIV)
 	ciphertext := make([]byte, len(plaintext))
 	cfb.XORKeyStream(ciphertext, plaintext)
@@ -55,7 +56,7 @@ func AesEn(s string) string {
 	fmt.Printf("%x=>%s\n", ciphertext, plaintextCopy)*/
 }
 
-//日期差计算,年月日计算
+// 日期差计算,年月日计算
 func SubDate(date1, date2 time.Time) string {
 	var y, m, d int
 	y = date1.Year() - date2.Year()
@@ -65,7 +66,7 @@ func SubDate(date1, date2 time.Time) string {
 	} else {
 		m = int(date1.Month()) - int(date2.Month())
 	}
-	//天数模糊计算
+	// 天数模糊计算
 	if date1.Day() < date2.Day() {
 		m--
 		//闰年,29天
@@ -82,22 +83,58 @@ func SubDate(date1, date2 time.Time) string {
 	return strconv.Itoa(y) + "年" + strconv.Itoa(m) + "月" + strconv.Itoa(d) + "日"
 }
 
-//时间格式化2006-01-02 15:04:05
+// 时间格式化2006-01-02 15:04:05
 type JsonTime time.Time
 
-//实现它的json序列化方法
-func (this JsonTime) MarshalJSON() ([]byte, error) {
-	var stamp = fmt.Sprintf("\"%s\"", time.Time(this).Format("2006-01-02 15:04:05"))
+// 实现它的json序列化方法
+func (t JsonTime) MarshalJSON() ([]byte, error) {
+	var stamp = fmt.Sprintf("\"%s\"", time.Time(t).Format("2006-01-02 15:04:05"))
 	return []byte(stamp), nil
 }
 
-//时间格式化2006-01-02
+// insert problem https://github.com/jinzhu/gorm/issues/1611#issuecomment-329654638%E3%80%82
+func (t JsonTime) Value() (driver.Value, error) {
+	var zeroTime time.Time
+	var ti = time.Time(t)
+	if ti.UnixNano() == zeroTime.UnixNano() {
+		return nil, nil
+	}
+	return ti, nil
+}
+func (t *JsonTime) Scan(v interface{}) error {
+	value, ok := v.(time.Time)
+	if ok {
+		*t = JsonTime(value)
+		return nil
+	}
+	return fmt.Errorf("can not convert %v to JsonTime", v)
+}
+
+// 时间格式化2006-01-02
 type JsonDate time.Time
 
-//实现它的json序列化方法
-func (this JsonDate) MarshalJSON() ([]byte, error) {
-	var stamp = fmt.Sprintf("\"%s\"", time.Time(this).Format("2006-01-02"))
+// 实现它的json序列化方法
+func (t JsonDate) MarshalJSON() ([]byte, error) {
+	var stamp = fmt.Sprintf("\"%s\"", time.Time(t).Format("2006-01-02"))
 	return []byte(stamp), nil
+}
+
+func (t JsonDate) Value() (driver.Value, error) {
+	var zeroTime time.Time
+	var ti = time.Time(t)
+	if ti.UnixNano() == zeroTime.UnixNano() {
+		return nil, nil
+	}
+	return ti, nil
+}
+
+func (t *JsonDate) Scan(v interface{}) error {
+	value, ok := v.(time.Time)
+	if ok {
+		*t = JsonDate(value)
+		return nil
+	}
+	return fmt.Errorf("can not convert %v to JsonDate", v)
 }
 
 // key

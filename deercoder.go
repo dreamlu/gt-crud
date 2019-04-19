@@ -1,7 +1,7 @@
 // author:  dreamlu
 package deercoder
 
-const Version = "1.2.5"
+const Version = "1.2.6"
 
 // db database
 type DataBase interface {
@@ -33,7 +33,7 @@ type DBCruder interface {
 	Delete(id string) interface{}                         // delete
 	GetBySearch(args map[string][]string) interface{}     // search
 	GetByID(id string) interface{}                        // by id
-	GetMoreBySearch(args map[string][]string) interface{} // more search
+	GetMoreBySearch(args map[string][]string) interface{} // more searchta
 
 	// common sql data
 	Crud
