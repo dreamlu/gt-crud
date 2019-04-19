@@ -260,7 +260,7 @@ func GetDoubleSearchSql(model interface{}, table1, table2 string, params map[str
 
 // 传入表名,查询语句拼接
 // 单张表
-func GetSearchSQL(model interface{}, tablename string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64, args []interface{}) {
+func GetSearchSQL(model interface{}, table string, params map[string][]string) (sqlnolimit, sql string, clientPage, everyPage int64, args []interface{}) {
 
 	var (
 		clientPageStr = ClientPageStr // page number
@@ -270,8 +270,8 @@ func GetSearchSQL(model interface{}, tablename string, params map[string][]strin
 	)
 
 	//select* replace
-	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetColSql(model), tablename)
-	sqlnolimit = fmt.Sprintf("select count(id) as sum_page from `%s` where 1=1 and ", tablename)
+	sql = fmt.Sprintf("select %s from `%s` where 1=1 and ", GetColSql(model), table)
+	sqlnolimit = fmt.Sprintf("select count(id) as sum_page from `%s` where 1=1 and ", table)
 	for k, v := range params {
 		switch k {
 		case "clientPage":
@@ -285,7 +285,7 @@ func GetSearchSQL(model interface{}, tablename string, params map[string][]strin
 			continue
 		case "key":
 			key = v[0]
-			sql, sqlnolimit = lib.GetKeySQL(sql, sqlnolimit, key, model, tablename)
+			sql, sqlnolimit = lib.GetKeySQL(sql, sqlnolimit, key, model, table)
 			continue
 		case "":
 			continue
@@ -348,7 +348,7 @@ func GetInsertSQL(table string, params map[string][]string) (sql string, args []
 	buf.WriteString("insert `")
 	buf.WriteString(table)
 	buf.WriteString("`(")
-	//sql = "insert `" + tablename + "`("
+	//sql = "insert `" + table + "`("
 
 	for k, v := range params {
 		buf.WriteString("`")
@@ -524,9 +524,9 @@ func GetDataBySQLSearch(data interface{}, sql, sqlnolimit string, clientPage, ev
 }
 
 // 获得数据,分页/查询
-func GetDataBySearch(model, data interface{}, tablename string, params map[string][]string) lib.GetInfoPager {
+func GetDataBySearch(model, data interface{}, table string, params map[string][]string) lib.GetInfoPager {
 
-	sqlnolimit, sql, clientPage, everyPage, args := GetSearchSQL(model, tablename, params)
+	sqlnolimit, sql, clientPage, everyPage, args := GetSearchSQL(model, table, params)
 
 	return GetDataBySQLSearch(data, sql, sqlnolimit, clientPage, everyPage, args[:]...)
 }
@@ -552,8 +552,8 @@ func DeleteDataBySQL(sql string, args ...interface{}) (info lib.MapData) {
 }
 
 // 删除通用,任意参数
-func DeleteDataByName(tablename string, key, value string) (info lib.MapData) {
-	sql := fmt.Sprintf("delete from `%s` where %s=?", tablename, key)
+func DeleteDataByName(table string, key, value string) (info lib.MapData) {
+	sql := fmt.Sprintf("delete from `%s` where %s=?", table, key)
 
 	return DeleteDataBySQL(sql, value)
 }
@@ -579,9 +579,9 @@ func UpdateDataBySQL(sql string, args ...interface{}) (info lib.MapData) {
 }
 
 // 修改数据,通用
-func UpdateData(tablename string, params map[string][]string) (info lib.MapData) {
+func UpdateData(table string, params map[string][]string) (info lib.MapData) {
 
-	sql, args := GetUpdateSQL(tablename, params)
+	sql, args := GetUpdateSQL(table, params)
 
 	return UpdateDataBySQL(sql, args[:]...)
 }
@@ -625,9 +625,9 @@ func CreateDataBySQL(sql string, args ...interface{}) lib.MapData {
 }
 
 // 创建数据,通用
-func CreateData(tablename string, params map[string][]string) (info lib.MapData) {
+func CreateData(table string, params map[string][]string) (info lib.MapData) {
 
-	sql, args := GetInsertSQL(tablename, params)
+	sql, args := GetInsertSQL(table, params)
 
 	return CreateDataBySQL(sql, args[:]...)
 }
@@ -635,7 +635,7 @@ func CreateData(tablename string, params map[string][]string) (info lib.MapData)
 // 创建数据,通用
 // 返回id,事务,慎用
 // 业务少可用
-func CreateDataResID(tablename string, params map[string][]string) (info lib.GetInfo) {
+func CreateDataResID(table string, params map[string][]string) (info lib.GetInfo) {
 
 	//开启事务
 	tx := DB.Begin()
@@ -645,12 +645,12 @@ func CreateDataResID(tablename string, params map[string][]string) (info lib.Get
 		}
 	}()
 
-	sql, args := GetInsertSQL(tablename, params)
+	sql, args := GetInsertSQL(table, params)
 	dba := tx.Exec(sql, args[:]...)
 	num := dba.RowsAffected
 
 	var data ID
-	tx.Raw("select max(id) as id from `%s`", tablename).Scan(&data)
+	tx.Raw("select max(id) as id from `%s`", table).Scan(&data)
 
 	switch {
 	case dba.Error != nil:
@@ -709,6 +709,13 @@ func CreateDataJ(data interface{}) (info lib.MapData) {
 	return info
 }
 
+// more data create
+// writing
+func CreateMoreData(data interface{})  {
+
+}
+
+
 // create
 // return insert id
 func CreateDataJResID(data interface{}) (info lib.GetInfo) {
@@ -731,18 +738,14 @@ func CreateDataJResID(data interface{}) (info lib.GetInfo) {
 
 // update
 func UpdateDataJ(data interface{}) (info lib.MapData) {
-	var num int64 //返回影响的行数
 
-	dba := DB.Create(data)
-	num = dba.RowsAffected
+	dba := DB.Model(data).Update(data)
 
 	switch {
 	case dba.Error != nil:
 		info = lib.GetSqlError(dba.Error.Error())
-	case num == 0 && dba.Error == nil:
-		info = lib.MapError
 	default:
-		info = lib.MapCreate
+		info = lib.MapUpdate
 	}
 	return info
 }

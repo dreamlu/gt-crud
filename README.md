@@ -1,4 +1,4 @@
-#### 后端开发规范设计  
+#### [个人]开发工具设计  
 deercoder-gin 是一个通用的api快速开发工具  
 
 ##### 所需基础知识:  
@@ -40,18 +40,32 @@ deercoder-gin 是一个通用的api快速开发工具
 ##### 使用  
 - [安装使用](#安装使用)
 - [API 使用](#api-examples)
-    - [Create](#create)
-    - [Update](#update)
-    - [Delete](#delete)
-    - [GetBySearch](#getbysearch)
-    - [GetByID](#getbyid) 
-    - [GetMoreBySearch](#getmorebysearch)
-    - [GetDataBySQL](#getdatabysql)
-    - [GetDataBySearchSQL](#getdatabysearchsql)
-    - [DeleteBySQL](#deletebysql)
-    - [UpdateBySQL](#updatebysql)
-    - [CreateBySQL](#createbysql)
+    - [FORM请求](#form-request)
+        - [Create](#create)
+        - [Update](#update)
+        - [Delete](#delete)
+        - [GetBySearch](#getbysearch)
+        - [GetByID](#getbyid)
+        - [GetMoreBySearch](#getmorebysearch)
+        - [GetDataBySQL](#getdatabysql)
+        - [GetDataBySearchSQL](#getdatabysearchsql)
+        - [DeleteBySQL](#deletebysql)
+        - [UpdateBySQL](#updatebysql)
+        - [CreateBySQL](#createbysql)
+    - [JSON请求](#json-request)
+        - [Create](#create)
+        - [Update](#update)
+        - [Delete](#delete)
+        - [GetBySearch](#getbysearch)
+        - [GetByID](#getbyid)
+        - [GetMoreBySearch](#getmorebysearch)
+        - [GetDataBySQL](#getdatabysql)
+        - [GetDataBySearchSQL](#getdatabysearchsql)
+        - [DeleteBySQL](#deletebysql)
+        - [UpdateBySQL](#updatebysql)
+        - [CreateBySQL](#createbysql)
     - [GetDevModeConfig](#getdevmodeconfig)
+    
     
 
 #### 安装使用  
@@ -60,9 +74,12 @@ deercoder-gin 是一个通用的api快速开发工具
 3.go build  
 
 ### API Examples  
-#### Create
+
+#### Form Request
+
+##### Create
 ```go
-// dbcrud
+// dbcrud form data
 var db = deercoder.DbCrud{
 	Model: User{},		// model
 	Table:"user",		// table name
@@ -76,7 +93,7 @@ func (c *User)Create(params map[string][]string) interface{} {
 }
 ```
 
-#### Update
+##### Update
 ```go
 // update user
 func (c *User)Update(params map[string][]string) interface{} {
@@ -85,7 +102,7 @@ func (c *User)Update(params map[string][]string) interface{} {
 }
 ```
 
-#### Delete
+##### Delete
 ```go
 // delete user, by id
 func (c *User)Delete(id string) interface{} {
@@ -94,7 +111,7 @@ func (c *User)Delete(id string) interface{} {
 }
 ```
 
-#### GetBySearch
+##### GetBySearch
 ```go
 // get user, limit and search
 // clientPage 1, everyPage 10 default
@@ -105,7 +122,7 @@ func (c *User)GetBySearch(params map[string][]string) interface{} {
 }
 ```
 
-#### GetByID
+##### GetByID
 ```go
 // get user, by id
 func (c *User)GetByID(id string) interface{} {
@@ -116,7 +133,7 @@ func (c *User)GetByID(id string) interface{} {
 }
 ```
 
-#### GetMoreBySearch
+##### GetMoreBySearch
 ```go
 // get order, limit and search
 // clientPage 1, everyPage 10 default
@@ -133,31 +150,79 @@ func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 
 ```
 
-#### GetDataBySQL
+##### GetDataBySQL
 ```go
 // like UpdateBySQL
 ```
 
-#### GetDataBySearchSQL
+##### GetDataBySearchSQL
 ```go
 // like UpdateBySQL
 ```
 
-#### DeleteBySQL
+##### DeleteBySQL
 ```go
 // like UpdateBySQL
 ```
 
-#### UpdateBySQL
+##### UpdateBySQL
 ```go
 var db = DbCrud{}
 sql := "update `user` set name=? where id=?"
 log.Println("[Info]:", db.UpdateBySQL(sql,"梦sql", 1))
 ```
 
-#### CreateBySQL
+##### CreateBySQL
 ```go
 // like UpdateBySQL
+```
+
+#### Json Request
+```go
+// dbcrud json
+// json request
+var db_json = deercoder.DbCrudJ{
+	Model: User{}, // model
+	Table: "user", // table name
+}
+
+// get user, by id
+func (c *User) GetByIDJ(id string) interface{} {
+
+	var user User // not use *User
+	db_json.ModelData = &user
+	return db.GetByID(id)
+}
+
+// get user, limit and search
+// clientPage 1, everyPage 10 default
+func (c *User) GetBySearchJ(params map[string][]string) interface{} {
+	var users []*User
+	db_json.ModelData = &users
+	return db.GetBySearch(params)
+}
+
+// delete user, by id
+func (c *User) DeleteJ(id string) interface{} {
+
+	return db_json.Delete(id)
+}
+
+// update user
+func (c *User) UpdateJ(data *User) interface{} {
+
+	return db_json.Update(data)
+}
+
+// create user
+func (c *User) CreateJ(data *User) interface{} {
+
+	// create time
+	(*data).Createtime = deercoder.JsonTime(time.Now())
+
+	return db_json.Create(data)
+}
+
 ```
 
 - 多模式配置文件  

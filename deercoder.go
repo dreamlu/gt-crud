@@ -1,7 +1,9 @@
 // author:  dreamlu
 package deercoder
 
-const Version = "1.2.7"
+import "github.com/dreamlu/deercoder-gin/util/lib"
+
+const Version = "1.2.8"
 
 // db database
 type DataBase interface {
@@ -12,15 +14,21 @@ type DataBase interface {
 type Crud interface {
 	// crud method
 
+	// get url params
+	// like form data
+	GetBySearch(args map[string][]string) lib.GetInfoPager     // search
+	GetByID(id string) lib.GetInfo                             // by id
+	GetMoreBySearch(args map[string][]string) lib.GetInfoPager // more search
+
 	// common sql data
 	// through sql, get the data
-	GetDataBySQL(sql string, args ...interface{}) interface{} // single data
+	GetDataBySQL(sql string, args ...interface{}) lib.GetInfo // single data
 	// page limit ?,?
 	// args not include limit ?,?
-	GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) interface{} // more data
-	DeleteBySQL(sql string, args ...interface{}) interface{}
-	UpdateBySQL(sql string, args ...interface{}) interface{}
-	CreateBySQL(sql string, args ...interface{}) interface{}
+	GetDataBySearchSQL(sql, sqlnolimit string, args ...interface{}) lib.GetInfoPager // more data
+	DeleteBySQL(sql string, args ...interface{}) lib.MapData
+	UpdateBySQL(sql string, args ...interface{}) lib.MapData
+	CreateBySQL(sql string, args ...interface{}) lib.MapData
 }
 
 // common crud
@@ -28,12 +36,10 @@ type Crud interface {
 // form data
 type DBCruder interface {
 	// crud and search id
-	Create(args map[string][]string) interface{}          // create
-	Update(args map[string][]string) interface{}          // update
-	Delete(id string) interface{}                         // delete
-	GetBySearch(args map[string][]string) interface{}     // search
-	GetByID(id string) interface{}                        // by id
-	GetMoreBySearch(args map[string][]string) interface{} // more searchta
+	Create(args map[string][]string) lib.MapData      // create
+	CreateResID(args map[string][]string) lib.GetInfo // create res insert id
+	Update(args map[string][]string) lib.MapData      // update
+	Delete(id string) lib.MapData                     // delete
 
 	// common sql data
 	Crud
@@ -43,15 +49,10 @@ type DBCruder interface {
 // json data
 type DBCrudJer interface {
 	// crud and search id
-	Create(data interface{}) interface{}          // create
-	Update(data interface{}) interface{}          // update
-	Delete(id string) interface{}                         // delete
-
-	// get url params
-	// like form data
-	GetBySearch(args map[string][]string) interface{}     // search
-	GetByID(id string) interface{}                        // by id
-	GetMoreBySearch(args map[string][]string) interface{} // more search
+	Create(data interface{}) lib.MapData      // create
+	CreateResID(data interface{}) lib.GetInfo // create res insert id
+	Update(data interface{}) lib.MapData      // update
+	Delete(id string) lib.MapData             // delete
 
 	// common sql data
 	Crud

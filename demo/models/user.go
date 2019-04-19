@@ -13,7 +13,7 @@ type User struct {
 	Createtime deercoder.JsonTime `json:"createtime"` //maybe you like util.JsonDate
 }
 
-// dbcrud
+// dbcrud form data
 var db = deercoder.DbCrud{
 	Model: User{},		// model
 	Table:"user",		// table name

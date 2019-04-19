@@ -7,8 +7,8 @@ github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisenkom/go-mssqldb v0.0.0-20190121005146-b04fd42d9952 h1:b5OnbZD49x9g+/FcYbs/vukEt8C/jUbGhCJ3uduQmu8=
 github.com/denisenkom/go-mssqldb v0.0.0-20190121005146-b04fd42d9952/go.mod h1:xN/JuLBIz4bjkxNmByTiV1IbhfnYb6oo99phBn4Eqhc=
-github.com/dreamlu/deercoder-gin v1.2.6 h1:WDAYZ8RiRHgtzG3BDcAN9SDy1HtD12ExmyOKHc4F9yo=
-github.com/dreamlu/deercoder-gin v1.2.6/go.mod h1:8cCmT6rJee6xWKnJGiMO/mI/f0DMFvjzbtKbnU5aDVI=
+github.com/dreamlu/deercoder-gin v1.2.7 h1:KW57f6cDxqbLiJyo6HZZKC8i0r7OxRfZxjplWGcL79k=
+github.com/dreamlu/deercoder-gin v1.2.7/go.mod h1:8cCmT6rJee6xWKnJGiMO/mI/f0DMFvjzbtKbnU5aDVI=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646 h1:xHdtHvnCl8+HI3N47/YRkFOi7Bee/MCFRVTfU1WV4Xo=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646/go.mod h1:eki9RCc1wSN9m8lOBvgKtNmNOnSF6s8f+wIGt8RTxWA=
 github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 h1:Yzb9+7DPaBjB8zlTR87/ElzFsnQfuHnVUVqpZZIcV5Y=

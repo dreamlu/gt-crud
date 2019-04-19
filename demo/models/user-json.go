@@ -3,6 +3,7 @@ package models
 
 import (
 	"github.com/dreamlu/deercoder-gin"
+	"time"
 )
 
 ///*user model*/
@@ -12,7 +13,7 @@ import (
 //	Createtime deercoder.JsonTime `json:"createtime"` //maybe you like util.JsonDate
 //}
 
-// dbcrud
+// dbcrud json
 var db_json = deercoder.DbCrudJ{
 	Model: User{}, // model
 	Table: "user", // table name
@@ -50,7 +51,7 @@ func (c *User) UpdateJ(data *User) interface{} {
 func (c *User) CreateJ(data *User) interface{} {
 
 	// create time
-	//(*data).Createtime = deercoder.JsonTime(time.Now())
+	(*data).Createtime = deercoder.JsonTime(time.Now())
 
 	return db_json.Create(data)
 }

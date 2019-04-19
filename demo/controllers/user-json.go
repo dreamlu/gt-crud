@@ -16,8 +16,9 @@ func GetByIdJ(u *gin.Context) {
 	u.JSON(http.StatusOK, ss)
 }
 
-//用户信息分页
+// 用户信息分页
 func GetBySearchJ(u *gin.Context) {
+	// this is get url 参数
 	_ = u.Request.ParseForm()
 	values := u.Request.Form //在使用之前需要调用ParseForm方法
 	xss.XssMap(values)
@@ -36,6 +37,10 @@ func DeleteJ(u *gin.Context) {
 func UpdateJ(u *gin.Context) {
 	var user models.User
 
+	// json 类型需要匹配
+	// 与spring boot不同
+	// 不能自动将字符串转成对应类型
+	// 严格匹配
 	_ = u.ShouldBindJSON(&user)
 	// do something
 
@@ -51,9 +56,6 @@ func CreateJ(u *gin.Context) {
 	err := u.ShouldBindJSON(&user)
 	log.Println(err)
 
-	// 实现json解析
-	//err := json.NewDecoder(u.Request.Body).Decode(&user)
-	//log.Println(err)
 
 	ss := p.CreateJ(&user)
 	u.JSON(http.StatusOK, ss)
