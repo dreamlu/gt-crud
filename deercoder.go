@@ -1,7 +1,7 @@
 // author:  dreamlu
 package deercoder
 
-const Version = "1.2.6"
+const Version = "1.2.7"
 
 // db database
 type DataBase interface {

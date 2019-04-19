@@ -5,6 +5,7 @@ import (
 	"demo/models"
 	"github.com/dreamlu/deercoder-gin/util/xss"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -44,9 +45,15 @@ func UpdateJ(u *gin.Context) {
 
 //新增用户信息
 func CreateJ(u *gin.Context) {
-	var user models.User
+	var user  models.User
 
-	_ = u.ShouldBindJSON(&user)
+	// 自定义日期格式问题
+	err := u.ShouldBindJSON(&user)
+	log.Println(err)
+
+	// 实现json解析
+	//err := json.NewDecoder(u.Request.Body).Decode(&user)
+	//log.Println(err)
 
 	ss := p.CreateJ(&user)
 	u.JSON(http.StatusOK, ss)

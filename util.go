@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -92,6 +93,17 @@ func (t JsonTime) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
+// 反序列化方法 https://stackoverflow.com/questions/45303326/how-to-parse-non-standard-time-format-from-json-in-golang
+func (t *JsonTime) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), "\"")
+	ti, err := time.Parse("2006-01-02 15:04:05", s)
+	if err != nil {
+		return err
+	}
+	*t = JsonTime(ti)
+	return nil
+}
+
 // insert problem https://github.com/jinzhu/gorm/issues/1611#issuecomment-329654638%E3%80%82
 func (t JsonTime) Value() (driver.Value, error) {
 	var zeroTime time.Time
@@ -101,6 +113,7 @@ func (t JsonTime) Value() (driver.Value, error) {
 	}
 	return ti, nil
 }
+
 func (t *JsonTime) Scan(v interface{}) error {
 	value, ok := v.(time.Time)
 	if ok {
@@ -117,6 +130,17 @@ type JsonDate time.Time
 func (t JsonDate) MarshalJSON() ([]byte, error) {
 	var stamp = fmt.Sprintf("\"%s\"", time.Time(t).Format("2006-01-02"))
 	return []byte(stamp), nil
+}
+
+// imeplement Marshaler und Unmarshalere interface
+func (t *JsonDate) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), "\"")
+	ti, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return err
+	}
+	*t = JsonDate(ti)
+	return nil
 }
 
 func (t JsonDate) Value() (driver.Value, error) {
