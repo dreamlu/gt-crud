@@ -1,4 +1,4 @@
-// author:  dreamlu
+// @author  dreamlu
 package deercoder
 
 import "github.com/dreamlu/deercoder-gin/util/lib"

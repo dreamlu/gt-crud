@@ -1,4 +1,4 @@
-// author:  dreamlu
+// @author  dreamlu
 package file
 
 import (

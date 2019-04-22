@@ -35,7 +35,8 @@ deercoder-gin 是一个通用的api快速开发工具
 | session(cookie/redis) |
 | 更多数据库支持(待完善) |
 | conf/app.conf 多开发模式支持 |
-| 请求方式json/form data(待测试) |
+| 请求方式json/form data |
+| [cache](./cache.go) 缓存实现 |
 
 ##### 使用  
 - [安装使用](#安装使用)
@@ -53,17 +54,17 @@ deercoder-gin 是一个通用的api快速开发工具
         - [UpdateBySQL](#updatebysql)
         - [CreateBySQL](#createbysql)
     - [JSON请求](#json-request)
-        - [Create](#create)
-        - [Update](#update)
-        - [Delete](#delete)
-        - [GetBySearch](#getbysearch)
-        - [GetByID](#getbyid)
-        - [GetMoreBySearch](#getmorebysearch)
-        - [GetDataBySQL](#getdatabysql)
-        - [GetDataBySearchSQL](#getdatabysearchsql)
-        - [DeleteBySQL](#deletebysql)
-        - [UpdateBySQL](#updatebysql)
-        - [CreateBySQL](#createbysql)
+        - [Create](#)
+        - [Update](#)
+        - [Delete](#)
+        - [GetBySearch](#)
+        - [GetByID](#)
+        - [GetMoreBySearch](#)
+        - [GetDataBySQL](#)
+        - [GetDataBySearchSQL](#)
+        - [DeleteBySQL](#)
+        - [UpdateBySQL](#)
+        - [CreateBySQL](#)
     - [GetDevModeConfig](#getdevmodeconfig)
     
     

@@ -1,4 +1,4 @@
-// author:  dreamlu
+// @author  dreamlu
 package deercoder
 
 import (
@@ -177,14 +177,14 @@ func TestCrud(t *testing.T) {
 	log.Println("\n[User Info]:", users)
 
 	// delete
-	info = db.Delete("12")
-	log.Println(info)
+	info2 := db.Delete("12")
+	log.Println(info2)
 
 	// update
 	args["id"] = append(args["id"], "4")
 	args["name"][0] = "梦4"
-	info = db.Update(args)
-	log.Println(info)
+	info2 = db.Update(args)
+	log.Println(info2)
 
 	// create
 	//var args2 = make(map[string][]string)

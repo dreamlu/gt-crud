@@ -1,9 +1,9 @@
-// author:  dreamlu
+// @author  dreamlu
 package deercoder
 
 import "github.com/dreamlu/deercoder-gin/util/lib"
 
-const Version = "1.2.8"
+const Version = "1.3.0"
 
 // db database
 type DataBase interface {

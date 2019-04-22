@@ -1,4 +1,4 @@
-// author:  dreamlu
+// @author  dreamlu
 package deercoder
 
 import (
@@ -132,7 +132,7 @@ func (t JsonDate) MarshalJSON() ([]byte, error) {
 	return []byte(stamp), nil
 }
 
-// imeplement Marshaler und Unmarshalere interface
+// 反序列化
 func (t *JsonDate) UnmarshalJSON(b []byte) error {
 	s := strings.Trim(string(b), "\"")
 	ti, err := time.Parse("2006-01-02", s)

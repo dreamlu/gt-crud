@@ -1,9 +1,9 @@
-// Package tester is a // author:  dreamlu
-package to test each // author:  dreamlu
+// Package tester is a // @author  dreamlu
+package to test each // @author  dreamlu
 packages of session stores, such as
 // cookie, redis, memcached, mongo, memstore.  You can use this to test your own session
 // stores.
-// author:  dreamlu
+// @author  dreamlu
 package tester
 
 import (
