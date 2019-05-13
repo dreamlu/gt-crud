@@ -30,11 +30,11 @@ func init() {
 // impl cache manager
 // redis cache
 // interface key, interface value
-type redisManager struct {
+type RedisManager struct {
 	// do nothing else
 }
 
-func (r *redisManager) set(key interface{}, value CacheModel) error {
+func (r *RedisManager) Set(key interface{}, value CacheModel) error {
 
 	// change key to string
 	keyS, err := json.Marshal(key)
@@ -63,7 +63,7 @@ func (r *redisManager) set(key interface{}, value CacheModel) error {
 	return nil
 }
 
-func (r *redisManager) get(key interface{}) (CacheModel, error) {
+func (r *RedisManager) Get(key interface{}) (CacheModel, error) {
 
 	var reply CacheModel
 
@@ -85,7 +85,7 @@ func (r *redisManager) get(key interface{}) (CacheModel, error) {
 	return reply, nil
 }
 
-func (r *redisManager) delete(key interface{}) error {
+func (r *RedisManager) Delete(key interface{}) error {
 
 	// change key to string
 	keyS, err := json.Marshal(key)
@@ -96,7 +96,7 @@ func (r *redisManager) delete(key interface{}) error {
 	return Rc.Delete(keyS).Err()
 }
 
-func (r *redisManager) deleteMore(key interface{}) error {
+func (r *RedisManager) DeleteMore(key interface{}) error {
 
 	// change key to string
 	keyS, err := json.Marshal(key)
@@ -125,7 +125,7 @@ func (r *redisManager) deleteMore(key interface{}) error {
 	return nil
 }
 
-func (r *redisManager) check(key interface{}) error {
+func (r *RedisManager) Check(key interface{}) error {
 
 	var reply CacheModel
 

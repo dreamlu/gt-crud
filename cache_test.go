@@ -17,7 +17,7 @@ func TestRedis(t *testing.T) {
 }
 
 // cache test
-var cache CacheManager = new(redisManager)
+var cache CacheManager = new(RedisManager)
 
 // user model
 var user = User{
@@ -37,11 +37,11 @@ func TestCache(t *testing.T) {
 	// key can use user.ID,user.Name,user
 	// because it can be interface
 	// set
-	err := cache.set(user, data)
+	err := cache.Set(user, data)
 	log.Println("set err: ", err)
 
 	// get
-	reply,_ := cache.get(user)
+	reply,_ := cache.Get(user)
 	log.Println("user data :", reply.Data)
 
 }
@@ -49,19 +49,19 @@ func TestCache(t *testing.T) {
 // check or delete cache
 func  TestCacheCheckDel(t *testing.T)  {
 	// check
-	//err := cache.check(user.ID)
+	//err := cache.Check(user.ID)
 	//log.Println("check: ", err)
 
 	// del
-	//err := cache.delete(user.ID)
+	//err := cache.Delete(user.ID)
 	//log.Println("delete: ", err)
 
 	// del *
 
-	//err := cache.delete("1*")
+	//err := cache.Delete("1*")
 	//log.Println("delete: ", err)
 
 	// del more
-	err := cache.deleteMore(user)
+	err := cache.DeleteMore(user)
 	log.Println("delete: ", err)
 }

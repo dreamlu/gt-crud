@@ -14,15 +14,15 @@ type CacheManager interface {
 	// operate method
 	// set value
 	// if time != 0 set it
-	set(key interface{}, value CacheModel) error
+	Set(key interface{}, value CacheModel) error
 	// get value
-	get(key interface{}) (CacheModel, error)
+	Get(key interface{}) (CacheModel, error)
 	// delete value
-	delete(key interface{}) error
+	Delete(key interface{}) error
 	// more del
 	// key will become *key*
-	deleteMore(key interface{}) error
+	DeleteMore(key interface{}) error
 	// check value
 	// flush the time
-	check(key interface{}) error
+	Check(key interface{}) error
 }

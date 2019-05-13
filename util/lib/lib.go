@@ -77,7 +77,7 @@ var (
 // 分页数据信息
 type GetInfoPager struct {
 	GetInfo
-	Pager
+	Pager Pager `json:"pager"`
 }
 
 // pager info
