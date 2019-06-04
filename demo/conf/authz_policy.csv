@@ -1,8 +1,0 @@
-p, 1, /*, *
-p, -1, /api/v1/captcha/getkey, GET
-p, -1, /api/v1/captcha/showimage, GET
-p, -1, /api/v1/field/getbyflag, GET
-p, client, /api/v1/field/getbyflag, GET
-p, client, /api/v1/captcha/getkey, GET
-g, 2, client
-g, 3, client
