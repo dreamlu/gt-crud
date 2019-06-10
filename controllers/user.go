@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"demo/models"
+	"github.com/dreamlu/go-tool/util/lib"
 	"github.com/dreamlu/go-tool/util/xss"
 	"github.com/dreamlu/go-tool/validator"
 	"github.com/gin-gonic/gin"
@@ -38,13 +39,6 @@ func Update(u *gin.Context) {
 	_ = u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)
-	val := validator.NewValidator(values) //验证规则
-	val.AddRule("name", "用户名","required,len","2-20")
-	info := val.CheckInfo()
-	if info != nil {
-		u.JSON(http.StatusOK, info)
-		return
-	}
 
 	ss := p.Update(values)
 	u.JSON(http.StatusOK, ss)
@@ -54,13 +48,10 @@ func Update(u *gin.Context) {
 func Create(u *gin.Context) {
 	_ = u.Request.ParseForm()
 	values := u.Request.Form
-	xss.XssMap(values)	//html特殊字符转换
-
-	val := validator.NewValidator(values) //验证规则
-	val.AddRule("name", "用户名","required,len","2-20")
-	info := val.CheckInfo()
-	if info != nil {
-		u.JSON(http.StatusOK, info)
+	xss.XssMap(values)                            //html特殊字符转换
+	res := validator.Valid(values, models.User{}) //验证规则
+	if res != lib.MapValSuccess {
+		u.JSON(http.StatusOK, res)
 		return
 	}
 

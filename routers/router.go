@@ -4,8 +4,8 @@ package routers
 import (
 	"demo/controllers"
 	"demo/controllers/basic"
+	"demo/controllers/file"
 	"github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/util/file"
 	"github.com/dreamlu/go-tool/util/lib"
 	"github.com/gin-gonic/gin"
 	"net/http"
