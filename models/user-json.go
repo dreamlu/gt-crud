@@ -3,6 +3,8 @@ package models
 
 import (
 	"github.com/dreamlu/go-tool"
+	"github.com/dreamlu/go-tool/tool/result"
+	time2 "github.com/dreamlu/go-tool/tool/type/time"
 	"time"
 )
 
@@ -10,7 +12,7 @@ import (
 //type User struct {
 //	ID         uint               `json:"id" gorm:"primary_key"`
 //	Name       string             `json:"name"`
-//	Createtime der.JsonTime `json:"createtime"` //maybe you like util.JsonDate
+//	Createtime der.JsonTime `json:"createtime"` //maybe you like tool.JsonDate
 //}
 
 // dbcrud json
@@ -32,7 +34,12 @@ func (c *User) GetByIDJ(id string) interface{} {
 func (c *User) GetBySearchJ(params map[string][]string) interface{} {
 	var users []*User
 	db_json.ModelData = &users
-	return db.GetBySearch(params)
+
+	pager, err := db.GetBySearch(params)
+	if err != nil {
+		return result.GetError(err)
+	}
+	return result.GetSuccessPager(users, pager)
 }
 
 // delete user, by id
@@ -51,7 +58,7 @@ func (c *User) UpdateJ(data *User) interface{} {
 func (c *User) CreateJ(data *User) interface{} {
 
 	// create time
-	(*data).Createtime = der.JsonTime(time.Now())
+	(*data).Createtime = time2.CTime(time.Now())
 
 	return db_json.Create(data)
 }

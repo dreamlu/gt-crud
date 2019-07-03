@@ -3,14 +3,16 @@ package models
 
 import (
 	"github.com/dreamlu/go-tool"
+	"github.com/dreamlu/go-tool/tool/result"
+	time2 "github.com/dreamlu/go-tool/tool/type/time"
 	"time"
 )
 
 /*user model*/
 type User struct {
-	ID         uint         `json:"id" gorm:"primary_key"`
-	Name       string       `json:"name" valid:"required,len=2-20"`
-	Createtime der.JsonTime `json:"createtime"` //maybe you like util.JsonDate
+	ID         uint        `json:"id" gorm:"primary_key"`
+	Name       string      `json:"name" valid:"required,len=2-20"`
+	Createtime time2.CTime `json:"createtime"` //maybe you like util.JsonDate
 }
 
 // dbcrud form data
@@ -32,7 +34,11 @@ func (c *User) GetByID(id string) interface{} {
 func (c *User) GetBySearch(params map[string][]string) interface{} {
 	var users []*User
 	db.ModelData = &users
-	return db.GetBySearch(params)
+	pager, err := db.GetBySearch(params)
+	if err != nil {
+		return result.GetError(err)
+	}
+	return result.GetSuccessPager(users, pager)
 }
 
 // delete user, by id

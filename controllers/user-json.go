@@ -3,7 +3,7 @@ package controllers
 
 import (
 	"demo/models"
-	"github.com/dreamlu/go-tool/util/xss"
+	"github.com/dreamlu/go-tool/tool/xss"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

@@ -3,9 +3,9 @@ package controllers
 
 import (
 	"demo/models"
-	"github.com/dreamlu/go-tool/util/lib"
-	"github.com/dreamlu/go-tool/util/xss"
-	"github.com/dreamlu/go-tool/validator"
+	"github.com/dreamlu/go-tool/tool/result"
+	"github.com/dreamlu/go-tool/tool/xss"
+	"github.com/dreamlu/go-tool/tool/validator"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -50,7 +50,7 @@ func Create(u *gin.Context) {
 	values := u.Request.Form
 	xss.XssMap(values)                            //html特殊字符转换
 	res := validator.Valid(values, models.User{}) //验证规则
-	if res != lib.MapValSuccess {
+	if res != result.MapValSuccess {
 		u.JSON(http.StatusOK, res)
 		return
 	}

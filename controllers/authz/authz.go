@@ -6,9 +6,8 @@
 package authz
 
 import (
-	"fmt"
-	"github.com/dreamlu/go-tool/util"
-	"github.com/dreamlu/go-tool/util/lib"
+	der "github.com/dreamlu/go-tool"
+	"github.com/dreamlu/go-tool/tool/result"
 	"net/http"
 	"net/url"
 	"strings"
@@ -24,7 +23,7 @@ func NewAuthorizer(e *casbin.Enforcer) gin.HandlerFunc {
 
 		if !a.CheckPermission(c.Request) {
 			c.Abort()
-			c.JSON(http.StatusOK, lib.MapNoAuth)
+			c.JSON(http.StatusOK, result.MapNoAuth)
 		}
 	}
 }
@@ -44,11 +43,11 @@ func (a *BasicAuthorizer) GetUserName(r *http.Request) string {
 	}
 	ss, _ := url.QueryUnescape(cookie.Value)
 	// 解密
-	role_id, err := util.Decrypt([]byte(ss))
-	if err != nil {
-		fmt.Println("cookie解密失败: ", err)
-		return "-1"
-	}
+	role_id := der.AesDe(ss)
+	//if err != nil {
+	//	fmt.Println("cookie解密失败: ", err)
+	//	return "-1"
+	//}
 	//各位数角色职位,截取一位即可
 	return string(role_id[:1])
 }

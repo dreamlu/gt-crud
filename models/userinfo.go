@@ -3,23 +3,25 @@ package models
 
 import (
 	"github.com/dreamlu/go-tool"
+	"github.com/dreamlu/go-tool/tool/result"
+	"github.com/dreamlu/go-tool/tool/type/time"
 )
 
 /*userinfo model*/
 type Userinfo struct {
-	ID         int64              `json:"id"`
-	UserID     int64              `json:"user_id"`
-	Userinfo   string             `json:"userinfo"`
-	Updatetime der.JsonTime `json:"updatetime"` //maybe you like util.JsonDate
+	ID         int64      `json:"id"`
+	UserID     int64      `json:"user_id"`
+	Userinfo   string     `json:"userinfo"`
+	Updatetime time.CTime `json:"updatetime"` //maybe you like util.JsonDate
 }
 
 /*detail userinfo and user model*/
 type UserinfoDe struct {
-	ID         int64              `json:"id"`
-	UserID     int64              `json:"user_id"`
-	UserName   string             `json:"user_name"` //table `user` + `user`.name
-	Userinfo   string             `json:"userinfo"`
-	Updatetime der.JsonTime `json:"updatetime"`
+	ID         int64      `json:"id"`
+	UserID     int64      `json:"user_id"`
+	UserName   string     `json:"user_name"` //table `user` + `user`.name
+	Userinfo   string     `json:"userinfo"`
+	Updatetime time.CTime `json:"updatetime"`
 }
 
 // old, please see order.go
@@ -29,5 +31,9 @@ type UserinfoDe struct {
 func GetUserInfoBySearch(args map[string][]string) interface{} {
 
 	var userdetail []UserinfoDe
-	return der.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
+	pager, err := der.GetDoubleTableDataBySearch(UserinfoDe{}, &userdetail, "userinfo", "user", args)
+	if err != nil {
+		return result.GetError(err)
+	}
+	return result.GetSuccessPager(userdetail, pager)
 }

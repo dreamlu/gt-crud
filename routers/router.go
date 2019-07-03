@@ -6,7 +6,7 @@ import (
 	"demo/controllers/basic"
 	"demo/controllers/file"
 	"github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/util/lib"
+	"github.com/dreamlu/go-tool/tool/result"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -121,7 +121,7 @@ func CheckLogin() gin.HandlerFunc {
 			_, err := c.Cookie("uid")	// may be use session
 			if err != nil {
 				c.Abort()
-				c.JSON(http.StatusOK, lib.MapNoAuth)
+				c.JSON(http.StatusOK, result.MapNoAuth)
 			}
 		}
 	}

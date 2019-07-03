@@ -1,7 +1,11 @@
 // author: dreamlu
 package models
 
-import "github.com/dreamlu/go-tool"
+import (
+	"github.com/dreamlu/go-tool"
+	"github.com/dreamlu/go-tool/tool/result"
+	"github.com/dreamlu/go-tool/tool/type/time"
+)
 
 // order
 type Order struct {
@@ -18,18 +22,23 @@ type OrderD struct {
 	UserName    string             `json:"user_name"`    // user table column name
 	ServiceID   int64              `json:"service_id"`   // service table id
 	ServiceName string             `json:"service_name"` // service table column `name`
-	Createtime  der.JsonTime `json:"createtime"`   // createtime
+	Createtime  time.CTime `json:"createtime"`   // createtime
 }
 
 // get order, limit and search
 // clientPage 1, everyPage 10 default
 func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
-	var or []*OrderD
-	db = der.DbCrud{
+	var or []OrderD
+	db := der.DbCrud{
 		InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table
 		LeftTables:  []string{"service"},       // left join tables
 		Model:       OrderD{},                  // order model
 		ModelData:   &or,                       // model value
 	}
-	return db.GetMoreBySearch(params)
+	pager, err := db.GetMoreBySearch(params)
+	if err != nil {
+		return result.GetError(err)
+	}
+
+	return result.GetSuccessPager(or, pager)
 }

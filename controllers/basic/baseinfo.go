@@ -3,7 +3,7 @@ package basic
 
 import (
 	"github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/util/lib"
+	"github.com/dreamlu/go-tool/tool/result"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"runtime"
@@ -30,5 +30,5 @@ func GetBasicInfo(u *gin.Context) {
 	basic.Maxmerory = der.MaxUploadMemory / 1024 / 1024
 	der.DB.Raw("select version() as mysql").Scan(&basic)
 
-	u.JSON(http.StatusOK, lib.GetMapDataSuccess(basic))
+	u.JSON(http.StatusOK, result.GetSuccess(basic))
 }
