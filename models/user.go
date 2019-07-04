@@ -2,6 +2,7 @@
 package models
 
 import (
+	"demo/util/log"
 	"github.com/dreamlu/go-tool"
 	"github.com/dreamlu/go-tool/tool/result"
 	time2 "github.com/dreamlu/go-tool/tool/type/time"
@@ -26,7 +27,11 @@ func (c *User) GetByID(id string) interface{} {
 
 	var user User // not use *User
 	db.ModelData = &user
-	return db.GetByID(id)
+	if err := db.GetByID(id); err != nil {
+		log.Log.Error(err.Error())
+		return result.GetError(err.Error())
+	}
+	return result.GetSuccess(user)
 }
 
 // get user, limit and search
@@ -36,6 +41,7 @@ func (c *User) GetBySearch(params map[string][]string) interface{} {
 	db.ModelData = &users
 	pager, err := db.GetBySearch(params)
 	if err != nil {
+		log.Log.Error(err.Error())
 		return result.GetError(err)
 	}
 	return result.GetSuccessPager(users, pager)
@@ -44,18 +50,31 @@ func (c *User) GetBySearch(params map[string][]string) interface{} {
 // delete user, by id
 func (c *User) Delete(id string) interface{} {
 
-	return db.Delete(id)
+	if err := db.Delete(id); err != nil {
+		log.Log.Error(err.Error())
+		return result.GetError(err)
+	}
+	return result.GetMapData(result.CodeDelete, result.MsgDelete)
 }
 
 // update user
 func (c *User) Update(params map[string][]string) interface{} {
 
-	return db.Update(params)
+	if err := db.Update(params); err != nil {
+		log.Log.Error(err.Error())
+		return result.GetError(err)
+	}
+	return result.GetMapData(result.CodeUpdate, result.MsgUpdate)
 }
 
 // create user
 func (c *User) Create(params map[string][]string) interface{} {
 
 	params["createtime"] = append(params["createtime"], time.Now().Format("2006-01-02 15:04:05"))
-	return db.Create(params)
+
+	if err := db.Create(params); err != nil {
+		log.Log.Error(err.Error())
+		return result.GetError(err)
+	}
+	return result.GetMapData(result.CodeCreate, result.MsgCreate)
 }
