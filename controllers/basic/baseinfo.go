@@ -2,6 +2,7 @@
 package basic
 
 import (
+	"demo/util/global"
 	"github.com/dreamlu/go-tool"
 	"github.com/dreamlu/go-tool/tool/result"
 	"github.com/gin-gonic/gin"
@@ -21,14 +22,14 @@ type Basic struct {
 
 func GetBasicInfo(u *gin.Context) {
 	var basic Basic
-	basic.Address = der.GetConfigValue("domain")
-	basic.Port = der.GetConfigValue("http_port")
+	basic.Address = global.Config.GetString("domain")
+	basic.Port = global.Config.GetString("app.port")
 	basic.Os = runtime.GOOS
 	basic.Goversion = runtime.Version()
 	basic.Ginversion = gin.Version
 	// router := routers.SetRouter()
 	basic.Maxmerory = der.MaxUploadMemory / 1024 / 1024
-	der.DB.Raw("select version() as mysql").Scan(&basic)
+	global.DBTool.DB.Raw("select version() as mysql").Scan(&basic)
 
 	u.JSON(http.StatusOK, result.GetSuccess(basic))
 }

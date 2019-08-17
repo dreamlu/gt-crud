@@ -1,0 +1,15 @@
+app:
+  # database
+  db:
+    host: tcp(127.0.0.1:3306)
+    user: root
+    password: lucheng
+    # database name
+    name: deercoder-gin
+  # redis
+  redis:
+    database: 0
+    host: 127.0.0.1:6379
+    poolSize: 0
+    minIdleConns: 0
+    password:

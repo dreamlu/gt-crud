@@ -64,10 +64,10 @@ func SetRouter() *gin.Engine {
 			user.PATCH("/updateJ", controllers.UpdateJ)
 		}
 		//用户账户数据
-		usercount := v.Group("/userinfo")
-		{
-			usercount.GET("/search", controllers.GetUserinfoBySearch)
-		}
+		//usercount := v.Group("/userinfo")
+		//{
+		//	usercount.GET("/search", controllers.GetUserinfoBySearch)
+		//}
 		//订单数据
 		orders := v.Group("/order")
 		{
@@ -96,11 +96,6 @@ func SetRouter() *gin.Engine {
 			user.DELETE("/delete/:id", controllers.Delete)
 			user.POST("/create", controllers.Create)
 			user.PATCH("/update", controllers.Update)
-		}
-		//用户账户数据
-		usercount := v.Group("/userinfo")
-		{
-			usercount.GET("/search", controllers.GetUserinfoBySearch)
 		}
 	}
 	//不存在路由
