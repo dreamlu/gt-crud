@@ -19,8 +19,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/denisenkom/go-mssqldb v0.0.0-20190423183735-731ef375ac02 h1:PS3xfVPa8N84AzoWZHFCbA0+ikz4f4skktfjQoNMsgk=
 github.com/denisenkom/go-mssqldb v0.0.0-20190423183735-731ef375ac02/go.mod h1:zAg7JM8CkOJ43xKXIj7eRO9kmWm/TW578qo+oDO6tuM=
-github.com/dreamlu/go-tool v1.2.2 h1:No5xOhxTib8qfOVuBfyW6awuZFhun8Qu2gVFE7gSQnE=
-github.com/dreamlu/go-tool v1.2.2/go.mod h1:nKsAgTL+bEmWc2AC5k09eWY1WKZcawW9xjq2qmRnMpc=
+github.com/dreamlu/go-tool v1.2.3 h1:AIztfDXqyOINkLepdQsWJeeIhOajIU5UNUqXH3jVc1c=
+github.com/dreamlu/go-tool v1.2.3/go.mod h1:nKsAgTL+bEmWc2AC5k09eWY1WKZcawW9xjq2qmRnMpc=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646 h1:xHdtHvnCl8+HI3N47/YRkFOi7Bee/MCFRVTfU1WV4Xo=
 github.com/dreamlu/resize v0.0.0-20180221191011-83c6a9932646/go.mod h1:eki9RCc1wSN9m8lOBvgKtNmNOnSF6s8f+wIGt8RTxWA=
 github.com/eapache/go-resiliency v1.1.0/go.mod h1:kFI+JgMyC7bLPUVY133qvEBtVayf5mFgVsvEsIPBvNs=

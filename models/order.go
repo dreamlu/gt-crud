@@ -30,13 +30,17 @@ type OrderD struct {
 // clientPage 1, everyPage 10 default
 func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 	var or []OrderD
-	DBTool.Param = der.CrudParam{
-		InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table
-		LeftTables:  []string{"service"},       // left join tables
-		Model:       OrderD{},                  // order model
-		ModelData:   &or,                       // model value
+	var crud = der.DBCrud{
+		DBTool: DBTool,
+		Param: &der.CrudParam{
+			InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table
+			LeftTables:  []string{"service"},       // left join tables
+			Model:       OrderD{},                  // order model
+			ModelData:   &or,                       // model value
+		},
 	}
-	pager, err := DBTool.Crud.GetMoreBySearch(params)
+
+	pager, err := crud.GetMoreBySearch(params)
 	if err != nil {
 		return result.GetError(err)
 	}

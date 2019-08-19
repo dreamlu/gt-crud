@@ -1,6 +1,8 @@
 package global
 
-import der "github.com/dreamlu/go-tool"
+import (
+	der "github.com/dreamlu/go-tool"
+)
 
 // init param
 var DBTool = &der.DBTool{}
