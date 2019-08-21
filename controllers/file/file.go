@@ -9,14 +9,16 @@ import (
 
 // 单文件上传
 // use gin upload file
-func UpoadFile(u *gin.Context) {
+func UploadFile(u *gin.Context) {
 
-	fname := u.PostForm("fname") //指定文件名
+	name := u.PostForm("name") //指定文件名
 	file, err := u.FormFile("file")
 	if err != nil {
 		u.JSON(http.StatusOK, result.MapData{Status: result.CodeFile, Msg: err.Error()})
 	}
-	upFile := File.File{}
-	path := upFile.GetUploadFile(file, fname)
+	upFile := File.File{
+		Name: name,
+	}
+	path, err := upFile.GetUploadFile(file)
 	u.JSON(http.StatusOK, map[string]interface{}{result.Status: result.CodeFile, result.Msg: result.MsgFile, "path": path})
 }

@@ -20,8 +20,8 @@ func SetRouter() *gin.Engine {
 	der.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
-	//登录失效验证
-	//router.Use(CheckLogin())
+	// 过滤器
+	router.Use(Filter())
 	//权限中间件
 	// load the casbin model and policy from files, database is also supported.
 	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
@@ -43,10 +43,16 @@ func SetRouter() *gin.Engine {
 	v1 := router.Group("/api/v1")
 	{
 		v := v1
+
+		// 静态目录
+		// relativePath:请求路径
+		// root:静态文件所在目录
+		v.Static("static", "static")
+		// v.GET("/statics/file", file.StaticFile)
 		//网站基本信息
 		v.GET("/basic/basic", basic.GetBasicInfo)
 		//文件上传
-		v.POST("/file/upload", file.UpoadFile)
+		v.POST("/file/upload", file.UploadFile)
 		//用户
 		user := v.Group("/user")
 		{
@@ -87,7 +93,7 @@ func SetRouter() *gin.Engine {
 		//网站基本信息
 		v.GET("/basic/basic", basic.GetBasicInfo)
 		//文件上传
-		v.POST("/file/upload", file.UpoadFile)
+		v.POST("/file/upload", file.UploadFile)
 		//用户
 		user := v.Group("/user")
 		{
@@ -108,12 +114,19 @@ func SetRouter() *gin.Engine {
 	return router
 }
 
-/*登录失效验证*/
-func CheckLogin() gin.HandlerFunc {
+// 登录失效验证
+func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.String()
+
+		// 静态服务器 file 处理
+		if strings.Contains(path, "/static/file/") {
+			file.StaticFile(c)
+			return
+		}
+
 		if !strings.Contains(path, "login") && !strings.Contains(path, "/static/file") {
-			_, err := c.Cookie("uid")	// may be use session
+			_, err := c.Cookie("uid") // may be use session
 			if err != nil {
 				c.Abort()
 				c.JSON(http.StatusOK, result.MapNoAuth)
@@ -122,40 +135,22 @@ func CheckLogin() gin.HandlerFunc {
 	}
 }
 
-// xss
-//func xssMid() gin.HandlerFunc{
-//	return func(c *gin.Context) {
-//		c.Request.ParseForm()
-//		//values := c.Request.PostForm
-//		xss.XssMap(c.Request.PostForm)
-//	}
-//}
-
-///*跨域解决方案,待完善,建议nginx 解决*/
-//func CorsMiddleware() gin.HandlerFunc {
+// 处理跨域请求,支持options访问
+//func Cors() gin.HandlerFunc {
 //	return func(c *gin.Context) {
 //		method := c.Request.Method
-//		origin := c.Request.Header.Get("Origin")
-//		var filterHost = [...]string{"http://localhost.*", "http://192.168.31.173:3000"}
-//		// filterHost 做过滤器，防止不合法的域名访问
-//		var isAccess = false
-//		for _, v := range filterHost {
-//			match, _ := regexp.MatchString(v, origin)
-//			if match {
-//				isAccess = true
-//			}
-//		}
-//		if isAccess {
-//			// 核心处理方式
-//			c.Header("Access-Control-Allow-Origin", "*")
-//			c.Header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-//			c.Header("Access-Control-Allow-Methods", "GET, OPTIONS, POST, PUT, DELETE")
-//			c.Set("content-type", "application/json")
-//		}
-//		//放行所有OPTIONS方法
+//		//fmt.Println(method)
+//		c.Header("Access-Control-Allow-Origin", "*")
+//		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+//		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
+//		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+//		c.Header("Access-Control-Allow-Credentials", "true")
+//
+//		// 放行所有OPTIONS方法，因为有的模板是要请求两次的
 //		if method == "OPTIONS" {
-//			c.JSON(http.StatusOK, "Options Request!")
+//			c.AbortWithStatus(http.StatusNoContent)
 //		}
+//		// 处理请求
 //		c.Next()
 //	}
 //}
