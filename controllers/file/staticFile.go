@@ -14,6 +14,8 @@ import (
 // static file path
 func StaticFile(u *gin.Context) {
 
+	var fileByte []byte
+
 	// get the params
 	url := u.Request.URL.Path
 	urlSp := strings.Split(url, "/")
@@ -29,16 +31,6 @@ func StaticFile(u *gin.Context) {
 
 	// upload dir
 	uploadDir := global.Config.GetString("app.filepath")
-
-	// 文件读取
-	fileByte, err := ioutil.ReadFile(uploadDir + name)
-	if err != nil {
-		u.JSON(http.StatusOK, result.MapData{
-			Status: result.CodeFile,
-			Msg:    err.Error(),
-		})
-		return
-	}
 
 	// 文件查找 是否存在 不存在则压缩
 	if width != 0 || height != 0 {
@@ -61,6 +53,16 @@ func StaticFile(u *gin.Context) {
 				})
 				return
 			}
+		}
+	} else {
+		// 文件读取
+		fileByte, err = ioutil.ReadFile(uploadDir + name)
+		if err != nil {
+			u.JSON(http.StatusOK, result.MapData{
+				Status: result.CodeFile,
+				Msg:    err.Error(),
+			})
+			return
 		}
 	}
 

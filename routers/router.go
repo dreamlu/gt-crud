@@ -122,6 +122,7 @@ func Filter() gin.HandlerFunc {
 		// 静态服务器 file 处理
 		if strings.Contains(path, "/static/file/") {
 			file.StaticFile(c)
+			c.Abort()
 			return
 		}
 
