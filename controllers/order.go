@@ -3,12 +3,13 @@ package controllers
 
 import (
 	"demo/models"
-	"github.com/dreamlu/go-tool/tool/xss"
+	"github.com/dreamlu/gt/tool/xss"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 var q models.Order
+
 //用户信息分页
 func GetOrderBySearch(u *gin.Context) {
 	u.Request.ParseForm()

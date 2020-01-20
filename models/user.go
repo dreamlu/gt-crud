@@ -2,10 +2,9 @@
 package models
 
 import (
-	. "demo/util/global"
-	der "github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/tool/result"
-	. "github.com/dreamlu/go-tool/tool/type/time"
+	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/result"
+	. "github.com/dreamlu/gt/tool/type/time"
 	"time"
 )
 
@@ -16,19 +15,16 @@ type User struct {
 	Createtime CTime  `json:"createtime"` //maybe you like util.JsonDate
 }
 
-var crud2 = der.DBCrud{
-	DBTool: DBTool,
-	Param: &der.CrudParam{
-		Model: User{}, // model
-		Table: "user", // table name
-	},
-}
+var crud2 = gt.NewCrud(
+	gt.Model(User{}),
+	gt.Table("user"),
+)
 
 // get user, by id
 func (c *User) GetByID(id string) interface{} {
 
 	var user User // not use *User
-	crud2.Param.ModelData = &user
+	crud.Params(gt.Data(&user))
 	if err := crud2.GetByID(id); err != nil {
 		//log.Log.Error(err.Error())
 		return result.GetError(err.Error())
@@ -40,13 +36,13 @@ func (c *User) GetByID(id string) interface{} {
 // clientPage 1, everyPage 10 default
 func (c *User) GetBySearch(params map[string][]string) interface{} {
 	var users []*User
-	crud2.Param.ModelData = &users
-	pager, err := crud2.GetBySearch(params)
-	if err != nil {
+	crud.Params(gt.Data(&users))
+	cd := crud.GetBySearch(params)
+	if cd.Error() != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(err)
+		return result.GetError(cd.Error())
 	}
-	return result.GetSuccessPager(users, pager)
+	return result.GetSuccessPager(users, cd.Pager())
 }
 
 // delete user, by id

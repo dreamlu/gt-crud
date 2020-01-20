@@ -6,8 +6,8 @@
 package authz
 
 import (
-	der "github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/tool/result"
+	der "github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/result"
 	"net/http"
 	"net/url"
 	"strings"

@@ -2,32 +2,27 @@
 package models
 
 import (
-	. "demo/util/global"
-	der "github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/tool/result"
-	time2 "github.com/dreamlu/go-tool/tool/type/time"
-	"log"
+	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/result"
+	time2 "github.com/dreamlu/gt/tool/type/time"
 	"time"
 )
 
-var crud = der.DBCrud{
-	DBTool: DBTool,
-	Param: &der.CrudParam{
-		Model: User{}, // model
-		Table: "user", // table name
-	},
-}
+var crud = gt.NewCrud(
+	gt.Model(User{}),
+	gt.Table("user"),
+)
 
 // get user, by id
 func (c *User) GetByIDJ(id string) interface{} {
 
 	var user User // not use *User
-	crud.Param.ModelData = &user
+	crud.Params(gt.Data(&user))
 	if err := crud.GetByID(id); err != nil {
 		//log.Log.Error(err.Error())
 		return result.GetError(err.Error())
 	}
-	log.Print("测试", crud.Param)
+	gt.Logger().Print("测试", user)
 	return result.GetSuccess(user)
 }
 
@@ -35,20 +30,20 @@ func (c *User) GetByIDJ(id string) interface{} {
 // clientPage 1, everyPage 10 default
 func (c *User) GetBySearchJ(params map[string][]string) interface{} {
 	var users []*User
-	crud.Param.ModelData = &users
+	crud.Params(gt.Data(&users))
 
-	pager, err := crud.GetBySearch(params)
-	if err != nil {
+	cd := crud.GetBySearch(params)
+	if cd.Error() != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(err)
+		return result.GetError(cd.Error())
 	}
-	return result.GetSuccessPager(users, pager)
+	return result.GetSuccessPager(users, cd.Pager())
 }
 
 // delete user, by id
 func (c *User) DeleteJ(id string) interface{} {
 
-	if err := crud.Delete(id); err != nil {
+	if err := crud.Delete(id).Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return result.GetError(err)
 	}
@@ -58,7 +53,8 @@ func (c *User) DeleteJ(id string) interface{} {
 // update user
 func (c *User) UpdateJ(data *User) interface{} {
 
-	if err := crud.Update(data); err != nil {
+	crud.Params(gt.Data(data))
+	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return result.GetError(err)
 	}
@@ -71,7 +67,8 @@ func (c *User) CreateJ(data *User) interface{} {
 	// create time
 	(*data).Createtime = time2.CTime(time.Now())
 
-	if err := crud.Create(data); err != nil {
+	crud.Params(gt.Data(data))
+	if err := crud.Create().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return result.GetError(err)
 	}

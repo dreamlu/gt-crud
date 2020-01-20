@@ -1,9 +1,9 @@
 package file
 
 import (
-	"demo/util/global"
-	"github.com/dreamlu/go-tool/tool/file"
-	"github.com/dreamlu/go-tool/tool/result"
+	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/file"
+	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -30,7 +30,7 @@ func StaticFile(u *gin.Context) {
 	}
 
 	// upload dir
-	uploadDir := global.Config.GetString("app.filepath")
+	uploadDir := gt.Configger().GetString("app.filepath")
 
 	// 文件查找 是否存在 不存在则压缩
 	if width != 0 || height != 0 {
@@ -47,10 +47,7 @@ func StaticFile(u *gin.Context) {
 			err = fileUtil.CompressImage("jpg")
 			fileByte, err = ioutil.ReadFile(fileUtil.NewPath)
 			if err != nil {
-				u.JSON(http.StatusOK, result.MapData{
-					Status: result.CodeFile,
-					Msg:    err.Error(),
-				})
+				u.JSON(http.StatusOK, result.GetError(err))
 				return
 			}
 		}
@@ -58,10 +55,7 @@ func StaticFile(u *gin.Context) {
 		// 文件读取
 		fileByte, err = ioutil.ReadFile(uploadDir + name)
 		if err != nil {
-			u.JSON(http.StatusOK, result.MapData{
-				Status: result.CodeFile,
-				Msg:    err.Error(),
-			})
+			u.JSON(http.StatusOK, result.GetError(err))
 			return
 		}
 	}

@@ -2,10 +2,9 @@
 package models
 
 import (
-	. "demo/util/global"
-	"github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/tool/result"
-	"github.com/dreamlu/go-tool/tool/type/time"
+	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/type/time"
 )
 
 // order
@@ -30,20 +29,17 @@ type OrderD struct {
 // clientPage 1, everyPage 10 default
 func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 	var or []OrderD
-	var crud = der.DBCrud{
-		DBTool: DBTool,
-		Param: &der.CrudParam{
-			InnerTables: []string{"order", "user"}, // inner join tables, 'order' must the first table
-			LeftTables:  []string{"service"},       // left join tables
-			Model:       OrderD{},                  // order model
-			ModelData:   &or,                       // model value
-		},
+	var crud = gt.NewCrud(
+		gt.InnerTable([]string{"order", "user"}),
+		gt.LeftTable([]string{"service"}),
+		gt.Model(OrderD{}),
+		gt.Data(&or),
+	)
+
+	cd := crud.GetMoreBySearch(params)
+	if cd.Error() != nil {
+		return result.GetError(cd.Error())
 	}
 
-	pager, err := crud.GetMoreBySearch(params)
-	if err != nil {
-		return result.GetError(err)
-	}
-
-	return result.GetSuccessPager(or, pager)
+	return result.GetSuccessPager(or, cd.Pager())
 }

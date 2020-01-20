@@ -3,14 +3,15 @@ package controllers
 
 import (
 	"demo/models"
-	"github.com/dreamlu/go-tool/tool/result"
-	"github.com/dreamlu/go-tool/tool/xss"
-	"github.com/dreamlu/go-tool/tool/validator"
+	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/validator"
+	"github.com/dreamlu/gt/tool/xss"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 var p models.User
+
 //根据id获得用户获取
 func GetById(u *gin.Context) {
 	id := u.Query("id")

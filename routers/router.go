@@ -5,8 +5,8 @@ import (
 	"demo/controllers"
 	"demo/controllers/basic"
 	"demo/controllers/file"
-	"github.com/dreamlu/go-tool"
-	"github.com/dreamlu/go-tool/tool/result"
+	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/util/str"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -17,7 +17,7 @@ func SetRouter() *gin.Engine {
 	// gin.DisableConsoleColor()
 	//router := gin.Default()
 	router := gin.New()
-	der.MaxUploadMemory = router.MaxMultipartMemory
+	str.MaxUploadMemory = router.MaxMultipartMemory
 	//router.Use(CorsMiddleware())
 
 	// 过滤器
@@ -117,6 +117,10 @@ func SetRouter() *gin.Engine {
 // 登录失效验证
 func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if c.Request.Method == "GET"{
+			//c.Next()
+			return
+		}
 		path := c.Request.URL.String()
 
 		// 静态服务器 file 处理
