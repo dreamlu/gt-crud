@@ -61,19 +61,9 @@ func SetRouter() *gin.Engine {
 			user.DELETE("/delete/:id", controllers.Delete)
 			user.POST("/create", controllers.Create)
 			user.PATCH("/update", controllers.Update)
-
-			// json
-			user.GET("/searchJ", controllers.GetBySearchJ)
-			user.GET("/idJ", controllers.GetByIdJ)
-			user.DELETE("/deleteJ/:id", controllers.DeleteJ)
-			user.POST("/createJ", controllers.CreateJ)
-			user.PATCH("/updateJ", controllers.UpdateJ)
+			user.POST("/createForm", controllers.CreateForm)
+			user.PATCH("/updateForm", controllers.UpdateForm)
 		}
-		//用户账户数据
-		//usercount := v.Group("/userinfo")
-		//{
-		//	usercount.GET("/search", controllers.GetUserinfoBySearch)
-		//}
 		//订单数据
 		orders := v.Group("/order")
 		{
@@ -101,7 +91,7 @@ func SetRouter() *gin.Engine {
 			user.GET("/id", controllers.GetById)
 			user.DELETE("/delete/:id", controllers.Delete)
 			user.POST("/create", controllers.Create)
-			user.PATCH("/update", controllers.Update)
+			user.PUT("/update", controllers.Update)
 		}
 	}
 	//不存在路由

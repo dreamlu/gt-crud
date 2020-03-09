@@ -33,10 +33,10 @@ type BasicAuthorizer struct {
 	enforcer *casbin.Enforcer
 }
 
-// GetUserName gets the user name from the request.
+// GetUserName gets the data name from the request.
 // Currently, only HTTP basic authentication is supported
 func (a *BasicAuthorizer) GetUserName(r *http.Request) string {
-	//username, _, _ := r.BasicAuth()
+	//dataname, _, _ := r.BasicAuth()
 	cookie, err := r.Cookie("role_id")
 	if err != nil {
 		return "-1"
@@ -52,16 +52,16 @@ func (a *BasicAuthorizer) GetUserName(r *http.Request) string {
 	return string(role_id[:1])
 }
 
-// CheckPermission checks the user/method/path combination from the request.
+// CheckPermission checks the data/method/path combination from the request.
 // Returns true (permission granted) or false (permission forbidden)
 func (a *BasicAuthorizer) CheckPermission(r *http.Request) bool {
-	user := a.GetUserName(r)
+	data := a.GetUserName(r)
 	method := r.Method
 	path := r.URL.Path
 	if strings.Contains(path, "/static/") || strings.Contains(path, "login") {
 		return true
 	}
-	return a.enforcer.Enforce(user, path, method)
+	return a.enforcer.Enforce(data, path, method)
 }
 
 /*// RequirePermission returns the 403 Forbidden to the client

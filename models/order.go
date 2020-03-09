@@ -7,12 +7,18 @@ import (
 	"github.com/dreamlu/gt/tool/type/time"
 )
 
-// order
+// order model
 type Order struct {
-	ID         int64 `json:"id"`
-	UserID     int64 `json:"user_id"`     // user id
-	ServiceID  int64 `json:"service_id"`  // service table id
-	CreateTime int64 `json:"create_time"` // createtime
+	ID         int64      `gorm:"type:bigint(20) AUTO_INCREMENT;PRIMARY_KEY;" json:"id"`
+	UserID     int64      `json:"user_id" gorm:"type:bigint(20)"`    // user id
+	ServiceID  int64      `json:"service_id" gorm:"type:bigint(20)"` // service table id
+	CreateTime time.CTime `gorm:"type:datetime;DEFAULT:CURRENT_TIMESTAMP" json:"createtime"`
+}
+
+// service model
+type Service struct {
+	ID   int64  `gorm:"type:bigint(20) AUTO_INCREMENT;PRIMARY_KEY;" json:"id"`
+	Name string `json:"name" gorm:"type:varchar(30)"`
 }
 
 // order detail
@@ -31,7 +37,7 @@ func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 	var or []OrderD
 	var crud = gt.NewCrud(
 		gt.InnerTable([]string{"order", "user"}),
-		gt.LeftTable([]string{"service"}),
+		gt.LeftTable([]string{"order", "service"}),
 		gt.Model(OrderD{}),
 		gt.Data(&or),
 	)

@@ -7,6 +7,7 @@ import (
 	"github.com/dreamlu/gt/tool/validator"
 	"github.com/dreamlu/gt/tool/xss"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -37,16 +38,44 @@ func Delete(u *gin.Context) {
 
 //用户信息修改
 func Update(u *gin.Context) {
-	_ = u.Request.ParseForm()
-	values := u.Request.Form
-	xss.XssMap(values)
+	var data models.User
 
-	ss := p.Update(values)
+	// json 类型需要匹配
+	// 与spring boot不同
+	// 不能自动将字符串转成对应类型
+	// 严格匹配
+	_ = u.ShouldBindJSON(&data)
+	// do something
+
+	ss := p.Update(&data)
 	u.JSON(http.StatusOK, ss)
 }
 
 //新增用户信息
 func Create(u *gin.Context) {
+	var data models.User
+
+	// 自定义日期格式问题
+	err := u.ShouldBindJSON(&data)
+	log.Println(err)
+
+	ss := p.Create(&data)
+	u.JSON(http.StatusOK, ss)
+}
+
+
+//用户信息修改
+func UpdateForm(u *gin.Context) {
+	_ = u.Request.ParseForm()
+	values := u.Request.Form
+	xss.XssMap(values)
+
+	ss := p.UpdateForm(values)
+	u.JSON(http.StatusOK, ss)
+}
+
+//新增用户信息
+func CreateForm(u *gin.Context) {
 	_ = u.Request.ParseForm()
 	values := u.Request.Form
 	xss.XssMap(values)                            //html特殊字符转换
@@ -56,6 +85,6 @@ func Create(u *gin.Context) {
 		return
 	}
 
-	ss := p.Create(values)
+	ss := p.CreateForm(values)
 	u.JSON(http.StatusOK, ss)
 }
