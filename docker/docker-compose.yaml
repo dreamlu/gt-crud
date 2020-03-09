@@ -15,16 +15,7 @@ services:
 
   # mysql-server
   mysql:
-    build:
-      context: ./mysql
-      dockerfile: Dockerfile
-      args:
-        MYSQL_VERSION: 5.7
-        # 账号密码同下环境变量值
-        MYSQL_DATABASE: deercoder-gin
-        MYSQL_USER: dreamlu
-        MYSQL_PASSWORD: dreamlu
-        MYSQL_ROOT_PASSWORD: dreamlu
+    image: registry.cn-hangzhou.aliyuncs.com/dreamlu/mysql:8.0
     #command:
     #privileged: true
     container_name: d-mysql
@@ -42,7 +33,8 @@ services:
     restart: always
     # sql备份目录
     volumes:
-      - /home/ubuntu/dreamlu/bak:/bak
+      - /root/bak/mysql:/bak
+#      - /root/bak/mysql/data:/var/lib/mysql
   # redis
 #  redis:
 #    image: redis:4.0
@@ -52,10 +44,10 @@ services:
 #    restart: always
   # api gateway
   demo:
-    image: registry.cn-hangzhou.aliyuncs.com/dreamlu/common:deercoder-gin-demo
+    image: registry.cn-hangzhou.aliyuncs.com/dreamlu/common:deercoder-gin
     ports:
       - 9000:9000
     container_name: d-demo
     restart: always
-    #depends_on:
-    #  - mysql
+    volumes:
+      - /root/bak/static:/static
