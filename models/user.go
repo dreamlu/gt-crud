@@ -94,7 +94,7 @@ func (c *User) UpdateForm(params map[string][]string) interface{} {
 // create data
 func (c *User) CreateForm(params map[string][]string) interface{} {
 
-	params["createtime"] = append(params["createtime"], time.Now().Format("2006-01-02 15:04:05"))
+	//params["createtime"] = append(params["createtime"], time.Now().Format("2006-01-02 15:04:05"))
 
 	if err := crud.CreateForm(params); err != nil {
 		//log.Log.Error(err.Error())

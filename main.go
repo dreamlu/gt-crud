@@ -16,7 +16,7 @@ func main() {
 	_ = r.Run(":" + gt.Configger().GetString("app.port"))
 }
 
-// 数据库模型自动生成初始化
+// 数据库模型自动生成
 func init() {
 	gt.NewDBTool().AutoMigrate(
 		&models.User{},
