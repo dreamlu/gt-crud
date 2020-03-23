@@ -4,6 +4,7 @@ app:
   port: 9000
   # database
   db:
+    name: deercoder-gin
     maxIdleConn: 20
     maxOpenConn: 100
   # upload filepath

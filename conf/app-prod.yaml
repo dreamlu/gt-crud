@@ -2,6 +2,12 @@ app:
   # database
   db:
     host: tcp(mysql:3306)
-    name: deercoder-gin
     password: docker
     user: root
+  # redis
+  redis:
+    database: 0
+    host: redis:6379
+    poolSize: 0
+    minIdleConns: 0
+    password:

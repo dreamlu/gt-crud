@@ -2,25 +2,23 @@
 package main
 
 import (
-	"demo/models"
 	"demo/routers"
+	"demo/routers/dreamlu"
+	"demo/util/db"
 	"github.com/dreamlu/gt"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	gin.SetMode(gin.DebugMode)
-	r := routers.SetRouter()
+	//r := routers.SetRouter()
 	// pprof.Register(r)
 	// Listen and Server in 0.0.0.0:8080
-	_ = r.Run(":" + gt.Configger().GetString("app.port"))
+	_ = routers.Router.Run(":" + gt.Configger().GetString("app.port"))
 }
 
 // 数据库模型自动生成
 func init() {
-	gt.NewDBTool().AutoMigrate(
-		&models.User{},
-		&models.Service{},
-		&models.Order{},
-	)
+	dreamlu.InitRouter()
+	db.InitDB()
 }

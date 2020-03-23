@@ -1,53 +1,50 @@
-// @author  dreamlu
-package models
+package client
 
 import (
+	"demo/models"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
-	"github.com/dreamlu/gt/tool/type/time"
 )
 
-// User
-type User struct {
-	ID         uint       `gorm:"type:bigint(20) AUTO_INCREMENT;PRIMARY_KEY;" json:"id"`
-	Name       string     `gorm:"varchar(30)" json:"name" valid:"required,len=2-20"`         // 昵称
-	Createtime time.CTime `gorm:"type:datetime;DEFAULT:CURRENT_TIMESTAMP" json:"createtime"` // 创建时间自动生成
+// Client
+type Client struct {
+	models.ModelCom
+	Name string `gorm:"type:varchar(30)" json:"name" valid:"required,len=2-20"` // 昵称
 	//Openid     string     `json:"openid" gorm:"varchar(30);UNIQUE_INDEX:openid已存在"` // openID
 	//Headimg    string     `json:"headimg"` // 头像
 }
 
 var crud = gt.NewCrud(
-	gt.Model(User{}),
-	gt.Table("user"),
+	gt.Model(Client{}),
 )
 
 // get data, by id
-func (c *User) GetByID(id string) interface{} {
+func (c *Client) GetByID(id string) interface{} {
 
-	var data User // not use *User
+	var data Client // not use *Client
 	crud.Params(gt.Data(&data))
 	if err := crud.GetByID(id).Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(err.Error())
+		return result.CError(err)
 	}
 	return result.GetSuccess(data)
 }
 
 // get data, limit and search
 // clientPage 1, everyPage 10 default
-func (c *User) GetBySearch(params map[string][]string) interface{} {
-	var datas []*User
+func (c *Client) GetBySearch(params map[string][]string) interface{} {
+	var datas []*Client
 	crud.Params(gt.Data(&datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(cd.Error())
+		return result.CError(cd.Error())
 	}
 	return result.GetSuccessPager(datas, cd.Pager())
 }
 
 // delete data, by id
-func (c *User) Delete(id string) interface{} {
+func (c *Client) Delete(id string) interface{} {
 
 	if err := crud.Delete(id).Error(); err != nil {
 		//log.Log.Error(err.Error())
@@ -57,18 +54,18 @@ func (c *User) Delete(id string) interface{} {
 }
 
 // update data
-func (c *User) Update(data *User) interface{} {
+func (c *Client) Update(data *Client) interface{} {
 
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(err)
+		return result.CError(err)
 	}
 	return result.GetMapData(result.CodeUpdate, result.MsgUpdate)
 }
 
 // create data
-func (c *User) Create(data *User) interface{} {
+func (c *Client) Create(data *Client) interface{} {
 
 	// create time
 	//(*data).Createtime = time2.CTime(time.Now())
@@ -76,13 +73,13 @@ func (c *User) Create(data *User) interface{} {
 	crud.Params(gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return result.GetError(err)
+		return result.CError(err)
 	}
 	return result.GetMapData(result.CodeCreate, result.MsgCreate)
 }
 
 // update data
-func (c *User) UpdateForm(params map[string][]string) interface{} {
+func (c *Client) UpdateForm(params map[string][]string) interface{} {
 
 	if err := crud.UpdateForm(params); err != nil {
 		//log.Log.Error(err.Error())
@@ -92,7 +89,7 @@ func (c *User) UpdateForm(params map[string][]string) interface{} {
 }
 
 // create data
-func (c *User) CreateForm(params map[string][]string) interface{} {
+func (c *Client) CreateForm(params map[string][]string) interface{} {
 
 	//params["createtime"] = append(params["createtime"], time.Now().Format("2006-01-02 15:04:05"))
 

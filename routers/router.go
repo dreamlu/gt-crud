@@ -2,7 +2,6 @@
 package routers
 
 import (
-	"demo/controllers"
 	"demo/controllers/basic"
 	"demo/controllers/file"
 	"github.com/dreamlu/gt/tool/result"
@@ -11,6 +10,10 @@ import (
 	"net/http"
 	"strings"
 )
+
+var Router = SetRouter()
+
+var V = Router.Group("/api/v1")
 
 func SetRouter() *gin.Engine {
 	// Disable Console Color
@@ -53,46 +56,6 @@ func SetRouter() *gin.Engine {
 		v.GET("/basic/basic", basic.GetBasicInfo)
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
-		//用户
-		user := v.Group("/user")
-		{
-			user.GET("/search", controllers.GetBySearch)
-			user.GET("/id", controllers.GetById)
-			user.DELETE("/delete/:id", controllers.Delete)
-			user.POST("/create", controllers.Create)
-			user.PATCH("/update", controllers.Update)
-			user.POST("/createForm", controllers.CreateForm)
-			user.PATCH("/updateForm", controllers.UpdateForm)
-		}
-		//订单数据
-		orders := v.Group("/order")
-		{
-			orders.GET("/search", controllers.GetOrderBySearch)
-		}
-	}
-	//组的路由,version
-	v2 := router.Group("/api/v2")
-	{
-		v := v2
-
-		// 静态目录
-		// relativePath:请求路径
-		// root:静态文件所在目录
-		v.Static("static", "static")
-
-		//网站基本信息
-		v.GET("/basic/basic", basic.GetBasicInfo)
-		//文件上传
-		v.POST("/file/upload", file.UploadFile)
-		//用户
-		user := v.Group("/user")
-		{
-			user.GET("/search", controllers.GetBySearch)
-			user.GET("/id", controllers.GetById)
-			user.DELETE("/delete/:id", controllers.Delete)
-			user.POST("/create", controllers.Create)
-			user.PUT("/update", controllers.Update)
-		}
 	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {
@@ -107,7 +70,7 @@ func SetRouter() *gin.Engine {
 // 登录失效验证
 func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if c.Request.Method == "GET"{
+		if c.Request.Method == "GET" {
 			//c.Next()
 			return
 		}
