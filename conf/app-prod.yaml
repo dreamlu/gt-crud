@@ -6,8 +6,8 @@ app:
     user: root
   # redis
   redis:
-    database: 0
-    host: redis:6379
+    dB: 0
+    addr: redis:6379
     poolSize: 0
     minIdleConns: 0
-    password:
+    #password:

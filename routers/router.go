@@ -88,6 +88,7 @@ func Filter() gin.HandlerFunc {
 			if err != nil {
 				c.Abort()
 				c.JSON(http.StatusOK, result.MapNoAuth)
+				return
 			}
 		}
 	}

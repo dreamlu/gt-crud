@@ -15,6 +15,7 @@ func UploadFile(u *gin.Context) {
 	file, err := u.FormFile("file")
 	if err != nil {
 		u.JSON(http.StatusOK, result.GetError(err.Error()))
+		return
 	}
 	upFile := File.File{
 		Name: name,

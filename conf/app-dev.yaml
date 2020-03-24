@@ -7,8 +7,8 @@ app:
     log: true
   # redis
   redis:
-    database: 0
-    host: 127.0.0.1:6379
+    dB: 0
+    addr: 127.0.0.1:6379
     poolSize: 0
     minIdleConns: 0
-    password:
+    #password:
