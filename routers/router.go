@@ -4,6 +4,7 @@ package routers
 import (
 	"demo/controllers/basic"
 	"demo/controllers/file"
+	str2 "demo/util/str"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/util/str"
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,7 @@ func SetRouter() *gin.Engine {
 		v.GET("/basic/basic", basic.GetBasicInfo)
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
+		v.POST("/file/multi_upload", file.UploadMultiFile)
 	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {
@@ -70,6 +72,12 @@ func SetRouter() *gin.Engine {
 // 登录失效验证
 func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// 127请求且本地开发且为dev时无需验证
+		if strings.Contains(c.Request.RemoteAddr, "127.0.0.1") &&
+			str2.DevMode == str.Dev {
+			return
+		}
+
 		if c.Request.Method == "GET" {
 			//c.Next()
 			return

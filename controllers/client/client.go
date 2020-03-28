@@ -2,9 +2,9 @@ package client
 
 import (
 	"demo/models/client"
+	"demo/util"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/validator"
-	"github.com/dreamlu/gt/tool/xss"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -30,10 +30,7 @@ func GetBySearch(u *gin.Context) {
 	var (
 		res interface{}
 	)
-	_ = u.Request.ParseForm()
-	values := u.Request.Form //在使用之前需要调用ParseForm方法
-	xss.XssMap(values)
-	datas, pager, err := p.GetBySearch(values)
+	datas, pager, err := p.GetBySearch(util.ToCMap(u))
 	if err != nil {
 		res = result.CError(err)
 	}
@@ -96,19 +93,13 @@ func Create(u *gin.Context) {
 
 //data信息修改
 func UpdateForm(u *gin.Context) {
-	_ = u.Request.ParseForm()
-	values := u.Request.Form
-	xss.XssMap(values)
-
-	ss := p.UpdateForm(values)
+	ss := p.UpdateForm(util.ToCMap(u))
 	u.JSON(http.StatusOK, ss)
 }
 
 //新增data信息
 func CreateForm(u *gin.Context) {
-	_ = u.Request.ParseForm()
-	values := u.Request.Form
-	xss.XssMap(values)                              //html特殊字符转换
+	values := util.ToCMap(u)
 	res := validator.Valid(values, client.Client{}) //验证规则
 	if res != result.MapValSuccess {
 		u.JSON(http.StatusOK, res)

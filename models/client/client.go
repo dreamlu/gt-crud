@@ -4,6 +4,7 @@ import (
 	"demo/models"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/type/cmap"
 )
 
 // Client
@@ -32,7 +33,7 @@ func (c *Client) GetByID(id string) (*Client, error) {
 
 // get data, limit and search
 // clientPage 1, everyPage 10 default
-func (c *Client) GetBySearch(params map[string][]string) (datas []*Client, pager result.Pager, err error) {
+func (c *Client) GetBySearch(params cmap.CMap) (datas []*Client, pager result.Pager, err error) {
 	//var datas []*Client
 	crud.Params(gt.Data(&datas))
 	cd := crud.GetBySearch(params)
