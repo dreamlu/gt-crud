@@ -19,8 +19,6 @@ services:
     #command:
     #privileged: true
     container_name: d-mysql
-    #image: mysql/mysql-server:5.7
-    #image: mysql:5.7
     environment:
       MYSQL_DATABASE: deercoder-gin
       MYSQL_USER: dreamlu
@@ -33,8 +31,7 @@ services:
     restart: always
     # sql备份目录
     volumes:
-      - /root/bak/mysql:/bak
-#      - /root/bak/mysql/data:/var/lib/mysql
+      - /root/demo/bak/mysql/data:/var/lib/mysql
   # redis
 #  redis:
 #    image: redis:4.0
