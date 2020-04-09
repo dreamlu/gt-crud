@@ -1,13 +1,11 @@
 // Copyright 2014 Manu Martinez-Almeida.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
-
-// @author  dreamlu
 package authz
 
 import (
-	der "github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/util"
 	"net/http"
 	"net/url"
 	"strings"
@@ -43,7 +41,7 @@ func (a *BasicAuthorizer) GetUserName(r *http.Request) string {
 	}
 	ss, _ := url.QueryUnescape(cookie.Value)
 	// 解密
-	role_id := der.AesDe(ss)
+	role_id := util.AesDe(ss)
 	//if err != nil {
 	//	fmt.Println("cookie解密失败: ", err)
 	//	return "-1"

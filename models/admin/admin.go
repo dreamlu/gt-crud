@@ -1,28 +1,29 @@
-package client
+package admin
 
 import (
 	"demo/models"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
+	"github.com/dreamlu/gt/tool/util"
 )
 
-// Client
-type Client struct {
+// 多账号管理 模型
+type Admin struct {
 	models.ModelCom
-	Name string `gorm:"type:varchar(30)" json:"name" valid:"required,len=2-20"` // 昵称
-	//Openid     string     `json:"openid" gorm:"varchar(30);UNIQUE_INDEX:openid已存在"` // openID
-	//Headimg    string     `json:"headimg"` // 头像
+	Name     string `gorm:"type:varchar(30);UNIQUE_INDEX:账号已存在" json:"name"` // 名称
+	Password string `json:"password" gorm:"type:varchar(100)"`               // 密码
+	Role     *int8  `json:"role" gorm:"type:tinyint(2);DEFAULT:0"`           // 0默认,1管理员
 }
 
 var crud = gt.NewCrud(
-	gt.Model(Client{}),
+	gt.Model(Admin{}),
 )
 
 // get data, by id
-func (c *Client) Get(id string) (*Client, error) {
+func (c *Admin) Get(id string) (*Admin, error) {
 
-	var data Client // not use *Client
+	var data Admin // not use *Admin
 	crud.Params(gt.Data(&data))
 	if err := crud.GetByID(id).Error(); err != nil {
 		//log.Log.Error(err.Error())
@@ -32,9 +33,9 @@ func (c *Client) Get(id string) (*Client, error) {
 }
 
 // get data, limit and search
-// clientPage 1, everyPage 10 default
-func (c *Client) Search(params cmap.CMap) (datas []*Client, pager result.Pager, err error) {
-	//var datas []*Client
+// AdminPage 1, everyPage 10 default
+func (c *Admin) Search(params cmap.CMap) (datas []*Admin, pager result.Pager, err error) {
+	//var datas []*Admin
 	crud.Params(gt.Data(&datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
@@ -45,14 +46,15 @@ func (c *Client) Search(params cmap.CMap) (datas []*Client, pager result.Pager, 
 }
 
 // delete data, by id
-func (c *Client) Delete(id string) error {
+func (c *Admin) Delete(id string) error {
 
 	return crud.Delete(id).Error()
 }
 
 // update data
-func (c *Client) Update(data *Client) (*Client, error) {
+func (c *Admin) Update(data *Admin) (*Admin, error) {
 
+	data.Password = util.AesEn(data.Password)
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
@@ -62,8 +64,9 @@ func (c *Client) Update(data *Client) (*Client, error) {
 }
 
 // create data
-func (c *Client) Create(data *Client) (*Client, error) {
+func (c *Admin) Create(data *Admin) (*Admin, error) {
 
+	data.Password = util.AesEn(data.Password)
 	crud.Params(gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return nil, err

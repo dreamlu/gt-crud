@@ -9,3 +9,4 @@ app:
     maxOpenConn: 100
   # upload filepath
   filepath: static/file/
+  version: v0.1

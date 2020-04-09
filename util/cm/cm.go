@@ -1,0 +1,47 @@
+package cm
+
+import (
+	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/result"
+	"github.com/dreamlu/gt/tool/type/cmap"
+	"github.com/dreamlu/gt/tool/xss"
+	"github.com/gin-gonic/gin"
+)
+
+func ToCMap(u *gin.Context) cmap.CMap {
+	err := u.Request.ParseForm()
+	if err != nil {
+		gt.Logger().Error(err.Error())
+		return nil
+	}
+	values := cmap.CMap(u.Request.Form) //在使用之前需要调用ParseForm方法
+	xss.XssMap(values)
+	return values
+}
+
+func Res(err error) (res interface{}) {
+	if err != nil {
+		res = result.CError(err)
+	} else {
+		res = result.MapSuccess
+	}
+	return
+}
+
+func ResGet(err error, data interface{}) (res interface{}) {
+	if err != nil {
+		res = result.CError(err)
+	} else {
+		res = result.GetSuccess(data)
+	}
+	return
+}
+
+func ResPager(err error, datas interface{}, pager result.Pager) (res interface{}) {
+	if err != nil {
+		res = result.CError(err)
+	} else {
+		res = result.GetSuccessPager(datas, pager)
+	}
+	return
+}

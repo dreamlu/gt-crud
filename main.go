@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	//log.Println(gt.Version)
 	gin.SetMode(gin.DebugMode)
 	//r := routers.SetRouter()
 	// pprof.Register(r)
