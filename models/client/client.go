@@ -20,7 +20,7 @@ var crud = gt.NewCrud(
 )
 
 // get data, by id
-func (c *Client) Get(id string) (*Client, error) {
+func (c *Client) Get(id interface{}) (*Client, error) {
 
 	var data Client // not use *Client
 	crud.Params(gt.Data(&data))

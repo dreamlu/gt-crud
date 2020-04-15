@@ -3,16 +3,6 @@
 # github.com/dreamlu
 version: '3'
 services:
-  #nginx:
-  #  container_name: d-nginx
-  #  image: nginx
-  #  restart: always
-  #  ports:
-  #    - 80:80
-  #    - 443:443
-  #  volumes:
-  #    - ./nginx/conf.d:/etc/nginx/conf.d
-
   # mysql-server
   mysql:
     image: registry.cn-hangzhou.aliyuncs.com/dreamlu/mysql:8.0
@@ -32,13 +22,15 @@ services:
     # sql备份目录
     volumes:
       - /root/demo/bak/mysql/data:/var/lib/mysql
+    networks:
+      - demo
   # redis
-#  redis:
-#    image: redis:4.0
-#    ports:
-#      - 6378:6379
-#    container_name: d-redis
-#    restart: always
+  redis:
+    image: redis:4.0
+    ports:
+      - 6378:6379
+    container_name: d-redis
+    restart: always
   # api gateway
   demo:
     image: registry.cn-hangzhou.aliyuncs.com/dreamlu/common:deercoder-gin
@@ -48,3 +40,9 @@ services:
     restart: always
     volumes:
       - /root/bak/static:/static
+    networks:
+      - demo
+
+networks:
+  demo:
+    driver: bridge

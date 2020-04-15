@@ -1,8 +1,9 @@
 package db
 
 import (
-	"demo/models"
+	"demo/controllers/wx"
 	"demo/models/admin"
+	"demo/models/admin/applet"
 	"demo/models/client"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/util"
@@ -10,16 +11,42 @@ import (
 
 func InitDB() {
 	gt.NewDBTool().AutoMigrate(
-		&client.Client{},
-		&models.Service{},
-		&models.Order{},
-		&admin.Admin{},
+		&client.Client{}, // 客户
+		//&order.Service{},
+		//&order.Order{}, // 订单, 不用可注释
+		&admin.Admin{},   // 账号管理
+		&applet.Applet{}, // appid账号存储
+		&wx.QrCode{},     // 小程序二维码解析参数存储
 	)
 	initSQL()
 }
 
 // 初次部署更新, 后续可注释取消掉
 func initSQL() {
+	initAdmin()
+	//initApplet()
+}
+
+// 单账号初始化
+// 多账号可不用
+func initApplet() {
+	var data = applet.Applet{
+		//AdminCom:  models.AdminCom{}, // 单账号不需要admin_id,注释掉
+		Appid:     "",
+		Secret:    "",
+		MchID:     "",
+		PaySecret: "",
+		AppCert:   "",
+		AppKey:    "",
+	}
+	if data.Appid == "" {
+		return
+	}
+	gt.NewCrud(gt.Data(&data), gt.Model(applet.Applet{})).Create()
+}
+
+// init admin
+func initAdmin() {
 	// 插入admin账号
 	role := int8(1)
 	var ad = admin.Admin{

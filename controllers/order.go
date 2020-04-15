@@ -2,13 +2,13 @@
 package controllers
 
 import (
-	"demo/models"
+	"demo/models/order"
 	"demo/util/cm"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-var q models.Order
+var q order.Order
 
 //用户信息分页
 func GetOrderBySearch(u *gin.Context) {

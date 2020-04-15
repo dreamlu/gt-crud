@@ -12,3 +12,5 @@ app:
     poolSize: 0
     minIdleConns: 0
     #password:
+  # 本地内网穿透测试域名
+  notifyUrl: http://test.deercoder.com/api/v1/wx/notify

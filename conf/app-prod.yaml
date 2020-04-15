@@ -11,3 +11,4 @@ app:
     poolSize: 0
     minIdleConns: 0
     #password:
+  notifyUrl: https://your domain/api/v1/wx/notify

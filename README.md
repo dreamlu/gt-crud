@@ -2,9 +2,9 @@ deercoder-gin
 
 deercoder-gin 是一个gin + gorm + gt 的使用案例  
 - 特点  
-1.[gin](https://github.com/gin-gonic/gin) 提供核心的请求处理  
-2.[gorm](https://github.com/jinzhu/gorm) 数据库处理  
-3.[gt](https://github.com/dreamlu/gt) 提供常用的操作工具类以及一些开发约定  
+1.[gin](https://github.com/gin-gonic/gin) 提供核心的请求处理(了解)  
+2.[gorm](https://github.com/jinzhu/gorm) 数据库处理(了解)  
+3.[gt](https://github.com/dreamlu/gt) 提供常用的操作工具类以及一些开发约定(封装了gin+gorm形成常用业务链,须知)  
 
 - api文档参考：  
 1.api.html(或者在线[api.html](https://www.eolinker.com/#/share/project/api/?groupID=-1&shareCode=pgnwpF&shareToken=$2y$10$QMWRQU4fEfGOLkZgLwGFX.UHcWaaR1Eutrh6DCG8u0XKDRwwcUv76&shareID=120217))  
@@ -14,3 +14,9 @@ deercoder-gin 是一个gin + gorm + gt 的使用案例
 > 模型定义需遵循:[模型定义](https://gorm.io/zh_CN/docs/models.html)  
 - 插件[代码](./util/plugin/README.md)    
 > 插件提供了一些其他常见功能  
+
+- 开箱即用  
+1.针对小程序  
+2.如用到支付回调和退款回调,请修改conf/中notifyUrl为你自己本地测试域名和上线域名,并根据注释掉的代码书写自己的逻辑  
+3.默认多账号小程序;单账号:注释掉models/global.go中AdminCom的adminID字段,(ps:为了方便部署, 全局搜索`initApplet()`,打开注释,填入单账号的appid等参数)`  
+n.更多用法参考[gt](https://github.com/dreamlu/gt)  
