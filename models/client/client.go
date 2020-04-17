@@ -12,7 +12,7 @@ type Client struct {
 	models.ModelCom
 	Name string `gorm:"type:varchar(30)" json:"name" valid:"required,len=2-20"` // 昵称
 	//Openid     string     `json:"openid" gorm:"varchar(30);UNIQUE_INDEX:openid已存在"` // openID
-	//Headimg    string     `json:"headimg"` // 头像
+	//HeadImg    string     `json:"head_img"` // 头像
 }
 
 var crud = gt.NewCrud(
@@ -20,15 +20,12 @@ var crud = gt.NewCrud(
 )
 
 // get data, by id
-func (c *Client) Get(id interface{}) (*Client, error) {
-
-	var data Client // not use *Client
+func (c *Client) Get(params cmap.CMap) (data Client, err error) {
 	crud.Params(gt.Data(&data))
-	if err := crud.GetByID(id).Error(); err != nil {
-		//log.Log.Error(err.Error())
-		return nil, err
+	if err = crud.GetByData(params).Error(); err != nil {
+		return
 	}
-	return &data, nil
+	return
 }
 
 // get data, limit and search
@@ -45,7 +42,7 @@ func (c *Client) Search(params cmap.CMap) (datas []*Client, pager result.Pager, 
 }
 
 // delete data, by id
-func (c *Client) Delete(id string) error {
+func (c *Client) Delete(id interface{}) error {
 
 	return crud.Delete(id).Error()
 }

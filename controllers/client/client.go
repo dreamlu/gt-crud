@@ -12,8 +12,7 @@ var p client.Client
 
 //根据id获得data
 func Get(u *gin.Context) {
-	id := u.Query("id")
-	data, err := p.Get(id)
+	data, err := p.Get(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResGet(err, data))
 }
 

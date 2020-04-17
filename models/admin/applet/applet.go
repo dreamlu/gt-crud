@@ -56,15 +56,12 @@ func (c *Applet) GetByAppid(appid string) error {
 }
 
 // get data, by id
-func (c *Applet) Get(id interface{}) (*Applet, error) {
-
-	var data Applet // not use *Applet
+func (c *Applet) Get(params cmap.CMap) (data Applet, err error) {
 	crud.Params(gt.Data(&data))
-	if err := crud.GetByID(id).Error(); err != nil {
-		//log.Log.Error(err.Error())
-		return nil, err
+	if err = crud.GetByData(params).Error(); err != nil {
+		return
 	}
-	return &data, nil
+	return
 }
 
 // get data, limit and search

@@ -20,3 +20,15 @@ deercoder-gin 是一个gin + gorm + gt 的使用案例
 2.如用到支付回调和退款回调,请修改conf/中notifyUrl为你自己本地测试域名和上线域名,并根据注释掉的代码书写自己的逻辑  
 3.默认多账号小程序;单账号:注释掉models/global.go中AdminCom的adminID字段,(ps:为了方便部署, 全局搜索`initApplet()`,打开注释,填入单账号的appid等参数)`  
 n.更多用法参考[gt](https://github.com/dreamlu/gt)  
+
+- 关于crud  
+```go
+var crud = gt.NewCrud(
+	gt.Model(Client{}),
+)
+``` 
+案例中使用是当前页面全局性的变量, 如果新增了方法, 修改了Model(),如:
+`crud.Params(gt.Model(Client2{}))`
+这种情况下,其他使用相同变量的crud的Model都会收到影响,解决方法如下:  
+1.新增的方法中使用`gt.NewCrud(gt.Model(Client2{}))`解决  
+2.可将`crud.Params(gt.Model(Client{}))`添加至每个使用的crud变量中  

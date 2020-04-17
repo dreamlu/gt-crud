@@ -21,15 +21,12 @@ var crud = gt.NewCrud(
 )
 
 // get data, by id
-func (c *Admin) Get(id string) (*Admin, error) {
-
-	var data Admin // not use *Admin
+func (c *Admin) Get(params cmap.CMap) (data Admin, err error) {
 	crud.Params(gt.Data(&data))
-	if err := crud.GetByID(id).Error(); err != nil {
-		//log.Log.Error(err.Error())
-		return nil, err
+	if err = crud.GetByData(params).Error(); err != nil {
+		return
 	}
-	return &data, nil
+	return
 }
 
 // get data, limit and search
