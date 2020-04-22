@@ -72,11 +72,12 @@ func Filter() gin.HandlerFunc {
 		// 127请求且本地开发且为dev时无需验证,方便自己测试
 		if strings.Contains(c.Request.RemoteAddr, "127.0.0.1") &&
 			str2.DevMode == str.Dev {
+			c.Next()
 			return
 		}
 
 		if c.Request.Method == "GET" {
-			//c.Next()
+			c.Next()
 			return
 		}
 		path := c.Request.URL.String()

@@ -1,9 +1,11 @@
 package cm
 
 import (
+	"errors"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
+	"github.com/dreamlu/gt/tool/type/te"
 	"github.com/dreamlu/gt/tool/xss"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +24,9 @@ func ToCMap(u *gin.Context) cmap.CMap {
 func Res(err error) (res interface{}) {
 	if err != nil {
 		res = result.CError(err)
-		gt.Logger().Error(res)
+		if !errors.As(err, &te.TextErr) {
+			gt.Logger().Error(res)
+		}
 	} else {
 		res = result.MapSuccess
 	}
@@ -32,7 +36,9 @@ func Res(err error) (res interface{}) {
 func ResGet(err error, data interface{}) (res interface{}) {
 	if err != nil {
 		res = result.CError(err)
-		gt.Logger().Error(res)
+		if !errors.As(err, &te.TextErr) {
+			gt.Logger().Error(res)
+		}
 	} else {
 		res = result.GetSuccess(data)
 	}
@@ -42,7 +48,9 @@ func ResGet(err error, data interface{}) (res interface{}) {
 func ResPager(err error, datas interface{}, pager result.Pager) (res interface{}) {
 	if err != nil {
 		res = result.CError(err)
-		gt.Logger().Error(res)
+		if !errors.As(err, &te.TextErr) {
+			gt.Logger().Error(res)
+		}
 	} else {
 		res = result.GetSuccessPager(datas, pager)
 	}

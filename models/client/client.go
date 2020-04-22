@@ -9,19 +9,19 @@ import (
 
 // Client
 type Client struct {
-	models.ModelCom
-	Name string `gorm:"type:varchar(30)" json:"name" valid:"required,len=2-20"` // 昵称
+	models.AdminCom
+	Name string `gorm:"type:varchar(30);UN" json:"name" valid:"required,len=2-20"` // 昵称
+	// 请注意, 多账号的唯一性, 需要和AdminID一起建立唯一性
+	// 如: 复制models.AdminCom中AdminID到这里 将"UNIQUE_INDEX:openid已存在"加入到AdminID中, 同时修改models.AdminCom为models.ModelCom
 	//Openid     string     `json:"openid" gorm:"varchar(30);UNIQUE_INDEX:openid已存在"` // openID
 	//HeadImg    string     `json:"head_img"` // 头像
 }
 
-var crud = gt.NewCrud(
-	gt.Model(Client{}),
-)
+var crud = gt.NewCrud()
 
 // get data, by id
 func (c *Client) Get(params cmap.CMap) (data Client, err error) {
-	crud.Params(gt.Data(&data))
+	crud.Params(gt.Model(Client{}), gt.Data(&data))
 	if err = crud.GetByData(params).Error(); err != nil {
 		return
 	}
@@ -31,11 +31,9 @@ func (c *Client) Get(params cmap.CMap) (data Client, err error) {
 // get data, limit and search
 // clientPage 1, everyPage 10 default
 func (c *Client) Search(params cmap.CMap) (datas []*Client, pager result.Pager, err error) {
-	//var datas []*Client
-	crud.Params(gt.Data(&datas))
+	crud.Params(gt.Model(Client{}), gt.Data(&datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
-		//log.Log.Error(err.Error())
 		return nil, pager, cd.Error()
 	}
 	return datas, cd.Pager(), nil
@@ -44,7 +42,7 @@ func (c *Client) Search(params cmap.CMap) (datas []*Client, pager result.Pager, 
 // delete data, by id
 func (c *Client) Delete(id interface{}) error {
 
-	return crud.Delete(id).Error()
+	return crud.Params(gt.Model(Client{})).Delete(id).Error()
 }
 
 // update data
