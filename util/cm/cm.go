@@ -21,7 +21,7 @@ func ToCMap(u *gin.Context) cmap.CMap {
 	return values
 }
 
-func Res(err error) (res interface{}) {
+func Res(err error) (res result.Resultable) {
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
@@ -33,7 +33,7 @@ func Res(err error) (res interface{}) {
 	return
 }
 
-func ResGet(err error, data interface{}) (res interface{}) {
+func ResGet(err error, data interface{}) (res result.Resultable) {
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
@@ -45,7 +45,7 @@ func ResGet(err error, data interface{}) (res interface{}) {
 	return
 }
 
-func ResPager(err error, datas interface{}, pager result.Pager) (res interface{}) {
+func ResPager(err error, datas interface{}, pager result.Pager) (res result.Resultable) {
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
