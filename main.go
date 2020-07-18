@@ -13,7 +13,8 @@ func main() {
 	//log.Println(gt.Version)
 	gin.SetMode(gin.DebugMode)
 	//r := routers.SetRouter()
-	// pprof.Register(r)
+	// 性能调试
+	//pprof.Register(routers.Router)
 	// Listen and Server in 0.0.0.0:8080
 	_ = routers.Router.Run(":" + gt.Configger().GetString("app.port"))
 }
