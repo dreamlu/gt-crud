@@ -1,4 +1,4 @@
-FROM alpine
+FROM registry.cn-hangzhou.aliyuncs.com/dreamlu/alpine
 MAINTAINER dreamlu <862362681@qq.com>
 
 WORKDIR /

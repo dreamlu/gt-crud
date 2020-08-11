@@ -4,9 +4,11 @@ package routers
 import (
 	"demo/controllers/file"
 	str2 "demo/util/cons"
+	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/util/str"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -90,12 +92,23 @@ func Filter() gin.HandlerFunc {
 		}
 
 		if !strings.Contains(path, "login") && !strings.Contains(path, "/static/file") {
-			_, err := c.Cookie("uid") // may be use session
+			r := c.Request
+			token := r.Header.Get("token")
+			if token == "" {
+				c.Abort()
+				c.JSON(http.StatusOK, result.GetError("缺少token"))
+				return
+			}
+			ca := cache.NewCache()
+			log.Println("[token]:", token)
+			cam, err := ca.Get(token)
 			if err != nil {
 				c.Abort()
 				c.JSON(http.StatusOK, result.MapNoAuth)
 				return
 			}
+			// 延长token对应时间
+			_ = ca.Set(token, cam)
 		}
 	}
 }

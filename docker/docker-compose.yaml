@@ -31,6 +31,8 @@ services:
       - 6378:6379
     container_name: d-redis
     restart: always
+    networks:
+      - demo
   # api gateway
   demo:
     image: registry.cn-hangzhou.aliyuncs.com/dreamlu/common:deercoder-gin
@@ -39,7 +41,7 @@ services:
     container_name: d-demo
     restart: always
     volumes:
-      - /root/bak/static:/static
+      - /root/deercoder-gin/bak/static:/static
     networks:
       - demo
 

@@ -18,7 +18,7 @@ func InitRouter() {
 			clients.GET("/id", client.Get)
 			clients.DELETE("/delete/:id", client.Delete)
 			clients.POST("/create", client.Create)
-			clients.PATCH("/update", client.Update)
+			clients.PUT("/update", client.Update)
 		}
 		// admin
 		admins := v.Group("/admin")
