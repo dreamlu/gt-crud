@@ -14,6 +14,7 @@ func WxRouter() {
 		{
 			wxs.POST("/login", wx.Login)
 			wxs.GET("/info", wx.Info)
+			wxs.GET("/phone", wx.Phone)
 			wxs.POST("/pay", wx.Pay)
 			wxs.GET("/access_token", wx.GetAccessToken)
 			wxs.GET("/qrcode", wx.GetQRCode)

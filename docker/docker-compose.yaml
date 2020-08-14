@@ -17,7 +17,7 @@ services:
       MYSQL_ROOT_HOST: '%'
       TZ: Asia/Shanghai
     ports:
-      - 3308:3306
+      - 3378:3306
     restart: always
     # sql备份目录
     volumes:

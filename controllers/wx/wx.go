@@ -3,6 +3,7 @@ package wx
 import (
 	"demo/models/admin/applet"
 	client2 "demo/models/client"
+	"demo/util/cm"
 	"demo/util/models"
 	"encoding/json"
 	"fmt"
@@ -113,6 +114,35 @@ func Info(u *gin.Context) {
 	//phone , err := weapp.DecryptPhoneNumber(session_key, encryptedData, iv)
 
 	u.JSON(http.StatusOK, userinfo)
+}
+
+// 用户信息--手机
+func Phone(u *gin.Context) {
+
+	_ = u.Request.ParseForm()
+	data := u.Request.Form
+	//log.Println(data)
+	//_, err := wx.Applet.GetByAppid(wx.Appid)
+	//if err != nil {
+	//	u.JSON(http.StatusOK, result.GetError(err.Error()))
+	//	return
+	//}
+	//var info interface{}
+	// 解密用户信息
+	//
+	// @rawData 不包括敏感信息的原始数据字符串, 用于计算签名。
+	// @encryptedData 包括敏感数据在内的完整用户信息的加密数据
+	// @signature 使用 sha1( rawData + session_key ) 得到字符串, 用于校验用户信息
+	// @iv 加密算法的初始向量
+	// @ssk 微信 session_key
+	//userinfo, err := weapp.DecryptUserInfo(data["raw_data"][0], data["encrypted_data"][0], data["signature"][0], data["iv"][0], data["session_key"][0])
+	//if err != nil {
+	//	u.JSON(http.StatusOK, result.GetError(err.Error()))
+	//	return
+	//}
+	phone, err := weapp.DecryptPhoneNumber(data["session_key"][0], data["encrypted_data"][0], data["iv"][0])
+
+	u.JSON(http.StatusOK, cm.ResGet(err, phone))
 }
 
 //支付,范围对应支付的多个(5)参数

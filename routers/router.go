@@ -13,9 +13,11 @@ import (
 	"strings"
 )
 
+const prefix = "/api/v1"
+
 var Router = SetRouter()
 
-var V = Router.Group("/api/v1")
+var V = Router.Group(prefix)
 
 func SetRouter() *gin.Engine {
 	// Disable Console Color
@@ -45,7 +47,7 @@ func SetRouter() *gin.Engine {
 		c.String(http.StatusOK, "pong")
 	})
 	//组的路由,version
-	v1 := router.Group("/api/v1")
+	v1 := router.Group(prefix)
 	{
 		v := v1
 
