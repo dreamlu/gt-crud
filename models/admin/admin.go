@@ -21,11 +21,6 @@ var crud = gt.NewCrud(
 )
 
 // get data, by id
-func (c Admin) New() models.DN {
-	return Admin{}
-}
-
-// get data, by id
 func (c *Admin) Get(params cmap.CMap) (data Admin, err error) {
 	crud.Params(gt.Data(&data))
 	if err = crud.GetByData(params).Error(); err != nil {

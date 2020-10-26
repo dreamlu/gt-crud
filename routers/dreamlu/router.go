@@ -1,10 +1,12 @@
 package dreamlu
 
 import (
+	"demo/controllers"
 	"demo/controllers/admin"
 	"demo/controllers/admin/applet"
 	"demo/controllers/client"
 	"demo/controllers/order"
+	client2 "demo/models/client"
 	"demo/routers"
 )
 
@@ -14,12 +16,13 @@ func InitRouter() {
 		//用户
 		clients := v.Group("/client")
 		{
+			clientCon := controllers.New(client2.Client{}, []*client2.Client{})
 			clients.GET("/token", client.Token)
-			clients.GET("/search", client.Search)
-			clients.GET("/id", client.Get)
-			clients.DELETE("/delete/:id", client.Delete)
-			clients.POST("/create", client.Create)
-			clients.PUT("/update", client.Update)
+			clients.GET("/search", clientCon.Search)
+			clients.GET("/id", clientCon.Get)
+			clients.DELETE("/delete/:id", clientCon.Delete)
+			clients.POST("/create", clientCon.Create)
+			clients.PUT("/update", clientCon.Update)
 		}
 		// admin
 		admins := v.Group("/admin")

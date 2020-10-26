@@ -39,12 +39,13 @@ type Com struct {
 var crud = gt.NewCrud()
 
 // get data, by id
-func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
-	crud.Params(gt.Model(c.Model), gt.Data(&c.Data))
+func (c *Com) Get(params cmap.CMap) (data DN, err error) {
+	data = c.Data.New()
+	crud.Params(gt.Model(c.Model), gt.Data(&data))
 	if err = crud.GetByData(params).Error(); err != nil {
 		return
 	}
-	return c.Data, nil
+	return
 }
 
 // get data, limit and search
@@ -64,9 +65,9 @@ func (c *Com) Delete(id interface{}) error {
 }
 
 // update data
-func (c *Com) Update() error {
+func (c *Com) Update(data interface{}) error {
 
-	crud.Params(gt.Data(c.Data))
+	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return err
@@ -75,9 +76,9 @@ func (c *Com) Update() error {
 }
 
 // create data
-func (c *Com) Create() error {
+func (c *Com) Create(data interface{}) error {
 
-	crud.Params(gt.Data(c.Data))
+	crud.Params(gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return err
 	}
