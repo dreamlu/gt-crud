@@ -1,6 +1,7 @@
 package admin
 
 import (
+	models2 "demo/models"
 	"demo/models/admin"
 	"demo/util/cm"
 	"demo/util/models"
@@ -14,31 +15,42 @@ import (
 	"net/http"
 )
 
-var p admin.Admin
+var (
+	//p   admin.Admin
+	com = models2.Com{
+		Model:     admin.Admin{},
+		Data:      admin.Admin{},
+		ArrayData: []*admin.Admin{},
+	}
+)
+
+type AdminController struct {
+	//Com
+}
 
 //根据id获得data
 func Get(u *gin.Context) {
-	data, err := p.Get(cm.ToCMap(u))
+	data, err := com.Get(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResGet(err, data))
 }
 
 //data信息分页
 func Search(u *gin.Context) {
-	datas, pager, err := p.Search(cm.ToCMap(u))
+	datas, pager, err := com.Search(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResPager(err, datas, pager))
 }
 
 //data信息删除
 func Delete(u *gin.Context) {
 	id := u.Param("id")
-	err := p.Delete(id)
+	err := com.Delete(id)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
 //data信息修改
 func Update(u *gin.Context) {
 	var (
-		data admin.Admin
+		data = com.Data.New()
 	)
 	// json 类型需要匹配
 	// 与spring boot不同
@@ -51,14 +63,14 @@ func Update(u *gin.Context) {
 	}
 	// do something
 
-	_, err = p.Update(&data)
+	err = com.Update()
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
 //新增data信息
 func Create(u *gin.Context) {
 	var (
-		data admin.Admin
+		data = com.Data.New()
 	)
 	// 自定义日期格式问题
 	err := u.ShouldBindJSON(&data)
@@ -66,7 +78,7 @@ func Create(u *gin.Context) {
 		u.JSON(http.StatusOK, result.CError(err))
 		return
 	}
-	_, err = p.Create(&data)
+	err = com.Create()
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 

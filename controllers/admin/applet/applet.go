@@ -50,7 +50,7 @@ func Update(u *gin.Context) {
 	}
 	// do something
 
-	_, err = p.Update(&data)
+	err = p.Update(&data)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 

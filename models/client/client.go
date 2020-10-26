@@ -46,14 +46,14 @@ func (c *Client) Delete(id interface{}) error {
 }
 
 // update data
-func (c *Client) Update(data *Client) (*Client, error) {
+func (c *Client) Update(data *Client) error {
 
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return nil, err
+		return err
 	}
-	return data, nil
+	return nil
 }
 
 // create data

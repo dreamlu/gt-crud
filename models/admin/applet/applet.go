@@ -84,14 +84,14 @@ func (c *Applet) Delete(id string) error {
 }
 
 // update data
-func (c *Applet) Update(data *Applet) (*Applet, error) {
+func (c *Applet) Update(data *Applet) error {
 
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return nil, err
+		return err
 	}
-	return data, nil
+	return nil
 }
 
 // create data

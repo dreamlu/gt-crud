@@ -39,8 +39,8 @@ type OrderD struct {
 func (c *Order) GetMoreBySearch(params map[string][]string) interface{} {
 	var or []OrderD
 	var crud = gt.NewCrud(
-		gt.InnerTable([]string{"order", "user"}),
-		gt.LeftTable([]string{"order", "service"}),
+		gt.Inner("order", "user"),
+		gt.Left("order", "service"),
 		gt.Model(OrderD{}),
 		gt.Data(&or),
 	)

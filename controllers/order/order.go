@@ -1,5 +1,5 @@
 // author: dreamlu
-package controllers
+package order
 
 import (
 	"demo/models/order"

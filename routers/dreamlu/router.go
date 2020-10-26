@@ -1,10 +1,10 @@
 package dreamlu
 
 import (
-	"demo/controllers"
 	"demo/controllers/admin"
 	"demo/controllers/admin/applet"
 	"demo/controllers/client"
+	"demo/controllers/order"
 	"demo/routers"
 )
 
@@ -14,6 +14,7 @@ func InitRouter() {
 		//用户
 		clients := v.Group("/client")
 		{
+			clients.GET("/token", client.Token)
 			clients.GET("/search", client.Search)
 			clients.GET("/id", client.Get)
 			clients.DELETE("/delete/:id", client.Delete)
@@ -46,7 +47,7 @@ func InitRouter() {
 		//订单数据
 		orders := v.Group("/order")
 		{
-			orders.GET("/search", controllers.GetOrderBySearch)
+			orders.GET("/search", order.GetOrderBySearch)
 		}
 	}
 }

@@ -21,6 +21,11 @@ var crud = gt.NewCrud(
 )
 
 // get data, by id
+func (c Admin) New() models.DN {
+	return Admin{}
+}
+
+// get data, by id
 func (c *Admin) Get(params cmap.CMap) (data Admin, err error) {
 	crud.Params(gt.Data(&data))
 	if err = crud.GetByData(params).Error(); err != nil {
@@ -49,15 +54,15 @@ func (c *Admin) Delete(id string) error {
 }
 
 // update data
-func (c *Admin) Update(data *Admin) (*Admin, error) {
+func (c *Admin) Update(data *Admin) error {
 
 	data.Password = util.AesEn(data.Password)
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
-		return nil, err
+		return err
 	}
-	return data, nil
+	return nil
 }
 
 // create data

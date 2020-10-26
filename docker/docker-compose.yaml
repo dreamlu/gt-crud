@@ -26,7 +26,7 @@ services:
       - demo
   # redis
   redis:
-    image: redis:4.0
+    image: redis:5.0
     ports:
       - 6378:6379
     container_name: d-redis
