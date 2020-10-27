@@ -14,7 +14,3 @@ type Client struct {
 	//Openid     string     `json:"openid" gorm:"varchar(30);UNIQUE_INDEX:openid已存在"` // openID
 	//HeadImg    string     `json:"head_img"` // 头像
 }
-
-func (c Client) New() models.DN {
-	return Client{}
-}

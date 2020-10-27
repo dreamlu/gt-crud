@@ -4,8 +4,6 @@ import (
 	"demo/models"
 	"fmt"
 	"github.com/dreamlu/gt"
-	"github.com/dreamlu/gt/tool/result"
-	"github.com/dreamlu/gt/tool/type/cmap"
 )
 
 // 小程序相关 模型
@@ -53,53 +51,4 @@ func (c *Applet) GetByAppid(appid string) error {
 	}
 	//c = &data
 	return nil
-}
-
-// get data, by id
-func (c *Applet) Get(params cmap.CMap) (data Applet, err error) {
-	crud.Params(gt.Data(&data))
-	if err = crud.GetByData(params).Error(); err != nil {
-		return
-	}
-	return
-}
-
-// get data, limit and search
-// AppletPage 1, everyPage 10 default
-func (c *Applet) Search(params cmap.CMap) (datas []*Applet, pager result.Pager, err error) {
-	//var datas []*Applet
-	crud.Params(gt.Data(&datas))
-	cd := crud.GetBySearch(params)
-	if cd.Error() != nil {
-		//log.Log.Error(err.Error())
-		return nil, pager, cd.Error()
-	}
-	return datas, cd.Pager(), nil
-}
-
-// delete data, by id
-func (c *Applet) Delete(id string) error {
-
-	return crud.Delete(id).Error()
-}
-
-// update data
-func (c *Applet) Update(data *Applet) error {
-
-	crud.Params(gt.Data(data))
-	if err := crud.Update().Error(); err != nil {
-		//log.Log.Error(err.Error())
-		return err
-	}
-	return nil
-}
-
-// create data
-func (c *Applet) Create(data *Applet) (*Applet, error) {
-
-	crud.Params(gt.Data(data))
-	if err := crud.Create().Error(); err != nil {
-		return nil, err
-	}
-	return data, nil
 }

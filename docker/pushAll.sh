@@ -1,6 +1,6 @@
 # 批量推向共有或私有仓库
 #!/bin/bash
-docker images | grep registry.cn-hangzhou.aliyuncs.com/dreamlu/common | grep deercoder-gin | awk '{print "docker push "$1":"$2}' | sh
+docker images | grep registry.cn-hangzhou.aliyuncs.com/dreamlu/common | grep gt-crud | awk '{print "docker push "$1":"$2}' | sh
 
 # 删除空镜像
 docker images|grep none|awk '{print $3 }'|xargs docker rmi

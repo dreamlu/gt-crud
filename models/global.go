@@ -1,6 +1,7 @@
 package models
 
 import (
+	"demo/util/reflect"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
@@ -25,23 +26,19 @@ type AdminCom struct {
 }
 
 // ================ common ============
-type DN interface {
-	New() DN
-}
 
 // common crud
 type Com struct {
-	Model     interface{}
-	Data      DN
-	ArrayData interface{}
+	Model      interface{}
+	ArrayModel interface{}
 }
 
 var crud = gt.NewCrud()
 
 // get data, by id
-func (c *Com) Get(params cmap.CMap) (data DN, err error) {
-	data = c.Data.New()
-	crud.Params(gt.Model(c.Model), gt.Data(&data))
+func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
+	data = reflect.New(c.Model)
+	crud.Params(gt.Model(c.Model), gt.Data(data))
 	if err = crud.GetByData(params).Error(); err != nil {
 		return
 	}
@@ -50,7 +47,9 @@ func (c *Com) Get(params cmap.CMap) (data DN, err error) {
 
 // get data, limit and search
 func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, err error) {
-	crud.Params(gt.Model(c.Model), gt.Data(&c.ArrayData))
+
+	datas = reflect.New(c.ArrayModel)
+	crud.Params(gt.Model(c.Model), gt.Data(datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
 		return nil, pager, cd.Error()
@@ -67,7 +66,7 @@ func (c *Com) Delete(id interface{}) error {
 // update data
 func (c *Com) Update(data interface{}) error {
 
-	crud.Params(gt.Data(data))
+	crud.Params(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return err
@@ -78,7 +77,7 @@ func (c *Com) Update(data interface{}) error {
 // create data
 func (c *Com) Create(data interface{}) error {
 
-	crud.Params(gt.Data(data))
+	crud.Params(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return err
 	}

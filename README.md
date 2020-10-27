@@ -1,6 +1,21 @@
-deercoder-gin 
+gt-crud 
 
-deercoder-gin 是一个gin + gorm + gt 的使用案例  
+- 简单方式(三步即可自动crud)  
+```go
+// 1.定义模型,参考models/client/client.go
+type Client struct {
+	ID uint64 `gorm:"type:bigint(20)" json:"id"`
+	Name string `gorm:"type:varchar(30);" json:"name" valid:"required,len=2-20"` // 昵称
+}
+
+// 2.初始化数据库表,参考util/db/db.go
+gt.NewDBTool().AutoMigrate(client.Client{})
+
+// 3.路由router中定义,参考routers/dreamlu/router.go
+cls["/client"] = controllers.New(client.Client{}, []*client.Client{})
+```
+
+gt-crud 是一个gin + gorm + gt 的使用案例  
 - 特点  
 1.[gin](https://github.com/gin-gonic/gin) 提供核心的请求处理(了解)  
 2.[gorm](https://github.com/jinzhu/gorm) 数据库处理(了解)  

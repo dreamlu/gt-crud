@@ -6,23 +6,39 @@ import (
 	"demo/controllers/admin/applet"
 	"demo/controllers/client"
 	"demo/controllers/order"
+	applet2 "demo/models/admin/applet"
 	client2 "demo/models/client"
 	"demo/routers"
 )
 
+var cls = map[string]controllers.ComController{}
+
 func InitRouter() {
 	v := routers.V
 	{
-		//用户
+		// 用户
+		cls["/client"] = controllers.New(client2.Client{}, []*client2.Client{})
+
+		// 小程序账号
+		cls["/admin/applet"] = controllers.New(applet2.Applet{}, []*applet2.Applet{})
+
+		// 路由列表
+		for k, c := range cls {
+			pre := v.Group(k)
+			{
+				pre.GET("/search", c.Search)
+				pre.GET("/id", c.Get)
+				pre.DELETE("/delete/:id", c.Delete)
+				pre.POST("/create", c.Create)
+				pre.PUT("/update", c.Update)
+			}
+		}
+
+		// ==== 额外接口单独定义 =======
+		// 用户-额外接口
 		clients := v.Group("/client")
 		{
-			clientCon := controllers.New(client2.Client{}, []*client2.Client{})
 			clients.GET("/token", client.Token)
-			clients.GET("/search", clientCon.Search)
-			clients.GET("/id", clientCon.Get)
-			clients.DELETE("/delete/:id", clientCon.Delete)
-			clients.POST("/create", clientCon.Create)
-			clients.PUT("/update", clientCon.Update)
 		}
 		// admin
 		admins := v.Group("/admin")
@@ -37,11 +53,6 @@ func InitRouter() {
 			// 小程序账号
 			applets := admins.Group("/applet")
 			{
-				applets.GET("/search", applet.Search)
-				applets.GET("/id", applet.Get)
-				applets.DELETE("/delete/:id", applet.Delete)
-				applets.POST("/create", applet.Create)
-				applets.PUT("/update", applet.Update)
 				applets.POST("/download", applet.DownLoad)
 			}
 		}
