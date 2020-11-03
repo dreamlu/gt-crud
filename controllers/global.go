@@ -9,6 +9,14 @@ import (
 	"net/http"
 )
 
+//type Controller interface {
+//	Get(u *gin.Context)
+//	Search(u *gin.Context)
+//	Delete(u *gin.Context)
+//	Update(u *gin.Context)
+//	Create(u *gin.Context)
+//}
+
 type ComController struct {
 	Com models.Com
 }
@@ -21,26 +29,26 @@ func New(model interface{}, arrayModel interface{}) ComController {
 }
 
 //根据id获得data
-func (c *ComController) Get(u *gin.Context) {
+func (c ComController) Get(u *gin.Context) {
 	data, err := c.Com.Get(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResGet(err, data))
 }
 
 //data信息分页
-func (c *ComController) Search(u *gin.Context) {
+func (c ComController) Search(u *gin.Context) {
 	datas, pager, err := c.Com.Search(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResPager(err, datas, pager))
 }
 
 //data信息删除
-func (c *ComController) Delete(u *gin.Context) {
+func (c ComController) Delete(u *gin.Context) {
 	id := u.Param("id")
 	err := c.Com.Delete(id)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
 //data信息修改
-func (c *ComController) Update(u *gin.Context) {
+func (c ComController) Update(u *gin.Context) {
 	var (
 		data = reflect.New(c.Com.Model)
 	)
@@ -60,7 +68,7 @@ func (c *ComController) Update(u *gin.Context) {
 }
 
 //新增data信息
-func (c *ComController) Create(u *gin.Context) {
+func (c ComController) Create(u *gin.Context) {
 	var (
 		data = reflect.New(c.Com.Model)
 	)

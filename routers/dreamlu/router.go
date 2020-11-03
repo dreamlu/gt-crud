@@ -27,7 +27,7 @@ func InitRouter() {
 			pre := v.Group(k)
 			{
 				pre.GET("/search", c.Search)
-				pre.GET("/id", c.Get)
+				pre.GET("/get", c.Get)
 				pre.DELETE("/delete/:id", c.Delete)
 				pre.POST("/create", c.Create)
 				pre.PUT("/update", c.Update)

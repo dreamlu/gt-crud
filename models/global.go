@@ -33,12 +33,10 @@ type Com struct {
 	ArrayModel interface{}
 }
 
-var crud = gt.NewCrud()
-
 // get data, by id
 func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 	data = reflect.New(c.Model)
-	crud.Params(gt.Model(c.Model), gt.Data(data))
+	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err = crud.GetByData(params).Error(); err != nil {
 		return
 	}
@@ -49,7 +47,7 @@ func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, err error) {
 
 	datas = reflect.New(c.ArrayModel)
-	crud.Params(gt.Model(c.Model), gt.Data(datas))
+	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
 		return nil, pager, cd.Error()
@@ -60,13 +58,13 @@ func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, e
 // delete data, by id
 func (c *Com) Delete(id interface{}) error {
 
-	return crud.Params(gt.Model(c.Model)).Delete(id).Error()
+	return gt.NewCrud(gt.Model(c.Model)).Delete(id).Error()
 }
 
 // update data
 func (c *Com) Update(data interface{}) error {
 
-	crud.Params(gt.Model(c.Model), gt.Data(data))
+	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return err
@@ -77,7 +75,7 @@ func (c *Com) Update(data interface{}) error {
 // create data
 func (c *Com) Create(data interface{}) error {
 
-	crud.Params(gt.Model(c.Model), gt.Data(data))
+	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return err
 	}
