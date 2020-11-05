@@ -73,7 +73,7 @@ package pca
 //}
 //
 //func readPca() ([]Link, error) {
-//	pcaPath := gt.Configger().GetString("app.staticpath") + "pca/pca-code.json"
+//	pcaPath := conf.GetString("app.staticpath") + "pca/pca-code.json"
 //	by, err := ioutil.ReadFile(pcaPath)
 //	if err != nil {
 //		return nil, err

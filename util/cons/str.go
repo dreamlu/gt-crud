@@ -1,8 +1,10 @@
 package cons
 
-import "github.com/dreamlu/gt"
+import (
+	"github.com/dreamlu/gt/tool/conf"
+)
 
 var (
-	DevMode = gt.Configger().GetString("app.devMode")
-	Version = gt.Configger().GetString("app.version")
+	DevMode = conf.GetString("app.devMode")
+	Version = conf.GetString("app.version")
 )

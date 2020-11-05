@@ -3,8 +3,9 @@ package wx
 import (
 	"demo/models/admin/applet"
 	"demo/models/order"
-	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/id"
+	log2 "github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp/payment"
@@ -39,7 +40,7 @@ func Refund(u *gin.Context) {
 	//}
 
 	refundNo, _ := id.NewID(1)
-	notifyUrl := gt.Configger().GetString("app.notifyUrl") + "/refund"
+	notifyUrl := conf.GetString("app.notifyUrl") + "/refund"
 	// 新建退款订单
 	form := payment.Refunder{
 		// 必填
@@ -102,10 +103,10 @@ func RefundNotify(u *gin.Context) {
 		} else {
 			msg = status
 		}
-		gt.Logger().Error(msg)
+		log2.Error(msg)
 		return false, msg
 	})
 	if err != nil {
-		gt.Logger().Error(err)
+		log2.Error(err)
 	}
 }

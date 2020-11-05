@@ -5,7 +5,7 @@ import (
 	"demo/routers"
 	"demo/routers/dreamlu"
 	"demo/util/db"
-	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/conf"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	// 性能调试
 	//pprof.Register(routers.Router)
 	// Listen and Server in 0.0.0.0:8080
-	_ = routers.Router.Run(":" + gt.Configger().GetString("app.port"))
+	_ = routers.Router.Run(":" + conf.GetString("app.port"))
 }
 
 // 数据库模型自动生成

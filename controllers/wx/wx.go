@@ -4,12 +4,14 @@ import (
 	"demo/models/admin/applet"
 	client2 "demo/models/client"
 	"demo/util/cm"
-	"demo/util/models"
+	"demo/util/models/token"
 	"encoding/json"
 	"fmt"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/cache"
+	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/id"
+	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp"
@@ -75,7 +77,7 @@ func Login(u *gin.Context) {
 		Select(fmt.Sprintf("select %s from client where openid = ?", gt.GetColSQL(client2.Client{})), res.OpenID).
 		Single()
 	ca := cache.NewCache()
-	var model models.TokenModel
+	var model token.TokenModel
 	model.ID = client.ID
 	newID, _ := id.NewID(1)
 	model.Token = newID.String()
@@ -163,7 +165,7 @@ func Pay(u *gin.Context) {
 		return
 	}
 
-	notifyUrl := gt.Configger().GetString("app.notifyUrl") + "/pay"
+	notifyUrl := conf.GetString("app.notifyUrl") + "/pay"
 	// 新建支付订单
 	form := payment.Order{
 		// 必填
@@ -230,7 +232,7 @@ func PayNotify(u *gin.Context) {
 		// 处理失败 return false, "失败原因..."
 	})
 	if err != nil {
-		gt.Logger().Error(err)
+		log.Error(err)
 	}
 	u.JSON(http.StatusOK, "回调处理完成")
 }

@@ -1,7 +1,7 @@
 package file
 
 import (
-	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/file"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
@@ -30,7 +30,7 @@ func StaticFile(u *gin.Context) {
 	}
 
 	// upload dir
-	uploadDir := gt.Configger().GetString("app.filepath")
+	uploadDir := conf.GetString("app.filepath")
 
 	// 文件查找 是否存在 不存在则压缩
 	if width != 0 || height != 0 {

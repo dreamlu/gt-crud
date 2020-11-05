@@ -11,9 +11,9 @@ import (
 // 多账号管理 模型
 type Admin struct {
 	models.ModelCom
-	Name     string `gorm:"type:varchar(30);UNIQUE_INDEX:账号已存在" json:"name"` // 名称
-	Password string `json:"password" gorm:"type:varchar(100)"`               // 密码
-	Role     *int8  `json:"role" gorm:"type:tinyint(2);DEFAULT:0"`           // 0默认,1管理员
+	Name     string `gorm:"type:varchar(30);uniqueIndex:账号已存在" json:"name"` // 名称
+	Password string `json:"password" gorm:"type:varchar(100)"`              // 密码
+	Role     *int8  `json:"role" gorm:"type:tinyint(2);DEFAULT:0"`          // 0默认,1管理员
 }
 
 var crud = gt.NewCrud(

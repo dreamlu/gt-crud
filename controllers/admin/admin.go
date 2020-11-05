@@ -3,7 +3,7 @@ package admin
 import (
 	"demo/models/admin"
 	"demo/util/cm"
-	"demo/util/models"
+	"demo/util/models/token"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/id"
@@ -92,7 +92,7 @@ func Login(u *gin.Context) {
 		u.JSON(http.StatusOK, result.GetError(err.Error()))
 		return
 	}
-	var model models.TokenModel
+	var model token.TokenModel
 	model.ID = sqlData.ID
 	newID, _ := id.NewID(1)
 	model.Token = newID.String()

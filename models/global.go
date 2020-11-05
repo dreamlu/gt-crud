@@ -31,10 +31,19 @@ type AdminCom struct {
 type Com struct {
 	Model      interface{}
 	ArrayModel interface{}
+	GetService
+	SearchService
+	DeleteService
+	UpdateService
+	CreateService
 }
 
 // get data, by id
 func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
+
+	if c.GetService != nil {
+		return c.GetService.Get(params)
+	}
 	data = reflect.New(c.Model)
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err = crud.GetByData(params).Error(); err != nil {
@@ -46,6 +55,9 @@ func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 // get data, limit and search
 func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, err error) {
 
+	if c.SearchService != nil {
+		return c.SearchService.Search(params)
+	}
 	datas = reflect.New(c.ArrayModel)
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(datas))
 	cd := crud.GetBySearch(params)
@@ -58,12 +70,18 @@ func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, e
 // delete data, by id
 func (c *Com) Delete(id interface{}) error {
 
+	if c.DeleteService != nil {
+		return c.DeleteService.Delete(id)
+	}
 	return gt.NewCrud(gt.Model(c.Model)).Delete(id).Error()
 }
 
 // update data
 func (c *Com) Update(data interface{}) error {
 
+	if c.UpdateService != nil {
+		return c.UpdateService.Update(data)
+	}
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
@@ -75,9 +93,17 @@ func (c *Com) Update(data interface{}) error {
 // create data
 func (c *Com) Create(data interface{}) error {
 
+	if c.CreateService != nil {
+		return c.CreateService.Create(data)
+	}
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c *Com) M() interface{} {
+
+	return c.Model
 }

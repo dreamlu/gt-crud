@@ -4,7 +4,7 @@ import (
 	"demo/models/admin/applet"
 	"demo/util/file"
 	"encoding/json"
-	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -46,12 +46,12 @@ func DownLoad(u *gin.Context) {
 		u.JSON(http.StatusOK, result.CError(err))
 		return
 	}
-	u.JSON(http.StatusOK, result.MapSuccess.Add("path", gt.Configger().GetString("app.staticpath")+"app/dist.zip"))
+	u.JSON(http.StatusOK, result.MapSuccess.Add("path", conf.GetString("app.staticpath")+"app/dist.zip"))
 }
 
 func rwConfig(appid string) error {
 	// 读取文件
-	dir := gt.Configger().GetString("app.staticpath") + "app/dist/"
+	dir := conf.GetString("app.staticpath") + "app/dist/"
 	path := dir + "project.config.json"
 	by, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -74,7 +74,7 @@ func rwConfig(appid string) error {
 	}
 
 	// 压缩文件
-	newZip := gt.Configger().GetString("app.staticpath") + "app/dist.zip"
+	newZip := conf.GetString("app.staticpath") + "app/dist.zip"
 	err = file.Zip(dir, newZip)
 	if err != nil {
 		return err

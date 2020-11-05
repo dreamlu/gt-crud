@@ -2,7 +2,7 @@ app:
   # database
   db:
     host: tcp(mysql:3306)
-    password: docker
+    password: dreamlu
     user: root
   # redis
   redis:

@@ -10,7 +10,7 @@ import (
 )
 
 func InitDB() {
-	gt.NewDBTool().AutoMigrate(
+	gt.DB().AutoMigrate(
 		&client.Client{}, // 客户
 		//&order.Service{},
 		//&order.Order{}, // 订单, 不用可注释

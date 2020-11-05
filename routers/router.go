@@ -6,7 +6,7 @@ import (
 	str2 "demo/util/cons"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/result"
-	"github.com/dreamlu/gt/tool/util/str"
+	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -77,7 +77,7 @@ func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 127请求且本地开发且为dev时无需验证,方便自己测试
 		if strings.Contains(c.Request.RemoteAddr, "127.0.0.1") &&
-			str2.DevMode == str.Dev {
+			str2.DevMode == cons.Dev {
 			c.Next()
 			return
 		}

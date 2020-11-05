@@ -1,4 +1,4 @@
-package models
+package token
 
 // token model
 type TokenModel struct {

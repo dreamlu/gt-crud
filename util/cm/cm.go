@@ -2,18 +2,18 @@ package cm
 
 import (
 	"errors"
-	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/dreamlu/gt/tool/type/te"
-	"github.com/dreamlu/gt/tool/xss"
+	"github.com/dreamlu/gt/tool/util/xss"
 	"github.com/gin-gonic/gin"
 )
 
 func ToCMap(u *gin.Context) cmap.CMap {
 	err := u.Request.ParseForm()
 	if err != nil {
-		gt.Logger().Error(err.Error())
+		log.Error(err.Error())
 		return nil
 	}
 	values := cmap.CMap(u.Request.Form) //在使用之前需要调用ParseForm方法
@@ -25,7 +25,7 @@ func Res(err error) (res result.Resultable) {
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
-			gt.Logger().Error(res)
+			log.Error(res)
 		}
 	} else {
 		res = result.MapSuccess
@@ -37,7 +37,7 @@ func ResGet(err error, data interface{}) (res result.Resultable) {
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
-			gt.Logger().Error(res)
+			log.Error(res)
 		}
 	} else {
 		res = result.GetSuccess(data)
@@ -49,7 +49,7 @@ func ResPager(err error, datas interface{}, pager result.Pager) (res result.Resu
 	if err != nil {
 		res = result.CError(err)
 		if !errors.As(err, &te.TextErr) {
-			gt.Logger().Error(res)
+			log.Error(res)
 		}
 	} else {
 		res = result.GetSuccessPager(datas, pager)

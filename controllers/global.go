@@ -18,11 +18,11 @@ import (
 //}
 
 type ComController struct {
-	Com models.Com
+	models.Service
 }
 
 func New(model interface{}, arrayModel interface{}) ComController {
-	return ComController{Com: models.Com{
+	return ComController{Service: &models.Com{
 		Model:      model,
 		ArrayModel: arrayModel,
 	}}
@@ -30,27 +30,27 @@ func New(model interface{}, arrayModel interface{}) ComController {
 
 //根据id获得data
 func (c ComController) Get(u *gin.Context) {
-	data, err := c.Com.Get(cm.ToCMap(u))
+	data, err := c.Service.Get(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResGet(err, data))
 }
 
 //data信息分页
 func (c ComController) Search(u *gin.Context) {
-	datas, pager, err := c.Com.Search(cm.ToCMap(u))
+	datas, pager, err := c.Service.Search(cm.ToCMap(u))
 	u.JSON(http.StatusOK, cm.ResPager(err, datas, pager))
 }
 
 //data信息删除
 func (c ComController) Delete(u *gin.Context) {
 	id := u.Param("id")
-	err := c.Com.Delete(id)
+	err := c.Service.Delete(id)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
 //data信息修改
 func (c ComController) Update(u *gin.Context) {
 	var (
-		data = reflect.New(c.Com.Model)
+		data = reflect.New(c.Service.M())
 	)
 	// json 类型需要匹配
 	// 与spring boot不同
@@ -63,14 +63,14 @@ func (c ComController) Update(u *gin.Context) {
 	}
 	// do something
 
-	err = c.Com.Update(data)
+	err = c.Service.Update(data)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
 //新增data信息
 func (c ComController) Create(u *gin.Context) {
 	var (
-		data = reflect.New(c.Com.Model)
+		data = reflect.New(c.Service.M())
 	)
 	// 自定义日期格式问题
 	err := u.ShouldBindJSON(data)
@@ -78,6 +78,6 @@ func (c ComController) Create(u *gin.Context) {
 		u.JSON(http.StatusOK, result.CError(err))
 		return
 	}
-	err = c.Com.Create(data)
+	err = c.Service.Create(data)
 	u.JSON(http.StatusOK, cm.Res(err))
 }
