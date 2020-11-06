@@ -21,7 +21,7 @@ services:
     restart: always
     # sql备份目录
     volumes:
-      - /root/demo/bak/mysql/data:/var/lib/mysql
+      - /root/gt-crud/bak/mysql/data:/var/lib/mysql
     networks:
       - demo
   # redis

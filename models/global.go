@@ -9,7 +9,7 @@ import (
 )
 
 type IDCom struct {
-	ID uint64 `gorm:"type:bigint(20) AUTO_INCREMENT;PRIMARY_KEY;" json:"id"`
+	ID uint64 `gorm:"type:bigint(20) AUTO_INCREMENT;primaryKey;" json:"id"`
 }
 
 // 通用模型

@@ -44,7 +44,7 @@ func InitRouter() {
 		admins := v.Group("/admin")
 		{
 			admins.GET("/search", admin.Search)
-			admins.GET("/id", admin.Get)
+			admins.GET("/get", admin.Get)
 			admins.DELETE("/delete/:id", admin.Delete)
 			admins.POST("/create", admin.Create)
 			admins.PUT("/update", admin.Update)
