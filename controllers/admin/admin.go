@@ -10,7 +10,6 @@ import (
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/util"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -70,13 +69,32 @@ func Create(u *gin.Context) {
 	u.JSON(http.StatusOK, cm.Res(err))
 }
 
+type LoginAdmin struct {
+	admin.Admin
+	Key  string `json:"key"`
+	Code string `json:"code"`
+}
+
 // 登录
 func Login(u *gin.Context) {
-	var login, sqlData admin.Admin
+
+	var (
+		login   LoginAdmin
+		sqlData admin.Admin
+	)
 
 	// 自定义日期格式问题
 	err := u.ShouldBindJSON(&login)
-	log.Println(err)
+	if err != nil {
+		u.JSON(http.StatusOK, result.GetError(err))
+		return
+	}
+
+	// 验证码验证,有需要打开验证
+	//if !captcha.Check(login.Key, login.Code) {
+	//	u.JSON(http.StatusOK, result.GetText("验证码不正确"))
+	//  return
+	//}
 
 	// 查找
 	gt.NewCrud(gt.Data(&sqlData)).Select("select id,password,role from admin where name = ?", login.Name).Single()

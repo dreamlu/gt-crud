@@ -2,6 +2,7 @@
 package routers
 
 import (
+	"demo/controllers/captcha"
 	"demo/controllers/file"
 	str2 "demo/util/cons"
 	"github.com/dreamlu/gt/cache"
@@ -61,6 +62,7 @@ func SetRouter() *gin.Engine {
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
 		v.POST("/file/multi_upload", file.UploadMultiFile)
+		v.GET("captcha", captcha.Captcha)
 	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {
