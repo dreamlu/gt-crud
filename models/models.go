@@ -27,15 +27,66 @@ type AdminCom struct {
 
 // ================ common ============
 
-// common crud
-type Com struct {
-	Model      interface{}
-	ArrayModel interface{}
+// CrudService service
+type CrudService struct {
 	GetService
 	SearchService
 	DeleteService
 	UpdateService
 	CreateService
+}
+
+type CrudServiceParam func(*CrudService)
+
+func Get(GetService GetService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.GetService = GetService
+	}
+}
+
+func NewService(params ...CrudServiceParam) CrudService {
+	param := &CrudService{}
+
+	for _, p := range params {
+		p(param)
+	}
+	return *param
+}
+
+func Search(SearchService SearchService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.SearchService = SearchService
+	}
+}
+
+func Delete(DeleteService DeleteService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.DeleteService = DeleteService
+	}
+}
+
+func Update(UpdateService UpdateService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.UpdateService = UpdateService
+	}
+}
+
+func Create(CreateService CreateService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.CreateService = CreateService
+	}
+}
+
+// common crud
+type Com struct {
+	Model      interface{}
+	ArrayModel interface{}
+	CrudService
 }
 
 // get data, by id

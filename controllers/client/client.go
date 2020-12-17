@@ -1,9 +1,6 @@
 package client
 
 import (
-	"demo/controllers"
-	"demo/models"
-	"demo/models/client"
 	"demo/util/models/token"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/id"
@@ -12,15 +9,6 @@ import (
 	"net/http"
 	"strconv"
 )
-
-// 自定义额外接口
-func New(model interface{}, arrayModel interface{}) controllers.ComController {
-	return controllers.ComController{Service: &models.Com{
-		Model:         model,
-		ArrayModel:    arrayModel,
-		UpdateService: &client.Client{},
-	}}
-}
 
 // token
 func Token(u *gin.Context) {

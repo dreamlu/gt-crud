@@ -97,8 +97,11 @@ func Login(u *gin.Context) {
 	//}
 
 	// 查找
-	gt.NewCrud(gt.Data(&sqlData)).Select("select id,password,role from admin where name = ?", login.Name).Single()
-
+	err = gt.NewCrud(gt.Data(&sqlData)).Select("select id,password,role from admin where name = ?", login.Name).Single().Error()
+	if err != nil {
+		u.JSON(http.StatusOK, result.GetError(err.Error()))
+		return
+	}
 	// 验证不通过
 	if sqlData.Password != util.AesEn(login.Password) {
 		u.JSON(http.StatusOK, result.MapCountErr)
@@ -106,10 +109,6 @@ func Login(u *gin.Context) {
 	}
 
 	ca := cache.NewCache()
-	if err != nil {
-		u.JSON(http.StatusOK, result.GetError(err.Error()))
-		return
-	}
 	var model token.TokenModel
 	model.ID = sqlData.ID
 	newID, _ := id.NewID(1)

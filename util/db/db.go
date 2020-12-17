@@ -48,7 +48,7 @@ func initApplet() {
 // init admin
 func initAdmin() {
 	// 插入admin账号
-	role := int8(1)
+	role := int8(0)
 	var ad = admin.Admin{
 		Name:     "admin",
 		Password: util.AesEn("123456"),

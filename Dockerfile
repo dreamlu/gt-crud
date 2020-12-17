@@ -6,7 +6,7 @@ COPY conf /conf
 COPY main /
 COPY static /static
 
-EXPOSE 8006
+#EXPOSE 8006
 
 CMD ["./main"]
 
