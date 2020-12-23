@@ -3,10 +3,8 @@ package admin
 import (
 	"demo/models/admin"
 	"demo/util/cm"
-	"demo/util/models/token"
+	"demo/util/token"
 	"github.com/dreamlu/gt"
-	"github.com/dreamlu/gt/cache"
-	"github.com/dreamlu/gt/tool/id"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/util"
 	"github.com/gin-gonic/gin"
@@ -108,18 +106,10 @@ func Login(u *gin.Context) {
 		return
 	}
 
-	ca := cache.NewCache()
-	var model token.TokenModel
-	model.ID = sqlData.ID
-	newID, _ := id.NewID(1)
-	model.Token = newID.String()
-	ca.Set(model.Token, cache.CacheModel{
-		Time: cache.CacheDay,
-		Data: model,
-	})
+	tk := token.GetToken(sqlData.ID)
 
 	u.JSON(http.StatusOK, result.MapSuccess.
-		Add("id", model.ID).
-		Add("token", model.Token).
+		Add("id", sqlData.ID).
+		Add("token", tk).
 		Add("role", sqlData.Role))
 }

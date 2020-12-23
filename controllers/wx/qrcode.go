@@ -4,13 +4,11 @@ import (
 	"demo/models"
 	"demo/models/admin/applet"
 	"demo/util/cm"
-	"fmt"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/id"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp/code"
-	"github.com/skip2/go-qrcode"
 	"io/ioutil"
 	"net/http"
 )
@@ -117,25 +115,4 @@ into:
 	bodyu, _ := ioutil.ReadAll(resu.Body)
 	u.Writer.Header().Add("Content-Type", "image/png")
 	u.Writer.Write(bodyu)
-}
-
-// 普通二维码生成
-func PQrcode(u *gin.Context) {
-	url := u.Query("url")
-	w := u.Writer
-
-	var err error
-	defer func() {
-		if err != nil {
-			w.WriteHeader(500)
-			return
-		}
-	}()
-	png, err := qrcode.Encode(url, qrcode.Medium, 256)
-	if err != nil {
-		return
-	}
-	w.Header().Set("Content-Type", "image/png")
-	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(png)))
-	w.Write(png)
 }

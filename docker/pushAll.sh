@@ -8,4 +8,4 @@ docker images|grep none|awk '{print $3 }'|xargs docker rmi
 # 删除停止的容器
 #docker rm `docker ps -a|grep Exited|awk '{print $1}'`
 # 自动更新，取消注释，配置ssh免密
-#ssh root@ip "cd /root/gt-crud/;./update.sh;exit"
+#ssh root@ip "cd /root/gt-crud/docker/;./update.sh;exit"

@@ -2,8 +2,9 @@
 package routers
 
 import (
-	"demo/controllers/captcha"
-	"demo/controllers/file"
+	"demo/controllers/common/captcha"
+	"demo/controllers/common/file"
+	"demo/controllers/common/qrcode"
 	str2 "demo/util/cons"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/result"
@@ -45,14 +46,15 @@ func SetRouter() *gin.Engine {
 	//store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
 	//router.Use(sessions.Sessions("mysession", store))
 
-	// Ping test
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
 	//组的路由,version
 	v1 := router.Group(prefix)
 	{
 		v := v1
+
+		// Ping test
+		v.GET("/ping", func(c *gin.Context) {
+			c.String(http.StatusOK, "pong")
+		})
 
 		// 静态目录
 		// relativePath:请求路径
@@ -62,7 +64,8 @@ func SetRouter() *gin.Engine {
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
 		v.POST("/file/multi_upload", file.UploadMultiFile)
-		v.GET("captcha", captcha.Captcha)
+		v.GET("/captcha", captcha.Captcha)
+		v.GET("/qrcode", qrcode.PQrcode)
 	}
 	//不存在路由
 	router.NoRoute(func(c *gin.Context) {
