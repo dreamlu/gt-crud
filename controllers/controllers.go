@@ -21,10 +21,9 @@ type ComController struct {
 	models.Service
 }
 
-func New(model interface{}, arrayModel interface{}, params ...models.CrudServiceParam) ComController {
+func New(model interface{}, params ...models.CrudServiceParam) ComController {
 	return ComController{Service: &models.Com{
 		Model:       model,
-		ArrayModel:  arrayModel,
 		CrudService: models.NewService(params...),
 	}}
 }

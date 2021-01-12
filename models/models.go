@@ -84,8 +84,7 @@ func Create(CreateService CreateService) CrudServiceParam {
 
 // common crud
 type Com struct {
-	Model      interface{}
-	ArrayModel interface{}
+	Model interface{}
 	CrudService
 }
 
@@ -109,7 +108,7 @@ func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, e
 	if c.SearchService != nil {
 		return c.SearchService.Search(params)
 	}
-	datas = reflect.New(c.ArrayModel)
+	datas = reflect.NewArray(c.Model)
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {

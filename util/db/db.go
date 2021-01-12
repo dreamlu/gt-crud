@@ -5,6 +5,7 @@ import (
 	"demo/models/admin"
 	"demo/models/admin/applet"
 	"demo/models/client"
+	"demo/models/order"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/util"
 )
@@ -12,8 +13,7 @@ import (
 func InitDB() {
 	gt.DB().AutoMigrate(
 		&client.Client{}, // 客户
-		//&order.Service{},
-		//&order.Order{}, // 订单, 不用可注释
+		&order.Order{},   // 订单, 不用可注释
 		&admin.Admin{},   // 账号管理
 		&applet.Applet{}, // appid账号存储
 		&wx.QrCode{},     // 小程序二维码解析参数存储

@@ -18,10 +18,10 @@ func InitRouter() {
 	v := routers.V
 	{
 		// 用户
-		cls["/client"] = controllers.New(client2.Client{}, []*client2.Client{}, models.Update(&client2.Client{}))
+		cls["/client"] = controllers.New(client2.Client{}, models.Update(&client2.Client{}))
 
 		// 小程序账号
-		cls["/admin/applet"] = controllers.New(applet2.Applet{}, []*applet2.Applet{})
+		cls["/admin/applet"] = controllers.New(applet2.Applet{})
 
 		// 路由列表
 		for k, c := range cls {
