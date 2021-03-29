@@ -3,7 +3,7 @@ package controllers
 import (
 	"demo/models"
 	"demo/util/cm"
-	"demo/util/reflect"
+	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"net/http"

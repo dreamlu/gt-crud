@@ -5,7 +5,7 @@ import (
 	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
-	"github.com/dreamlu/gt/tool/type/te"
+	te "github.com/dreamlu/gt/tool/type/errors"
 	"github.com/dreamlu/gt/tool/util/xss"
 	"github.com/gin-gonic/gin"
 )

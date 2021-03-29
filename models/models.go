@@ -1,8 +1,8 @@
 package models
 
 import (
-	"demo/util/reflect"
 	"github.com/dreamlu/gt"
+	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/dreamlu/gt/tool/type/time"
@@ -96,7 +96,7 @@ func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 	}
 	data = reflect.New(c.Model)
 	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
-	if err = crud.GetByData(params).Error(); err != nil {
+	if err = crud.Get(params).Error(); err != nil {
 		return
 	}
 	return

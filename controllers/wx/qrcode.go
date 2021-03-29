@@ -58,7 +58,7 @@ func GetByKey(u *gin.Context) {
 	cd := gt.NewCrud(
 		gt.Model(QrCode{}),
 		gt.Data(&qc),
-	).GetByData(cm.ToCMap(u))
+	).Get(cm.ToCMap(u))
 	if cd.Error() != nil {
 		u.JSON(http.StatusOK, result.CError(cd.Error()))
 		return

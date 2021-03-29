@@ -23,7 +23,7 @@ var crud = gt.NewCrud(
 // get data, by id
 func (c *Admin) Get(params cmap.CMap) (data Admin, err error) {
 	crud.Params(gt.Data(&data))
-	if err = crud.GetByData(params).Error(); err != nil {
+	if err = crud.Get(params).Error(); err != nil {
 		return
 	}
 	return

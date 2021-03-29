@@ -7,10 +7,10 @@ import (
 	"demo/controllers/common/qrcode"
 	str2 "demo/util/cons"
 	"github.com/dreamlu/gt/cache"
+	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"runtime/debug"
 	"strings"
@@ -109,7 +109,7 @@ func Filter() gin.HandlerFunc {
 				return
 			}
 			ca := cache.NewCache()
-			log.Println("[token]:", token)
+			log.Error("[token]:", token)
 			cam, err := ca.Get(token)
 			if err != nil {
 				c.Abort()
@@ -128,7 +128,8 @@ func Recover(c *gin.Context) {
 		if r := recover(); r != nil {
 			//打印错误堆栈信息
 			//log.Printf("panic: %v\n", r)
-			debug.PrintStack()
+			//debug.PrintStack()
+			log.Error(string(debug.Stack()))
 			//封装通用json返回
 			//c.JSON(http.StatusOK, Result.Fail(errorToString(r)))
 			//Result.Fail不是本例的重点，因此用下面代码代替

@@ -102,7 +102,7 @@ func Login(u *gin.Context) {
 	}
 	// 验证不通过
 	if sqlData.Password != util.AesEn(login.Password) {
-		u.JSON(http.StatusOK, result.MapCountErr)
+		u.JSON(http.StatusOK, result.GetText("账号或密码错误"))
 		return
 	}
 
