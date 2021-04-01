@@ -38,20 +38,20 @@ type CrudService struct {
 
 type CrudServiceParam func(*CrudService)
 
-func Get(GetService GetService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.GetService = GetService
-	}
-}
-
-func NewService(params ...CrudServiceParam) CrudService {
+func NewCrudService(params ...CrudServiceParam) CrudService {
 	param := &CrudService{}
 
 	for _, p := range params {
 		p(param)
 	}
 	return *param
+}
+
+func Get(GetService GetService) CrudServiceParam {
+
+	return func(params *CrudService) {
+		params.GetService = GetService
+	}
 }
 
 func Search(SearchService SearchService) CrudServiceParam {
@@ -86,6 +86,13 @@ func Create(CreateService CreateService) CrudServiceParam {
 type Com struct {
 	Model interface{}
 	CrudService
+}
+
+func NewService(model interface{}, params ...CrudServiceParam) *Com {
+	return &Com{
+		Model:       model,
+		CrudService: NewCrudService(params...),
+	}
 }
 
 // get data, by id

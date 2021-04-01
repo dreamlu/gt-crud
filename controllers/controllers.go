@@ -22,10 +22,7 @@ type ComController struct {
 }
 
 func New(model interface{}, params ...models.CrudServiceParam) ComController {
-	return ComController{Service: &models.Com{
-		Model:       model,
-		CrudService: models.NewService(params...),
-	}}
+	return ComController{Service: models.NewService(model, params...)}
 }
 
 //根据id获得data
