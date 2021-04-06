@@ -51,7 +51,9 @@ func (c *Admin) Delete(id string) error {
 // update data
 func (c *Admin) Update(data *Admin) error {
 
-	data.Password = util.AesEn(data.Password)
+	if data.Password != "" {
+		data.Password = util.AesEn(data.Password)
+	}
 	crud.Params(gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
