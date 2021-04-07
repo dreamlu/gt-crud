@@ -51,3 +51,4 @@ var crud = gt.NewCrud(
 这种情况下,其他使用相同变量的crud的Model都会收到影响,解决方法如下:  
 1.新增的方法中使用`gt.NewCrud(gt.Model(Client2{}))`解决  
 2.可将`crud.Params(gt.Model(Client{}))`添加至每个使用的crud变量中  
+3.项目使用，全局替换gt-crud,另修改conf/和docker中数据库名称和密码  
