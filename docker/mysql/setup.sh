@@ -55,12 +55,16 @@ do
     esac
 done
 
-if grep "bak.sh" ${cronFile} ; then
+if [ ! -d ${bakDir} ]; then
+  mkdir ${bakDir}
+fi
+
+if grep "$(pwd)/bak.sh" ${cronFile} ; then
 	echo "自动备份脚本已存在!"
 else
    	# 将命令写入定时备份文件
    	# 1.每天2:01开始备份数据
-	echo -e "#定时备份数据至${bakDir}目录\n1 2 * * * root ${bakDir}/bak.sh -c ${CONTAINER} -u ${USER} -p ${PASSWORD} -d ${DATABASE} -b ${bakDir}" >> ${cronFile}
+	echo -e "#定时备份数据至${bakDir}目录\n1 2 * * * root $(pwd)/bak.sh -c ${CONTAINER} -u ${USER} -p ${PASSWORD} -d ${DATABASE} -b ${bakDir}" >> ${cronFile}
 	echo "定时备份数==> ${bakDir}中"
 	# 将插件脚本放置mysql目录配置定时任务指定邮箱发送
 	# 2.邮件备份通知
