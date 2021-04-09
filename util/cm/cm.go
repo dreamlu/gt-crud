@@ -52,6 +52,9 @@ func ResPager(err error, datas interface{}, pager result.Pager) (res result.Resu
 			log.Error(res)
 		}
 	} else {
+		if pager.TotalNum == 0 {
+			datas = []interface{}{}
+		}
 		res = result.GetSuccessPager(datas, pager)
 	}
 	return
