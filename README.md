@@ -15,8 +15,8 @@ gt.DB().AutoMigrate(client.Client{})
 cls["/client"] = controllers.New(client.Client{})
 // 自定义crud中的某个方法,最后一个参数是可选参数
 // 定制方法需要确定该结构体实现了models/models_service.go中对应的接口
-// eg: cls["/client"] = controllers.New(client.Client{}, []*client.Client{}, models.Update(&client.Client{}), models.Search(&client.Client{})需要实现Update和Search接口方法 
-// cls["/client"] = controllers.New(client.Client{}, []*client.Client{}, models.Update(&client.Client{}))
+// eg: cls["/client"] = controllers.New(client.Client{}, models.Update(&client.Client{}), models.Search(&client.Client{})需要实现Update和Search接口方法 
+// cls["/client"] = controllers.New(client.Client{}, models.Update(&client.Client{}))
 ```
 
 gt-crud 是一个gin + gorm + gt 的使用案例  

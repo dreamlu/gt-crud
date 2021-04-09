@@ -3,10 +3,10 @@ package wx
 import (
 	"demo/models/admin/applet"
 	"demo/models/order"
+	"demo/util/result"
 	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/id"
 	log2 "github.com/dreamlu/gt/tool/log"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp/payment"
 	"log"

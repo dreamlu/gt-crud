@@ -3,15 +3,15 @@ package order
 
 import (
 	"demo/models/order"
-	"demo/util/cm"
+	"demo/util/result"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-var q order.Order
+var p order.Order
 
 //用户信息分页
 func GetOrderBySearch(u *gin.Context) {
-	ss := q.GetMoreBySearch(cm.ToCMap(u))
-	u.JSON(http.StatusOK, ss)
+	datas, pager, err := p.GetMoreBySearch(result.ToCMap(u))
+	u.JSON(http.StatusOK, result.ResPager(err, datas, pager))
 }

@@ -3,9 +3,9 @@ package applet
 import (
 	"demo/models/admin/applet"
 	"demo/util/file"
+	"demo/util/result"
 	"encoding/json"
 	"github.com/dreamlu/gt/tool/conf"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"

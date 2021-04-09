@@ -1,9 +1,9 @@
 package models
 
 import (
+	"demo/util/result"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/reflect"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/dreamlu/gt/tool/type/time"
 )
@@ -121,7 +121,8 @@ func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, e
 	if cd.Error() != nil {
 		return nil, pager, cd.Error()
 	}
-	return datas, cd.Pager(), nil
+	pager.Pager = cd.Pager()
+	return datas, pager, nil
 }
 
 // delete data, by id

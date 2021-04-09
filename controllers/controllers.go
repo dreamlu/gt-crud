@@ -2,9 +2,8 @@ package controllers
 
 import (
 	"demo/models"
-	"demo/util/cm"
+	"demo/util/result"
 	"github.com/dreamlu/gt/tool/reflect"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -27,21 +26,21 @@ func New(model interface{}, params ...models.CrudServiceParam) ComController {
 
 //根据id获得data
 func (c ComController) Get(u *gin.Context) {
-	data, err := c.Service.Get(cm.ToCMap(u))
-	u.JSON(http.StatusOK, cm.ResGet(err, data))
+	data, err := c.Service.Get(result.ToCMap(u))
+	u.JSON(http.StatusOK, result.ResGet(err, data))
 }
 
 //data信息分页
 func (c ComController) Search(u *gin.Context) {
-	datas, pager, err := c.Service.Search(cm.ToCMap(u))
-	u.JSON(http.StatusOK, cm.ResPager(err, datas, pager))
+	datas, pager, err := c.Service.Search(result.ToCMap(u))
+	u.JSON(http.StatusOK, result.ResPager(err, datas, pager))
 }
 
 //data信息删除
 func (c ComController) Delete(u *gin.Context) {
 	id := u.Param("id")
 	err := c.Service.Delete(id)
-	u.JSON(http.StatusOK, cm.Res(err))
+	u.JSON(http.StatusOK, result.Res(err))
 }
 
 //data信息修改
@@ -61,7 +60,7 @@ func (c ComController) Update(u *gin.Context) {
 	// do something
 
 	err = c.Service.Update(data)
-	u.JSON(http.StatusOK, cm.Res(err))
+	u.JSON(http.StatusOK, result.Res(err))
 }
 
 //新增data信息
@@ -76,5 +75,5 @@ func (c ComController) Create(u *gin.Context) {
 		return
 	}
 	err = c.Service.Create(data)
-	u.JSON(http.StatusOK, cm.Res(err))
+	u.JSON(http.StatusOK, result.Res(err))
 }

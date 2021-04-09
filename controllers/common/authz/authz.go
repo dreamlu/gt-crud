@@ -4,7 +4,7 @@
 package authz
 
 import (
-	"github.com/dreamlu/gt/tool/result"
+	"demo/util/result"
 	"github.com/dreamlu/gt/tool/util"
 	"net/http"
 	"net/url"

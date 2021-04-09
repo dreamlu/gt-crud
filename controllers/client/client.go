@@ -2,9 +2,9 @@ package client
 
 import (
 	"demo/util/models/token"
+	"demo/util/result"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/id"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

@@ -3,8 +3,8 @@ package order
 
 import (
 	"demo/models"
+	"demo/util/result"
 	"github.com/dreamlu/gt"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 )
 
@@ -28,19 +28,18 @@ type OrderD struct {
 
 // get order, limit and search
 // clientPage 1, everyPage 10 default
-func (c *Order) GetMoreBySearch(params cmap.CMap) interface{} {
-	var or []OrderD
+func (c *Order) GetMoreBySearch(params cmap.CMap) (datas []*OrderD, pager result.Pager, err error) {
 	var crud = gt.NewCrud(
 		gt.Inner("order", "client"),
 		//gt.Left("order", "service"),
 		gt.Model(OrderD{}),
-		gt.Data(&or),
+		gt.Data(&datas),
 	)
 
 	cd := crud.GetMoreBySearch(params)
 	if cd.Error() != nil {
-		return result.GetError(cd.Error())
+		return nil, pager, cd.Error()
 	}
-
-	return result.GetSuccessPager(or, cd.Pager())
+	pager.Pager = cd.Pager()
+	return datas, pager, nil
 }

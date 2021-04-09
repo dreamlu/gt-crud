@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/dreamlu/gt/tool/result"
+	"demo/util/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 )
 

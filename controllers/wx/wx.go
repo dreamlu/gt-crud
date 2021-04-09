@@ -3,8 +3,8 @@ package wx
 import (
 	"demo/models/admin/applet"
 	client2 "demo/models/client"
-	"demo/util/cm"
 	"demo/util/models/token"
+	"demo/util/result"
 	"encoding/json"
 	"fmt"
 	"github.com/dreamlu/gt"
@@ -12,7 +12,6 @@ import (
 	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/id"
 	"github.com/dreamlu/gt/tool/log"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp"
 	"github.com/medivhzhan/weapp/payment"
@@ -144,7 +143,7 @@ func Phone(u *gin.Context) {
 	//}
 	phone, err := weapp.DecryptPhoneNumber(data["session_key"][0], data["encrypted_data"][0], data["iv"][0])
 
-	u.JSON(http.StatusOK, cm.ResGet(err, phone))
+	u.JSON(http.StatusOK, result.ResGet(err, phone))
 }
 
 //支付,范围对应支付的多个(5)参数

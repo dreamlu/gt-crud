@@ -2,8 +2,8 @@ package admin
 
 import (
 	"demo/models"
+	"demo/util/result"
 	"github.com/dreamlu/gt"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/dreamlu/gt/tool/util"
 )
@@ -36,10 +36,10 @@ func (c *Admin) Search(params cmap.CMap) (datas []*Admin, pager result.Pager, er
 	crud.Params(gt.Data(&datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
-		//log.Log.Error(err.Error())
 		return nil, pager, cd.Error()
 	}
-	return datas, cd.Pager(), nil
+	pager.Pager = cd.Pager()
+	return datas, pager, nil
 }
 
 // delete data, by id

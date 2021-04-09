@@ -6,7 +6,7 @@ package pca
 //	"encoding/json"
 //	"fmt"
 //	"github.com/dreamlu/gt"
-//	"github.com/dreamlu/gt/tool/result"
+//	"demo/util/result"
 //	"github.com/gin-gonic/gin"
 //	"github.com/mozillazg/go-pinyin"
 //	"io/ioutil"

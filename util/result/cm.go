@@ -1,9 +1,8 @@
-package cm
+package result
 
 import (
 	"errors"
 	"github.com/dreamlu/gt/tool/log"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	te "github.com/dreamlu/gt/tool/type/errors"
 	"github.com/dreamlu/gt/tool/util/xss"
@@ -21,33 +20,33 @@ func ToCMap(u *gin.Context) cmap.CMap {
 	return values
 }
 
-func Res(err error) (res result.Resultable) {
+func Res(err error) (res Resultable) {
 	if err != nil {
-		res = result.CError(err)
+		res = CError(err)
 		if !errors.As(err, &te.TextErr) {
 			log.Error(res)
 		}
 	} else {
-		res = result.MapSuccess
+		res = MapSuccess
 	}
 	return
 }
 
-func ResGet(err error, data interface{}) (res result.Resultable) {
+func ResGet(err error, data interface{}) (res Resultable) {
 	if err != nil {
-		res = result.CError(err)
+		res = CError(err)
 		if !errors.As(err, &te.TextErr) {
 			log.Error(res)
 		}
 	} else {
-		res = result.GetSuccess(data)
+		res = GetSuccess(data)
 	}
 	return
 }
 
-func ResPager(err error, datas interface{}, pager result.Pager) (res result.Resultable) {
+func ResPager(err error, datas interface{}, pager Pager) (res Resultable) {
 	if err != nil {
-		res = result.CError(err)
+		res = CError(err)
 		if !errors.As(err, &te.TextErr) {
 			log.Error(res)
 		}
@@ -55,7 +54,7 @@ func ResPager(err error, datas interface{}, pager result.Pager) (res result.Resu
 		if pager.TotalNum == 0 {
 			datas = []interface{}{}
 		}
-		res = result.GetSuccessPager(datas, pager)
+		res = GetSuccessPager(datas, pager)
 	}
 	return
 }

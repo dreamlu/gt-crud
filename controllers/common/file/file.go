@@ -1,8 +1,8 @@
 package file
 
 import (
+	"demo/util/result"
 	File "github.com/dreamlu/gt/tool/file"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"image"
 	"net/http"

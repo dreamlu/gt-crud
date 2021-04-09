@@ -3,10 +3,9 @@ package wx
 import (
 	"demo/models"
 	"demo/models/admin/applet"
-	"demo/util/cm"
+	"demo/util/result"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/id"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"github.com/medivhzhan/weapp/code"
 	"io/ioutil"
@@ -58,7 +57,7 @@ func GetByKey(u *gin.Context) {
 	cd := gt.NewCrud(
 		gt.Model(QrCode{}),
 		gt.Data(&qc),
-	).Get(cm.ToCMap(u))
+	).Get(result.ToCMap(u))
 	if cd.Error() != nil {
 		u.JSON(http.StatusOK, result.CError(cd.Error()))
 		return

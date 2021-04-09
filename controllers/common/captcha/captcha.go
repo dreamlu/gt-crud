@@ -1,10 +1,10 @@
 package captcha
 
 import (
+	"demo/util/result"
 	"github.com/afocus/captcha"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/log"
-	"github.com/dreamlu/gt/tool/result"
 	"github.com/gin-gonic/gin"
 	"image/png"
 	"net/http"
