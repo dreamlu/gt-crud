@@ -26,21 +26,30 @@ func New(model interface{}, params ...models.CrudServiceParam) ComController {
 
 //根据id获得data
 func (c ComController) Get(u *gin.Context) {
-	data, err := c.Service.Get(result.ToCMap(u))
-	u.JSON(http.StatusOK, result.ResGet(err, data))
+	if f, ok := c.M().(models.GetService); ok {
+		u.JSON(http.StatusOK, result.ResGet(f.Get(result.ToCMap(u))))
+		return
+	}
+	u.JSON(http.StatusOK, result.ResGet(c.Service.Get(result.ToCMap(u))))
 }
 
 //data信息分页
 func (c ComController) Search(u *gin.Context) {
-	datas, pager, err := c.Service.Search(result.ToCMap(u))
-	u.JSON(http.StatusOK, result.ResPager(err, datas, pager))
+	if f, ok := c.M().(models.SearchService); ok {
+		u.JSON(http.StatusOK, result.ResPager(f.Search(result.ToCMap(u))))
+		return
+	}
+	u.JSON(http.StatusOK, result.ResPager(c.Service.Search(result.ToCMap(u))))
 }
 
 //data信息删除
 func (c ComController) Delete(u *gin.Context) {
 	id := u.Param("id")
-	err := c.Service.Delete(id)
-	u.JSON(http.StatusOK, result.Res(err))
+	if f, ok := c.M().(models.DeleteService); ok {
+		u.JSON(http.StatusOK, result.Res(f.Delete(id)))
+		return
+	}
+	u.JSON(http.StatusOK, result.Res(c.Service.Delete(id)))
 }
 
 //data信息修改
@@ -57,8 +66,10 @@ func (c ComController) Update(u *gin.Context) {
 		u.JSON(http.StatusOK, result.CError(err))
 		return
 	}
-	// do something
-
+	if f, ok := c.M().(models.UpdateService); ok {
+		u.JSON(http.StatusOK, result.Res(f.Update(data)))
+		return
+	}
 	err = c.Service.Update(data)
 	u.JSON(http.StatusOK, result.Res(err))
 }
@@ -74,6 +85,9 @@ func (c ComController) Create(u *gin.Context) {
 		u.JSON(http.StatusOK, result.CError(err))
 		return
 	}
-	err = c.Service.Create(data)
-	u.JSON(http.StatusOK, result.Res(err))
+	if f, ok := c.M().(models.CreateService); ok {
+		u.JSON(http.StatusOK, result.Res(f.Create(data)))
+		return
+	}
+	u.JSON(http.StatusOK, result.Res(c.Service.Create(data)))
 }

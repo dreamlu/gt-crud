@@ -32,7 +32,7 @@ func Res(err error) (res Resultable) {
 	return
 }
 
-func ResGet(err error, data interface{}) (res Resultable) {
+func ResGet(data interface{}, err error) (res Resultable) {
 	if err != nil {
 		res = CError(err)
 		if !errors.As(err, &te.TextErr) {
@@ -44,7 +44,7 @@ func ResGet(err error, data interface{}) (res Resultable) {
 	return
 }
 
-func ResPager(err error, datas interface{}, pager Pager) (res Resultable) {
+func ResPager(datas interface{}, pager Pager, err error) (res Resultable) {
 	if err != nil {
 		res = CError(err)
 		if !errors.As(err, &te.TextErr) {

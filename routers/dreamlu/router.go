@@ -6,7 +6,6 @@ import (
 	"demo/controllers/admin/applet"
 	"demo/controllers/client"
 	"demo/controllers/order"
-	"demo/models"
 	applet2 "demo/models/admin/applet"
 	client2 "demo/models/client"
 	"demo/routers"
@@ -18,7 +17,7 @@ func InitRouter() {
 	v := routers.V
 	{
 		// 用户
-		cls["/client"] = controllers.New(client2.Client{}, models.Update(&client2.Client{}))
+		cls["/client"] = controllers.New(client2.Client{})
 
 		// 小程序账号
 		cls["/admin/applet"] = controllers.New(applet2.Applet{})

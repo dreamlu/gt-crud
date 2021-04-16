@@ -14,14 +14,12 @@ var p admin.Admin
 
 //根据id获得data
 func Get(u *gin.Context) {
-	data, err := p.Get(result.ToCMap(u))
-	u.JSON(http.StatusOK, result.ResGet(err, data))
+	u.JSON(http.StatusOK, result.ResGet(p.Get(result.ToCMap(u))))
 }
 
 //data信息分页
 func Search(u *gin.Context) {
-	datas, pager, err := p.Search(result.ToCMap(u))
-	u.JSON(http.StatusOK, result.ResPager(err, datas, pager))
+	u.JSON(http.StatusOK, result.ResPager(p.Search(result.ToCMap(u))))
 }
 
 //data信息删除

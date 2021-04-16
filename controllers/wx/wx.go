@@ -143,7 +143,7 @@ func Phone(u *gin.Context) {
 	//}
 	phone, err := weapp.DecryptPhoneNumber(data["session_key"][0], data["encrypted_data"][0], data["iv"][0])
 
-	u.JSON(http.StatusOK, result.ResGet(err, phone))
+	u.JSON(http.StatusOK, result.ResGet(phone, err))
 }
 
 //支付,范围对应支付的多个(5)参数

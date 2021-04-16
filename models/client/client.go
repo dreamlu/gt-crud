@@ -2,7 +2,6 @@ package client
 
 import (
 	"demo/models"
-	"github.com/dreamlu/gt"
 )
 
 // Client
@@ -18,10 +17,7 @@ type Client struct {
 
 // 处理密码等额外操作
 func (c Client) Update(data interface{}) error {
-	crud := gt.NewCrud(gt.Model(Client{}), gt.Data(data))
-	if err := crud.Update().Error(); err != nil {
-		//log.Log.Error(err.Error())
-		return err
-	}
-	return nil
+	// 处理自己的逻辑
+	//cli := data.(*Client)
+	return models.NewService(Client{}).Update(data)
 }
