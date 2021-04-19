@@ -4,19 +4,20 @@ import (
 	"demo/controllers/wx"
 	"demo/models/admin"
 	"demo/models/admin/applet"
-	"demo/models/client"
 	"demo/models/order"
 	"github.com/dreamlu/gt"
 	"github.com/dreamlu/gt/tool/util"
 )
 
-func InitDB() {
+func InitDB(db ...interface{}) {
+
+	_ = gt.DB().AutoMigrate(db...)
 	gt.DB().AutoMigrate(
-		&client.Client{}, // 客户
-		&order.Order{},   // 订单, 不用可注释
-		&admin.Admin{},   // 账号管理
-		&applet.Applet{}, // appid账号存储
-		&wx.QrCode{},     // 小程序二维码解析参数存储
+		//&client.Client{}, // 客户
+		&order.Order{}, // 订单, 不用可注释
+		&admin.Admin{}, // 账号管理
+		//&applet.Applet{}, // appid账号存储
+		&wx.QrCode{}, // 小程序二维码解析参数存储
 	)
 	initSQL()
 }

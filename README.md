@@ -1,6 +1,6 @@
 gt-crud 
 
-- 简单方式(三步自动crud)  
+- 简单方式(两步自动crud)  
 ```go
 // 1.定义模型,参考models/client/client.go
 type Client struct {
@@ -8,14 +8,20 @@ type Client struct {
 	Name string `gorm:"type:varchar(30);" json:"name" valid:"required,len=2-20"` // 昵称
 }
 
+// 步骤二可省略, 最新方式可通过路由直接初始化调用DB
+// 如需额外定义数据库, 可建立模型初始化放入其中
 // 2.初始化数据库表,参考util/db/db.go
 gt.DB().AutoMigrate(client.Client{})
 
 // 3.路由router中定义,参考routers/dreamlu/router.go
-cls["/client"] = controllers.New(client.Client{})
-// 自定义crud中的某个方法,最后一个参数是可选参数
 // 定制方法需要确定该结构体实现了models/models_service.go中对应的接口
-// eg: cls["/client"] = controllers.New(client.Client{}, models.Update(&client.Client{}), models.Search(&client.Client{})需要实现Update和Search接口方法 
+// 路由定义
+		Route(map[string]interface{}{
+			// 客户
+			"/client":       client2.Client{},
+			// admin
+			"/admin/applet": applet2.Applet{},
+		})
 // cls["/client"] = controllers.New(client.Client{}, models.Update(&client.Client{}))
 ```
 

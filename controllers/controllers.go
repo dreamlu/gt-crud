@@ -5,7 +5,6 @@ import (
 	"demo/util/result"
 	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 //type Controller interface {
@@ -20,74 +19,59 @@ type ComController struct {
 	models.Service
 }
 
-func New(model interface{}, params ...models.CrudServiceParam) ComController {
-	return ComController{Service: models.NewService(model, params...)}
+func New(model interface{}) ComController {
+	return ComController{Service: models.NewService(model)}
 }
 
-//根据id获得data
+// Get 获得data
 func (c ComController) Get(u *gin.Context) {
 	if f, ok := c.M().(models.GetService); ok {
-		u.JSON(http.StatusOK, result.ResGet(f.Get(result.ToCMap(u))))
+		result.GinGet(u, f.Get)
 		return
 	}
-	u.JSON(http.StatusOK, result.ResGet(c.Service.Get(result.ToCMap(u))))
+	result.GinGet(u, c.Service.Get)
 }
 
-//data信息分页
+// Search data信息分页
 func (c ComController) Search(u *gin.Context) {
 	if f, ok := c.M().(models.SearchService); ok {
-		u.JSON(http.StatusOK, result.ResPager(f.Search(result.ToCMap(u))))
+		result.GinSearch(u, f.Search)
 		return
 	}
-	u.JSON(http.StatusOK, result.ResPager(c.Service.Search(result.ToCMap(u))))
+	result.GinSearch(u, c.Service.Search)
 }
 
-//data信息删除
+// Delete data信息删除
 func (c ComController) Delete(u *gin.Context) {
-	id := u.Param("id")
 	if f, ok := c.M().(models.DeleteService); ok {
-		u.JSON(http.StatusOK, result.Res(f.Delete(id)))
+		result.GinDelete(u, f.Delete)
 		return
 	}
-	u.JSON(http.StatusOK, result.Res(c.Service.Delete(id)))
+	result.GinDelete(u, c.Service.Delete)
 }
 
-//data信息修改
+// Update data信息修改
 func (c ComController) Update(u *gin.Context) {
 	var (
 		data = reflect.New(c.Service.M())
 	)
 	// json 类型需要匹配
-	// 与spring boot不同
-	// 不能自动将字符串转成对应类型
 	// 严格匹配
-	err := u.ShouldBindJSON(data)
-	if err != nil {
-		u.JSON(http.StatusOK, result.CError(err))
-		return
-	}
 	if f, ok := c.M().(models.UpdateService); ok {
-		u.JSON(http.StatusOK, result.Res(f.Update(data)))
+		result.GinCrUp(u, data, f.Update)
 		return
 	}
-	err = c.Service.Update(data)
-	u.JSON(http.StatusOK, result.Res(err))
+	result.GinCrUp(u, data, c.Service.Update)
 }
 
-//新增data信息
+// Create 新增data信息
 func (c ComController) Create(u *gin.Context) {
 	var (
 		data = reflect.New(c.Service.M())
 	)
-	// 自定义日期格式问题
-	err := u.ShouldBindJSON(data)
-	if err != nil {
-		u.JSON(http.StatusOK, result.CError(err))
-		return
-	}
 	if f, ok := c.M().(models.CreateService); ok {
-		u.JSON(http.StatusOK, result.Res(f.Create(data)))
+		result.GinCrUp(u, data, f.Create)
 		return
 	}
-	u.JSON(http.StatusOK, result.Res(c.Service.Create(data)))
+	result.GinCrUp(u, data, c.Service.Create, result.Add("data", data))
 }
