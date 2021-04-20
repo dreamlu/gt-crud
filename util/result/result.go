@@ -200,7 +200,7 @@ func StringToStruct(str string, st interface{}) error {
 // 所有TextErr类型的错误都将通过GetText, 业务状态码271返回
 // 用来进行直接的文字提示错误
 func CError(err error) *MapData {
-	err = GetSQLError(err.Error())
+	err = GetSQLError(err)
 	if errors.As(err, &errors2.TextErr) {
 		if err.Error() == MsgNoResult {
 			return MapNoResult

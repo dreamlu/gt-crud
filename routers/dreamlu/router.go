@@ -20,9 +20,9 @@ func InitRouter() {
 		// 路由定义
 		Route(map[string]interface{}{
 			// 客户
-			"/client": client2.Client{},
+			"/client": &client2.Client{}, // 取指针, 则实现方式既可以是指针实现也可以是值实现
 			// admin
-			"/admin/applet": applet2.Applet{},
+			"/admin/applet": &applet2.Applet{},
 		})
 
 		// 路由列表

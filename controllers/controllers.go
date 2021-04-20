@@ -70,7 +70,7 @@ func (c ComController) Create(u *gin.Context) {
 		data = reflect.New(c.Service.M())
 	)
 	if f, ok := c.M().(models.CreateService); ok {
-		result.GinCrUp(u, data, f.Create)
+		result.GinCrUp(u, data, f.Create, result.Add("data", data))
 		return
 	}
 	result.GinCrUp(u, data, c.Service.Create, result.Add("data", data))

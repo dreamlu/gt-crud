@@ -6,6 +6,7 @@ import (
 	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/dreamlu/gt/tool/type/time"
+	"github.com/dreamlu/gt/tool/util/hump"
 )
 
 type IDCom struct {
@@ -14,6 +15,7 @@ type IDCom struct {
 
 // 通用模型
 type ModelCom struct {
+	//Com Com `json:"-" gorm:"-" gt:"-"`
 	IDCom
 	CreateTime time.CTime `gorm:"type:datetime;DEFAULT:CURRENT_TIMESTAMP" json:"create_time"` // 创建时间自动生成
 }
@@ -27,20 +29,15 @@ type AdminCom struct {
 
 // ================ common ============
 
-// CrudService service
-type CrudService struct {
-	GetService
-	SearchService
-	DeleteService
-	UpdateService
-	CreateService
+// CrudParams service
+type CrudParams struct {
+	trans gt.Crud
 }
 
-// Deprecated
-type CrudServiceParam func(*CrudService)
+type CrudServiceParam func(*CrudParams)
 
-func NewCrudService(params ...CrudServiceParam) CrudService {
-	param := &CrudService{}
+func NewCrudService(params ...CrudServiceParam) CrudParams {
+	param := &CrudParams{}
 
 	for _, p := range params {
 		p(param)
@@ -48,51 +45,23 @@ func NewCrudService(params ...CrudServiceParam) CrudService {
 	return *param
 }
 
-func Get(GetService GetService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.GetService = GetService
-	}
-}
-
-func Search(SearchService SearchService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.SearchService = SearchService
-	}
-}
-
-func Delete(DeleteService DeleteService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.DeleteService = DeleteService
-	}
-}
-
-func Update(UpdateService UpdateService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.UpdateService = UpdateService
-	}
-}
-
-func Create(CreateService CreateService) CrudServiceParam {
-
-	return func(params *CrudService) {
-		params.CreateService = CreateService
+// Trans transaction
+func Trans(trans gt.Crud) CrudServiceParam {
+	return func(params *CrudParams) {
+		params.trans = trans
 	}
 }
 
 // common crud
 type Com struct {
 	Model interface{}
-	CrudService
+	CrudParams
 }
 
 func NewService(model interface{}, params ...CrudServiceParam) *Com {
 	return &Com{
-		Model:       model,
-		CrudService: NewCrudService(params...),
+		Model:      model,
+		CrudParams: NewCrudService(params...),
 	}
 }
 
@@ -100,7 +69,7 @@ func NewService(model interface{}, params ...CrudServiceParam) *Com {
 func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 
 	data = reflect.New(c.Model)
-	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data))
 	if err = crud.Get(params).Error(); err != nil {
 		return
 	}
@@ -111,7 +80,7 @@ func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, err error) {
 
 	datas = reflect.NewArray(c.Model)
-	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(datas))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(datas))
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
 		return nil, pager, cd.Error()
@@ -123,13 +92,13 @@ func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, e
 // delete data, by id
 func (c *Com) Delete(id interface{}) error {
 
-	return gt.NewCrud(gt.Model(c.Model)).Delete(id).Error()
+	return c.Crud().Params(gt.Model(c.Model)).Delete(id).Error()
 }
 
 // update data
 func (c *Com) Update(data interface{}) error {
 
-	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Update().Error(); err != nil {
 		//log.Log.Error(err.Error())
 		return err
@@ -140,7 +109,7 @@ func (c *Com) Update(data interface{}) error {
 // create data
 func (c *Com) Create(data interface{}) error {
 
-	crud := gt.NewCrud(gt.Model(c.Model), gt.Data(data))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data))
 	if err := crud.Create().Error(); err != nil {
 		return err
 	}
@@ -150,4 +119,13 @@ func (c *Com) Create(data interface{}) error {
 func (c *Com) M() interface{} {
 
 	return c.Model
+}
+
+func (c *Com) Crud() gt.Crud {
+	var cd = gt.NewCrud()
+	if c.trans != nil {
+		cd = c.trans
+		cd.Params(gt.Table(hump.HumpToLine(reflect.StructName(c.Model))))
+	}
+	return cd
 }

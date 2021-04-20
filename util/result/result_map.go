@@ -20,7 +20,7 @@ func (c ResultMap) Add(key string, value interface{}) Resultable {
 }
 
 func (c ResultMap) AddStruct(v interface{}) Resultable {
-	if reflect.ValueOf(v).IsNil() {
+	if v == nil || reflect.ValueOf(v).IsNil() {
 		return c
 	}
 	switch v.(type) {

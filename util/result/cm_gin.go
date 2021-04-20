@@ -28,7 +28,12 @@ func GinCrUp(u *gin.Context, data interface{}, f func(id interface{}) error, res
 		GinResult(u, CError(err))
 		return
 	}
-	GinResult(u, Res(f(data)).AddStruct(St(result...)))
+	err = f(data)
+	if err != nil {
+		GinResult(u, Res(f(data)))
+		return
+	}
+	GinResult(u, Res(nil).AddStruct(St(result...)))
 }
 
 func St(result ...Resultable) Resultable {
