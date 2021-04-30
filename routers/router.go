@@ -2,11 +2,13 @@
 package routers
 
 import (
+	"crypto/md5"
 	"demo/controllers/common/captcha"
 	"demo/controllers/common/file"
 	"demo/controllers/common/qrcode"
 	str2 "demo/util/cons"
 	"demo/util/result"
+	"fmt"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/util/cons"
@@ -71,7 +73,7 @@ func SetRouter() *gin.Engine {
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status": 404,
-			"msg":    "接口不存在->('.')/请求方法不存在",
+			"msg":    "接口不存在->('.')/请求方法类型GET/POST...不正确",
 		})
 	})
 	return router
@@ -118,8 +120,60 @@ func Filter() gin.HandlerFunc {
 			}
 			// 延长token对应时间
 			_ = ca.Set(token, cam)
+
+			// 重复点击
+			//switch r.Method {
+			//case "POST", "PATCH":
+			//	b := check(token, path)
+			//	if !b {
+			//		c.Abort()
+			//		c.JSON(http.StatusOK, result.TextError("点击太频繁"))
+			//		return
+			//	}
+			//}
 		}
 	}
+}
+
+// 重复请求全局验证
+func check(token, path string) bool {
+
+	// 白名单
+	if b := white(path); b {
+		return true
+	}
+	// 判断重复下单:redis
+	key := token + path
+	// md5加密缩短长度key
+	has := md5.Sum([]byte(key))
+	key = strings.ToUpper(fmt.Sprintf("%x", has))
+
+	ce := cache.NewCache()
+	ca, _ := ce.Get(key)
+	if ca.Data == nil {
+		ca.Data = 1
+		ca.Time = 2 * cache.CacheSecond
+		_ = ce.Set(key, ca)
+		//return nil
+	} else {
+		return false
+	}
+	return true
+}
+
+var whitePath = []string{
+	"/client/follow",
+	"/client/play",
+}
+
+// 白名单
+func white(path string) bool {
+	for _, v := range whitePath {
+		if strings.Contains(path, v) {
+			return true
+		}
+	}
+	return false
 }
 
 // 异常捕获

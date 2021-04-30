@@ -15,7 +15,6 @@ type IDCom struct {
 
 // 通用模型
 type ModelCom struct {
-	//Com Com `json:"-" gorm:"-" gt:"-"`
 	IDCom
 	CreateTime time.CTime `gorm:"type:datetime;DEFAULT:CURRENT_TIMESTAMP" json:"create_time"` // 创建时间自动生成
 }
@@ -31,7 +30,8 @@ type AdminCom struct {
 
 // CrudParams service
 type CrudParams struct {
-	trans gt.Crud
+	trans    gt.Crud
+	gtParams []gt.Param
 }
 
 type CrudServiceParam func(*CrudParams)
@@ -52,6 +52,13 @@ func Trans(trans gt.Crud) CrudServiceParam {
 	}
 }
 
+// 增加gt参数
+func GtParams(gtParams ...gt.Param) CrudServiceParam {
+	return func(params *CrudParams) {
+		params.gtParams = gtParams
+	}
+}
+
 // common crud
 type Com struct {
 	Model interface{}
@@ -66,10 +73,21 @@ func NewService(model interface{}, params ...CrudServiceParam) *Com {
 }
 
 // get data, by id
+func (c *Com) GetByID(id interface{}) (data interface{}, err error) {
+
+	data = reflect.New(c.Model)
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data)).Params(c.gtParams...)
+	if err = crud.GetByID(id).Error(); err != nil {
+		return
+	}
+	return
+}
+
+// get data, by id
 func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 
 	data = reflect.New(c.Model)
-	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(data)).Params(c.gtParams...)
 	if err = crud.Get(params).Error(); err != nil {
 		return
 	}
@@ -80,7 +98,7 @@ func (c *Com) Get(params cmap.CMap) (data interface{}, err error) {
 func (c *Com) Search(params cmap.CMap) (datas interface{}, pager result.Pager, err error) {
 
 	datas = reflect.NewArray(c.Model)
-	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(datas))
+	crud := c.Crud().Params(gt.Model(c.Model), gt.Data(datas)).Params(c.gtParams...)
 	cd := crud.GetBySearch(params)
 	if cd.Error() != nil {
 		return nil, pager, cd.Error()

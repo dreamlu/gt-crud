@@ -12,10 +12,11 @@ name=gt-crud
 ssh-copy-id -p 22 -i ~/.ssh/id_rsa.pub root@${ip}
 # =============================================
 # apt install
-ssh root@${ip} "[ -x "$(command -v docker-compose)" ] || apt install docker docker-compose"
+ssh root@${ip} "[ -x "$(command -v docker-compose)" ] || apt update & apt install docker docker-compose"
 # mkdir
-ssh root@${ip} "[ -d /root/${name} ] && echo ok || mkdir -p /root/${name}"
+ssh root@${ip} "[ -d /root/${name} ] && echo ok || mkdir -p /root/${name}/docker"
 cd ..
 # 更新：不带/root/${name}/docker/, 后的docker/可直接覆盖
 # but: 初次复制时服务器后缀需要加上docker下级目录(/root/${name}/docker/),必须确保copy的上级目录存在
+# 最新：由上面的mkdir直接创建,无需关心
 scp -r docker/ root@${ip}:/root/${name}/

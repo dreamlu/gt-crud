@@ -1,7 +1,8 @@
 # 批量推向共有或私有仓库
 #!/bin/bash
 # 私有/共有镜像地址
-dockerUrl=registry.cn-hangzhou.aliyuncs.com/deercoder/dreamlu
+# 替换你自己的镜像仓库
+dockerUrl=registry.cn-hangzhou.aliyuncs.com/dreamlu
 # 批量推向私有仓库
 docker images | grep ${dockerUrl} | awk '{print "docker push "$1":"$2}' | sh
 

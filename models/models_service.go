@@ -6,12 +6,17 @@ import (
 )
 
 type Service interface {
+	GetByIDService
 	GetService
 	SearchService
 	DeleteService
 	UpdateService
 	CreateService
 	M() interface{}
+}
+
+type GetByIDService interface {
+	GetByID(id interface{}) (data interface{}, err error)
 }
 
 type GetService interface {
