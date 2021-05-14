@@ -1,10 +1,8 @@
 package client
 
 import (
-	"demo/util/models/token"
 	"demo/util/result"
-	"github.com/dreamlu/gt/cache"
-	"github.com/dreamlu/gt/tool/id"
+	"demo/util/token"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -17,15 +15,12 @@ func Token(u *gin.Context) {
 		u.JSON(http.StatusOK, result.GetError("id不能为空"))
 		return
 	}
-	ca := cache.NewCache()
-	var model token.TokenModel
-	model.ID, _ = strconv.ParseUint(client_id, 10, 64)
-	newID, _ := id.NewID(1)
-	model.Token = newID.String()
-	ca.Set(model.Token, cache.CacheModel{
-		Time: cache.CacheDay,
-		Data: model,
-	})
+	id, err := strconv.ParseUint(client_id, 10, 64)
+	if err != nil {
+		u.JSON(http.StatusOK, result.Res(err))
+		return
+	}
+	tk := token.GetToken(id, 1)
 
-	u.JSON(http.StatusOK, result.MapSuccess.Add("token", model.Token))
+	u.JSON(http.StatusOK, result.MapSuccess.Add("token", tk))
 }

@@ -103,7 +103,7 @@ func Login(u *gin.Context) {
 		return
 	}
 
-	tk := token.GetToken(sqlData.ID)
+	tk := token.GetToken(sqlData.ID, 0)
 
 	u.JSON(http.StatusOK, result.MapSuccess.
 		Add("id", sqlData.ID).

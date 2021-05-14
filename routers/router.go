@@ -79,6 +79,12 @@ func SetRouter() *gin.Engine {
 	return router
 }
 
+var ignorePath = []string{
+	"/login",
+	"/static/file",
+	"/wx/notify",
+}
+
 // 登录失效验证
 func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -102,36 +108,41 @@ func Filter() gin.HandlerFunc {
 			return
 		}
 
-		if !strings.Contains(path, "login") && !strings.Contains(path, "/static/file") {
-			r := c.Request
-			token := r.Header.Get("token")
-			if token == "" {
-				c.Abort()
-				c.JSON(http.StatusOK, result.GetError("缺少token"))
+		for _, v := range ignorePath {
+			if strings.Contains(path, v) {
+				c.Next()
 				return
 			}
-			ca := cache.NewCache()
-			log.Error("[token]:", token)
-			cam, err := ca.Get(token)
-			if err != nil {
-				c.Abort()
-				c.JSON(http.StatusOK, result.MapNoAuth)
-				return
-			}
-			// 延长token对应时间
-			_ = ca.Set(token, cam)
-
-			// 重复点击
-			//switch r.Method {
-			//case "POST", "PATCH":
-			//	b := check(token, path)
-			//	if !b {
-			//		c.Abort()
-			//		c.JSON(http.StatusOK, result.TextError("点击太频繁"))
-			//		return
-			//	}
-			//}
 		}
+
+		r := c.Request
+		token := r.Header.Get("token")
+		if token == "" {
+			c.Abort()
+			c.JSON(http.StatusOK, result.GetError("缺少token"))
+			return
+		}
+		ca := cache.NewCache()
+		log.Info("[token]:", token)
+		cam, err := ca.Get(token)
+		if err != nil || cam.Data == nil {
+			c.Abort()
+			c.JSON(http.StatusOK, result.MapNoAuth)
+			return
+		}
+		// 延长token对应时间
+		_ = ca.Set(token, cam)
+
+		// 重复点击
+		//switch r.Method {
+		//case "POST", "PATCH":
+		//	b := check(token, path)
+		//	if !b {
+		//		c.Abort()
+		//		c.JSON(http.StatusOK, result.TextError("点击太频繁"))
+		//		return
+		//	}
+		//}
 	}
 }
 
