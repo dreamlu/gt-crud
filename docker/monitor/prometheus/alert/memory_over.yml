@@ -1,0 +1,11 @@
+groups:
+  - name: example
+    rules:
+      - alert: 内存使用
+        expr: (node_memory_MemTotal_bytes - (node_memory_MemFree_bytes+node_memory_Buffers_bytes+node_memory_Cached_bytes )) / node_memory_MemTotal_bytes * 100 > 80
+        for: 1m
+        labels:
+          user: dreamlu
+        annotations:
+          summary: "{{$labels.instance}}: 内存检测"
+          description: "{{$labels.instance}}: 内存使用率超过80% (当前内存使用率: {{ $value }})"

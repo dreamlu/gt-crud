@@ -1,0 +1,20 @@
+global:
+  #声明警告被解决的时间,如果警报没有再次发送
+  resolve_timeout: 5m
+  #smtp配置
+  smtp_from: "3147460271@qq.com"
+  smtp_smarthost: "smtp.qq.com:587"
+  smtp_auth_username: "3147460271@qq.com"
+  smtp_auth_password: "xxxx"
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 10m
+  receiver: dreamlu
+
+receivers:
+  - name: 'dreamlu'
+    email_configs:
+      - to: '3147460271@qq.com'

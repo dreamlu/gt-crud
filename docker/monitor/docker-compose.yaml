@@ -1,0 +1,77 @@
+version: '3'
+
+networks:
+  micro-go:
+    driver: bridge
+
+services:
+# 数据采集
+  prometheus:
+#    image: prom/prometheus
+    build: prometheus/.
+    container_name: prometheus
+    hostname: prometheus
+    restart: always
+#    volumes:
+#      - /usr/local/src/config/prometheus.yml:/etc/prometheus/prometheus.yaml
+#      - /usr/local/src/config/node_down.yml:/etc/prometheus/node_down.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - micro-go
+# 监控告警
+  alertmanager:
+#    image: prom/alertmanager
+    build: alertmanager/.
+    container_name: alertmanager
+    hostname: alertmanager
+    restart: always
+#    volumes:
+#      - /usr/local/src/config/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - micro-go
+# 图表
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - micro-go
+# 监控节点
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    hostname: node-exporter
+    restart: always
+    command:
+      - '--path.rootfs=/host'
+    # host宿主机模式才能统计流量
+    # 引用它使用宿主机ip, ifconfig中docker0的ip
+    # 或者host.docker.internal, 该数据不起作用, 待后续定位
+    network_mode: host
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - "9100:9100"
+#    networks:
+#      - micro-go
+# 监控容器
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    hostname: cadvisor
+    restart: always
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - micro-go

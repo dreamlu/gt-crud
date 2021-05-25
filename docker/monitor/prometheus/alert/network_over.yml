@@ -1,0 +1,11 @@
+groups:
+  - name: example
+    rules:
+      - alert: 网络使用
+        expr: ((sum(rate (node_network_transmit_bytes_total{device!~'tap.*|veth.*|br.*|docker.*|virbr*|lo*'}[5m])) by (instance)) / 100) > 10240 * 2
+        for: 1m
+        labels:
+          user: dreamlu
+        annotations:
+          summary: "{{$labels.instance}}: 流出网络带宽过高"
+          description: "{{$labels.instance}}: 流出网络带宽持续2分钟高于20M. RX带宽使用率: {{ $value }})"

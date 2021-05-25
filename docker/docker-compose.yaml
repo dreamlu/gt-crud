@@ -42,6 +42,7 @@ services:
     restart: always
     volumes:
       - /root/gt-crud/bak/static:/static
+      - /root/gt-crud/bak/log:/log
     networks:
       - demo
 

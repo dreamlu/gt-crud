@@ -1,0 +1,11 @@
+groups:
+  - name: example
+    rules:
+      - alert: 磁盘使用
+        expr: 100-(node_filesystem_free_bytes{fstype=~"ext4|xfs"}/node_filesystem_size_bytes {fstype=~"ext4|xfs"}*100) > 80
+        for: 1m
+        labels:
+          user: dreamlu
+        annotations:
+          summary: "{{$labels.mountpoint}}: 磁盘检测"
+          description: "{{$labels.mountpoint}}: 磁盘超过80% (当前内存使用率: {{ $value }})"
