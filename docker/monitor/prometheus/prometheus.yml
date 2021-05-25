@@ -35,7 +35,8 @@ scrape_configs:
   - job_name: 'node'
     scrape_interval: 8s
     static_configs:
-      # host.docker.internal不起作用,待后续定位
+      # host.docker.internal不起作用docker-compose版本太低不支持
+      # 后续尝试更高版本docker-compose
       - targets: [ '宿主机docker0的ip:9100' ]
 
 #  - job_name: 'consul'

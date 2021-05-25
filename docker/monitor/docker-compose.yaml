@@ -8,7 +8,16 @@ services:
 # 数据采集
   prometheus:
 #    image: prom/prometheus
-    build: prometheus/.
+    build:
+      context:
+        dockerfile: prometheus/.
+      # 版本需要大于2020年5月之后的版本
+      # 支持后，修改prometheus/prometheus.yml中的宿主机ip为host.docker.internal
+      # extra_hosts docker-compose
+#      extra_hosts:
+#        - "host.docker.internal:host-gateway宿主机docker0的ip"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
     container_name: prometheus
     hostname: prometheus
     restart: always
