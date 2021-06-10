@@ -7,4 +7,5 @@ import (
 var (
 	DevMode = conf.GetString("app.devMode")
 	Version = conf.GetString("app.version")
+	Prefix  = conf.GetString("app.prefix")
 )

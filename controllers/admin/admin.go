@@ -2,6 +2,7 @@ package admin
 
 import (
 	"demo/models/admin"
+	token2 "demo/util/models/token"
 	"demo/util/result"
 	"demo/util/token"
 	"github.com/dreamlu/gt"
@@ -103,7 +104,12 @@ func Login(u *gin.Context) {
 		return
 	}
 
-	tk := token.GetToken(sqlData.ID, 0)
+	tk := token.GetToken(token2.TokenModel{
+		ID:   sqlData.ID,
+		Typ:  0,
+		Role: nil,
+		G:    "",
+	})
 
 	u.JSON(http.StatusOK, result.MapSuccess.
 		Add("id", sqlData.ID).

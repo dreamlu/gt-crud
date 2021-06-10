@@ -2,6 +2,7 @@ app:
   # dev mode
   devMode: dev
   port: 9000
+  prefix: /api/v1
   # database
   db:
     name: demo

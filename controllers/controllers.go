@@ -3,6 +3,7 @@ package controllers
 import (
 	"demo/models"
 	"demo/util/result"
+	"demo/util/token"
 	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +35,7 @@ func (c ComController) Get(u *gin.Context) {
 
 // Search data信息分页
 func (c ComController) Search(u *gin.Context) {
+	//c.AddRoleParam(u)
 	if f, ok := c.M().(models.SearchService); ok {
 		result.GinSearch(u, f.Search)
 		return
@@ -74,4 +76,21 @@ func (c ComController) Create(u *gin.Context) {
 		return
 	}
 	result.GinCrUp(u, data, c.Service.Create, result.Add("data", data))
+}
+
+// AddRoleParam 全局token参数自动注入传递
+func (c ComController) AddRoleParam(u *gin.Context) {
+	// 全局token参数自动注入传递
+	tm, err := token.GetTokenModel(u.Request.Header.Get("token"))
+	if err == nil {
+		for _, role := range tm.Role {
+			_ = u.Request.ParseForm()
+			switch role {
+			case "4":
+				u.Request.Form.Set("你的字段", "你的参数值")
+			case "0", "1", "5":
+				u.Request.Form.Set("project_id", "1")
+			}
+		}
+	}
 }

@@ -2,25 +2,33 @@
 package main
 
 import (
-	"demo/routers"
 	"demo/routers/dreamlu"
+	"demo/routers/routelist"
+	"demo/util/cron"
 	"demo/util/db"
 	"github.com/dreamlu/gt/tool/conf"
+	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	//log.Println(gt.Version)
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
+	if conf.GetString("app.devMode") == cons.Dev {
+		gin.SetMode(gin.DebugMode)
+	}
 	//r := routers.SetRouter()
 	// 性能调试
 	//pprof.Register(routers.Router)
 	// Listen and Server in 0.0.0.0:8080
-	_ = routers.Router.Run(":" + conf.GetString("app.port"))
+	_ = routelist.RouteList.Router.Run(":" + conf.GetString("app.port"))
 }
 
 // 数据库模型自动生成
 func init() {
 	dreamlu.InitRouter()
-	db.InitDB()
+	db.InitDBOther()
+	// 如果需要权限,则打开注释
+	// 必须路由初始化完成后在初始化权限
+	//go policy.InitPolicy()
+	cron.Cron()
 }

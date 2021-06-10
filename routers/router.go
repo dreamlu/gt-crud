@@ -6,6 +6,8 @@ import (
 	"demo/controllers/common/captcha"
 	"demo/controllers/common/file"
 	"demo/controllers/common/qrcode"
+	"demo/routers/routelist"
+	"demo/routers/whitelist"
 	str2 "demo/util/cons"
 	"demo/util/result"
 	"fmt"
@@ -18,11 +20,15 @@ import (
 	"strings"
 )
 
-const prefix = "/api/v1"
+var (
+	prefix = str2.Prefix
+	V      *routelist.Routes
+)
 
-var Router = SetRouter()
-
-var V = Router.Group(prefix)
+func init() {
+	routelist.RouteList = routelist.NewRoute(SetRouter())
+	V = routelist.RouteList.Group(prefix)
+}
 
 func SetRouter() *gin.Engine {
 	// Disable Console Color
@@ -30,24 +36,14 @@ func SetRouter() *gin.Engine {
 	//router := gin.Default()
 	router := gin.New()
 	// router.MaxMultipartMemory = // 默认32M
-	//router.Use(CorsMiddleware())
+	router.Use(Cors())
 
 	// 过滤器
 	router.Use(Filter())
-	router.Use(Recover)
-	//权限中间件
-	// load the casbin model and policy from files, database is also supported.
-	//e := casbin.NewEnforcer("conf/authz_model.conf", "conf/authz_policy.csv")
-	//router.Use(authz.NewAuthorizer(e))
+	router.Use(Recovery())
 
-	//cookie session
-	//store := cookie.NewStore([]byte("secret"))
-	//router.Use(sessions.Sessions("mysession", store))
-
-	//redis session
-	//store, _ := redis.NewStore(10, "tcp", "localhost:6379", "", []byte("secret"))
-	//router.Use(sessions.Sessions("mysession", store))
-
+	// 权限中间件
+	//router.Use(authz.NewAuthorizer(authz.Enforcer))
 	//组的路由,version
 	v1 := router.Group(prefix)
 	{
@@ -79,26 +75,20 @@ func SetRouter() *gin.Engine {
 	return router
 }
 
-var ignorePath = []string{
-	"/login",
-	"/static/file",
-	"/wx/notify",
-}
-
 // 登录失效验证
 func Filter() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 127请求且本地开发且为dev时无需验证,方便自己测试
-		if strings.Contains(c.Request.RemoteAddr, "127.0.0.1") &&
+		if whitelist.WLIp.Contains(c.Request.RemoteAddr) &&
 			str2.DevMode == cons.Dev {
 			c.Next()
 			return
 		}
 
-		if c.Request.Method == "GET" {
-			c.Next()
-			return
-		}
+		//if c.Request.Method == "GET" {
+		//	c.Next()
+		//	return
+		//}
 		path := c.Request.URL.String()
 
 		// 静态服务器 file 处理
@@ -108,11 +98,9 @@ func Filter() gin.HandlerFunc {
 			return
 		}
 
-		for _, v := range ignorePath {
-			if strings.Contains(path, v) {
-				c.Next()
-				return
-			}
+		if whitelist.WLPath.Contains(path) {
+			c.Next()
+			return
 		}
 
 		r := c.Request
@@ -188,7 +176,27 @@ func white(path string) bool {
 }
 
 // 异常捕获
-func Recover(c *gin.Context) {
+func Recovery() gin.HandlerFunc {
+	return gin.CustomRecovery(func(c *gin.Context, recovered interface{}) {
+		if err, ok := recovered.(string); ok {
+			//log.Error(string(debug.Stack()))
+			//封装通用json返回
+			//c.JSON(http.StatusOK, Result.Fail(errorToString(r)))
+			//Result.Fail不是本例的重点，因此用下面代码代替
+			ss := strings.Split(string(debug.Stack()), "\n\t")
+			res := make(map[string]string)
+			res["error"] = err
+			for _, v := range ss {
+				ks := strings.Split(v, "\n")
+				res[ks[0]] = ks[1]
+			}
+			c.JSON(http.StatusOK, result.GetError(res))
+		}
+		c.Abort()
+	})
+}
+
+func RecoverOld(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
 			//打印错误堆栈信息
@@ -214,21 +222,21 @@ func Recover(c *gin.Context) {
 }
 
 // 处理跨域请求,支持options访问
-//func Cors() gin.HandlerFunc {
-//	return func(c *gin.Context) {
-//		method := c.Request.Method
-//		//fmt.Println(method)
-//		c.Header("Access-Control-Allow-Origin", "*")
-//		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
-//		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
-//		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-//		c.Header("Access-Control-Allow-Credentials", "true")
-//
-//		// 放行所有OPTIONS方法，因为有的模板是要请求两次的
-//		if method == "OPTIONS" {
-//			c.AbortWithStatus(http.StatusNoContent)
-//		}
-//		// 处理请求
-//		c.Next()
-//	}
-//}
+func Cors() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		method := c.Request.Method
+		//fmt.Println(method)
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "true")
+
+		// 放行所有OPTIONS方法，因为有的模板是要请求两次的
+		if method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+		}
+		// 处理请求
+		c.Next()
+	}
+}

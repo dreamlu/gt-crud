@@ -2,29 +2,46 @@ package dreamlu
 
 import (
 	"demo/controllers"
-	"demo/controllers/admin"
-	"demo/controllers/client"
-	"demo/controllers/order"
 	applet2 "demo/models/admin/applet"
 	client2 "demo/models/client"
 	"demo/routers"
 	"demo/util/db"
-	"github.com/gin-gonic/gin"
+	"demo/util/pool"
+	"sync"
 )
 
 var cls = map[string]controllers.ComController{}
 
 func InitRouter() {
+	// 路由定义
+	Route(map[string]interface{}{
+		// 客户
+		"/client": &client2.Client{}, // 取指针, 则实现方式既可以是指针实现也可以是值实现
+		// admin
+		"/admin/applet": &applet2.Applet{},
+	})
+}
+
+func Route(route map[string]interface{}) {
+
+	var g sync.WaitGroup
+	//var dbm []interface{}
+	for k, v := range route {
+		t := v // pointer
+		cls[k] = controllers.New(v)
+		//dbm = append(dbm, v)
+		// 加速初始化
+		g.Add(1)
+		pool.Gsync.Submit(func() {
+			defer g.Done()
+			db.InitDB(t)
+		})
+	}
+	//db.InitDBRouter(dbm...)
+	g.Wait()
+
 	v := routers.V
 	{
-		// 路由定义
-		Route(map[string]interface{}{
-			// 客户
-			"/client": &client2.Client{}, // 取指针, 则实现方式既可以是指针实现也可以是值实现
-			// admin
-			"/admin/applet": &applet2.Applet{},
-		})
-
 		// 路由列表
 		for k, c := range cls {
 			pre := v.Group(k)
@@ -36,43 +53,7 @@ func InitRouter() {
 				pre.PUT("/update", c.Update)
 			}
 		}
-
+		// 其他接口
 		oRoute(v)
-	}
-}
-
-func Route(route map[string]interface{}) {
-
-	var dbm []interface{}
-	for k, v := range route {
-		cls[k] = controllers.New(v)
-		dbm = append(dbm, v)
-	}
-	db.InitDB(dbm...)
-}
-
-// ==== 额外接口单独定义 =======
-func oRoute(v *gin.RouterGroup) {
-	// 用户-额外接口
-	clients := v.Group("/client")
-	{
-		clients.GET("/token", client.Token)
-	}
-	// admin
-	admins := v.Group("/admin")
-	{
-		admins.GET("/search", admin.Search)
-		admins.GET("/get", admin.Get)
-		admins.DELETE("/delete/:id", admin.Delete)
-		admins.POST("/create", admin.Create)
-		admins.PUT("/update", admin.Update)
-		admins.POST("/login", admin.Login)
-	}
-	// 初始化模块路由
-	WxRouter()
-	//订单数据
-	orders := v.Group("/order")
-	{
-		orders.GET("/search", order.GetOrderBySearch)
 	}
 }

@@ -159,6 +159,10 @@ func GetSuccessPager(data interface{}, pager Pager) *GetInfoPager {
 // 信息失败通用
 func GetError(msg interface{}) *MapData {
 
+	switch msg.(type) {
+	case error:
+		msg = msg.(error).Error()
+	}
 	return &MapData{
 		Status: CodeError,
 		Msg:    msg,

@@ -1,6 +1,7 @@
 package client
 
 import (
+	token2 "demo/util/models/token"
 	"demo/util/result"
 	"demo/util/token"
 	"github.com/gin-gonic/gin"
@@ -20,7 +21,12 @@ func Token(u *gin.Context) {
 		u.JSON(http.StatusOK, result.Res(err))
 		return
 	}
-	tk := token.GetToken(id, 1)
+	tk := token.GetToken(token2.TokenModel{
+		ID:   id,
+		Typ:  0,
+		Role: nil,
+		G:    "",
+	})
 
 	u.JSON(http.StatusOK, result.MapSuccess.Add("token", tk))
 }

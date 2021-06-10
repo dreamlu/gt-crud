@@ -25,6 +25,10 @@ gt.DB().AutoMigrate(client.Client{})
 // cls["/client"] = controllers.New(client.Client{}, models.Update(&client.Client{}))
 ```
 
+- 更新
+1.增加完善casbin权限,routers/router中开启权限中间间`//router.Use(authz.NewAuthorizer(authz.Enforcer))`, main中`//go policy.InitPolicy()`开启角色权限配置  
+2.增加路由封装记录所有路由api+Method  
+
 gt-crud 是一个gin + gorm + gt 的使用案例  
 - 特点  
 1.[gin](https://github.com/gin-gonic/gin) 提供核心的请求处理(了解)  

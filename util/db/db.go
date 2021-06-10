@@ -10,9 +10,11 @@ import (
 )
 
 func InitDB(db ...interface{}) {
-
 	_ = gt.DB().AutoMigrate(db...)
-	gt.DB().AutoMigrate(
+}
+
+func InitDBOther() {
+	InitDB(
 		//&client.Client{}, // 客户
 		&order.Order{}, // 订单, 不用可注释
 		&admin.Admin{}, // 账号管理
@@ -49,11 +51,15 @@ func initApplet() {
 // init admin
 func initAdmin() {
 	// 插入admin账号
-	role := int8(0)
+	r := int8(0)
 	var ad = admin.Admin{
 		Name:     "admin",
 		Password: util.AesEn("123456"),
-		Role:     &role,
+		Role:     &r,
 	}
-	gt.NewCrud(gt.Data(&ad), gt.Model(admin.Admin{})).Create()
+	cd := gt.NewCrud(gt.Data(&ad), gt.Model(admin.Admin{}))
+	cd.Params(gt.Data(&ad)).Select("select id from admin where name = ?", ad.Name).Single()
+	if ad.ID == 0 {
+		cd.Params(gt.Data(&ad)).Create()
+	}
 }
