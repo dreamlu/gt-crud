@@ -5,23 +5,16 @@
 # 执行该脚本
 devMode=${1}
 version=1.0
+project=${2}
 
-# 模块
-# 此处新增模块
-#modules=(api-gateway base-srv coupon-srv)
+# 必须要echo才能赋值version ???
+command -v git >/dev/null 2>&1 || echo "使用git版本号"; version=`git rev-parse --short HEAD`
+#echo "版本$version"
 
 # 默认dev
 if [[ ${devMode} = '' ]]; then
    devMode=dev
 fi
-
-# 配置文件地址
-# 修改各个模块下app.yaml文件开发模式
-confFiles=()
-# 工作目录
-workDir=`pwd`
-
-#confFiles=(api-gateway/conf/app.yaml base-srv/conf/app.yaml coupon-srv/conf/app.yaml)
 
 # conf配置修改
 # 替换源文件第三行内容
@@ -33,5 +26,5 @@ sed -i '3c \  \devMode: '${devMode} conf/app.yaml
 # shell awk参考:https://www.cnblogs.com/mfryf/p/3564779.html
 if [[ ${devMode} = 'prod' ]]; then
     echo "prod 开始构建docker"
-    ./docker.sh
+    ./docker.sh -p ${project} -v ${version}
 fi
