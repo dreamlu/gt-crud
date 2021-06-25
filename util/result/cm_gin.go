@@ -1,9 +1,13 @@
 package result
 
 import (
+	"encoding/json"
+	"github.com/dreamlu/gt/tool/reflect"
 	"github.com/dreamlu/gt/tool/type/cmap"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func GinResult(u *gin.Context, result Resultable) {
@@ -22,18 +26,57 @@ func GinDelete(u *gin.Context, f func(id interface{}) error, result ...Resultabl
 	GinResult(u, Res(f(u.Param("id"))).AddStruct(St(result...)))
 }
 
+func GinCu(u *gin.Context, data interface{}, f func(interface{}) error, result ...Resultable) {
+	err := f(data)
+	if err != nil {
+		GinResult(u, Res(f(data)))
+		return
+	}
+	GinResult(u, Res(nil).AddStruct(St(result...)))
+}
+
 func GinCrUp(u *gin.Context, data interface{}, f func(id interface{}) error, result ...Resultable) {
 	err := u.ShouldBindJSON(data)
 	if err != nil {
 		GinResult(u, CError(err))
 		return
 	}
-	err = f(data)
+	GinCu(u, data, f, result...)
+}
+
+// GinCreate Create/CreateMore
+func GinCreate(u *gin.Context, model interface{}, f func(interface{}) error) {
+
+	var (
+		data = reflect.New(model)
+		//err  error
+	)
+	b, err := ioutil.ReadAll(u.Request.Body)
 	if err != nil {
-		GinResult(u, Res(f(data)))
+		GinResult(u, CError(err))
 		return
 	}
-	GinResult(u, Res(nil).AddStruct(St(result...)))
+	err = json.Unmarshal(b, data)
+	//decoder := json.NewDecoder(u.Request.Body)
+	//err = decoder.Decode(data)
+	if err != nil {
+		// 后续优化判断方式, 字段属性可能会有影响
+		if strings.Contains(err.Error(), "cannot unmarshal array into Go value") {
+			err = nil
+			data = reflect.NewArray(model)
+			err = json.Unmarshal(b, data)
+			if err != nil {
+				GinResult(u, CError(err))
+				return
+			}
+			GinCu(u, data, f)
+			return
+		}
+		GinResult(u, CError(err))
+		return
+	}
+
+	GinCu(u, data, f, Add("data", data))
 }
 
 func St(result ...Resultable) Resultable {

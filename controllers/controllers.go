@@ -68,14 +68,15 @@ func (c ComController) Update(u *gin.Context) {
 
 // Create 新增data信息
 func (c ComController) Create(u *gin.Context) {
-	var (
-		data = reflect.New(c.Service.M())
-	)
 	if f, ok := c.M().(models.CreateService); ok {
-		result.GinCrUp(u, data, f.Create, result.Add("data", data))
+		// 增加token
+		//if tk, ok := c.M().(models.TokenService); ok {
+		//	tk.Token(u.Request.Header.Get("token"))
+		//}
+		result.GinCreate(u, c.M(), f.Create)
 		return
 	}
-	result.GinCrUp(u, data, c.Service.Create, result.Add("data", data))
+	result.GinCreate(u, c.M(), c.Service.Create)
 }
 
 // AddRoleParam 全局token参数自动注入传递

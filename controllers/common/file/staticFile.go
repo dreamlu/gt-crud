@@ -14,12 +14,17 @@ import (
 // static file path
 func StaticFile(u *gin.Context) {
 
-	var fileByte []byte
+	var (
+		fileByte  []byte
+		staticDir = conf.GetString("app.filepath")
+		url       = u.Request.URL.Path
+	)
 
 	// get the params
-	url := u.Request.URL.Path
-	urlSp := strings.Split(url, "/")
-	name := urlSp[len(urlSp)-1]
+	urlSp := strings.Split(url, staticDir)
+	dirFileName := urlSp[len(urlSp)-1]
+	dirFileNameS := strings.Split(dirFileName, "/")
+	name := dirFileNameS[len(dirFileNameS)-1]
 	width, err := strconv.Atoi(u.Query("width"))
 	if err != nil {
 		width = 0
@@ -30,7 +35,11 @@ func StaticFile(u *gin.Context) {
 	}
 
 	// upload dir
-	uploadDir := conf.GetString("app.filepath")
+	dayDir := ""
+	if len(dirFileNameS) > 1 {
+		dayDir = dirFileNameS[0]
+	}
+	uploadDir := staticDir + dayDir + "/"
 
 	// 文件查找 是否存在 不存在则压缩
 	if width != 0 || height != 0 {

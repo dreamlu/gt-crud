@@ -10,6 +10,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/conf"
+	"github.com/dreamlu/gt/tool/file/file_func"
 	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,11 @@ func init() {
 	if err != nil {
 		panic(err.Error())
 	}
-	Enforcer, err = casbin.NewEnforcer("conf/authz_model.conf", adapter)
+	path := file_func.ProjectPath()
+	if path != "" {
+		path += "/"
+	}
+	Enforcer, err = casbin.NewEnforcer(path+"conf/authz_model.conf", adapter)
 	if err != nil {
 		panic(err.Error())
 	}
