@@ -12,7 +12,7 @@ name=gt-crud
 ssh-copy-id -p 22 -i ~/.ssh/id_rsa.pub root@${ip}
 # =============================================
 # apt install
-ssh root@${ip} "[ -x "$(command -v docker-compose)" ] || apt update & apt install docker docker-compose"
+ssh root@${ip} "[ -x "$(command -v docker-compose)" ] || apt update & apt install docker docker-compose -y"
 # mkdir
 ssh root@${ip} "[ -d /root/${name} ] && echo ok || mkdir -p /root/${name}/docker"
 cd ..

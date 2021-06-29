@@ -39,7 +39,7 @@ gt-crud 是一个gin + gorm + gt 的使用案例
 1.api.html(或者在线[api.html](https://www.eolinker.com/#/share/project/api/?groupID=-1&shareCode=pgnwpF&shareToken=$2y$10$QMWRQU4fEfGOLkZgLwGFX.UHcWaaR1Eutrh6DCG8u0XKDRwwcUv76&shareID=120217))  
 2.此处单机部署开发,单机docker化参考docker目录,微服务go参考[micro-go](https://github.com/dreamlu/micro-go)  
 
-- 数据库模型生成,[代码](./util/db/db.go)  
+- 数据库模型生成,[代码](util/init/db/db.go)  
 > 模型定义需遵循:[模型定义](https://gorm.io/zh_CN/docs/models.html)  
 - 插件[代码](./util/plugin/README.md)    
 > 插件提供了一些其他常见功能  

@@ -7,7 +7,7 @@ import (
 	"demo/util/token"
 	"fmt"
 	"github.com/casbin/casbin/v2"
-	gormadapter "github.com/casbin/gorm-adapter/v3"
+	"github.com/casbin/gorm-adapter/v3"
 	"github.com/dreamlu/gt/cache"
 	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/file/file_func"

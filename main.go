@@ -5,7 +5,8 @@ import (
 	"demo/routers/dreamlu"
 	"demo/routers/routelist"
 	"demo/util/cron"
-	"demo/util/db"
+	db2 "demo/util/init/db"
+	"demo/util/init/policy"
 	"github.com/dreamlu/gt/tool/conf"
 	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
@@ -26,9 +27,9 @@ func main() {
 // 数据库模型自动生成
 func init() {
 	dreamlu.InitRouter()
-	db.InitDBOther()
+	db2.InitDBOther()
 	// 如果需要权限,则打开注释
 	// 必须路由初始化完成后在初始化权限
-	//go policy.InitPolicy()
+	go policy.InitPolicy()
 	cron.Cron()
 }
