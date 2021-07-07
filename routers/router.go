@@ -6,8 +6,10 @@ import (
 	"demo/controllers/common/captcha"
 	"demo/controllers/common/file"
 	"demo/controllers/common/qrcode"
+	"demo/routers/authz"
 	"demo/routers/routelist"
 	"demo/routers/whitelist"
+	"demo/util"
 	str2 "demo/util/cons"
 	"demo/util/result"
 	"fmt"
@@ -26,11 +28,6 @@ var (
 )
 
 func init() {
-	routelist.RouteList = routelist.NewRoute(SetRouter())
-	V = routelist.RouteList.Group(prefix)
-}
-
-func SetRouter() *gin.Engine {
 	// Disable Console Color
 	// gin.DisableConsoleColor()
 	//router := gin.Default()
@@ -42,8 +39,14 @@ func SetRouter() *gin.Engine {
 	router.Use(Filter())
 	router.Use(Recovery())
 
-	// 权限中间件
-	//router.Use(authz.NewAuthorizer(authz.Enforcer))
+	router.Use(authz.NewAuthorizer(authz.Enforcer))
+	routelist.RouteList = routelist.NewRoute(router)
+	SetRouter(routelist.RouteList)
+	V = routelist.RouteList.Group(prefix)
+}
+
+func SetRouter(router *routelist.Routes) {
+
 	//组的路由,version
 	v1 := router.Group(prefix)
 	{
@@ -58,6 +61,7 @@ func SetRouter() *gin.Engine {
 		// relativePath:请求路径
 		// root:静态文件所在目录
 		v.Static("static", "static")
+		v.Static("template", "conf/template")
 		// v.GET("/statics/file", file.StaticFile)
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
@@ -72,7 +76,6 @@ func SetRouter() *gin.Engine {
 			"msg":    "接口不存在->('.')/请求方法类型GET/POST...不正确",
 		})
 	})
-	return router
 }
 
 // 登录失效验证
@@ -92,7 +95,7 @@ func Filter() gin.HandlerFunc {
 		path := c.Request.URL.String()
 
 		// 静态服务器 file 处理
-		if strings.Contains(path, "/static/file/") {
+		if util.Contains(path, "/static/file/") {
 			file.StaticFile(c)
 			c.Abort()
 			return
@@ -103,8 +106,7 @@ func Filter() gin.HandlerFunc {
 			return
 		}
 
-		r := c.Request
-		token := r.Header.Get("token")
+		token := result.GetToken(c)
 		if token == "" {
 			c.Abort()
 			c.JSON(http.StatusOK, result.GetError("缺少token"))

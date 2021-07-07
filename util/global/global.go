@@ -1,4 +1,4 @@
-package pool
+package global
 
 import "github.com/dreamlu/gt/tool/gsync"
 

@@ -67,7 +67,7 @@ func NewAuthorizer(e *casbin.Enforcer) gin.HandlerFunc {
 		}
 
 		a := NewBasicAuthorizer(e)
-		if !a.CheckPermission(c.Request) {
+		if !a.CheckPermission(c) {
 			c.Abort()
 			c.JSON(http.StatusOK, result.MapNoAuth)
 		}
@@ -85,8 +85,8 @@ func NewBasicAuthorizer(e *casbin.Enforcer) *BasicAuthorizer {
 }
 
 // GetRole 获得角色
-func (a *BasicAuthorizer) GetRole(r *http.Request) string {
-	tk := r.Header.Get("token")
+func (a *BasicAuthorizer) GetRole(r *gin.Context) string {
+	tk := result.GetToken(r)
 	role, g, err := token.GetRole(tk)
 	if err != nil {
 		return "no role"
@@ -104,14 +104,14 @@ func (a *BasicAuthorizer) GetRole(r *http.Request) string {
 
 // CheckPermission checks the data/method/path combination from the request.
 // Returns true (permission granted) or false (permission forbidden)
-func (a *BasicAuthorizer) CheckPermission(r *http.Request) bool {
+func (a *BasicAuthorizer) CheckPermission(r *gin.Context) bool {
 	role := a.GetRole(r)
 	// 所有权限
 	//if role == str2.RoleAdmin {
 	//	return true
 	//}
-	method := r.Method
-	path := strings.TrimPrefix(r.URL.Path, str2.Prefix)
+	method := r.Request.Method
+	path := strings.TrimPrefix(r.Request.URL.Path, str2.Prefix)
 	b, err := a.enforcer.Enforce(role, path, method)
 	return b && err == nil
 }

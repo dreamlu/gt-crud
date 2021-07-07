@@ -5,8 +5,8 @@ import (
 	applet2 "demo/models/admin/applet"
 	client2 "demo/models/client"
 	"demo/routers"
+	"demo/util/global"
 	db2 "demo/util/init/db"
-	"demo/util/pool"
 	"sync"
 )
 
@@ -32,7 +32,7 @@ func Route(route map[string]interface{}) {
 		//dbm = append(dbm, v)
 		// 加速初始化
 		g.Add(1)
-		pool.Gsync.Submit(func() {
+		global.Gsync.Submit(func() {
 			defer g.Done()
 			db2.InitDB(t)
 		})

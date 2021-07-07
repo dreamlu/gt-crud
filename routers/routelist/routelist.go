@@ -121,3 +121,7 @@ func (group *Routes) StaticFS(relativePath string, fs http.FileSystem) gin.IRout
 	group.List.Set(relativePath, http.MethodGet)
 	return group.Router.StaticFS(relativePath, fs)
 }
+
+func (group *Routes) NoRoute(handlers ...gin.HandlerFunc) {
+	group.Router.NoRoute(handlers...)
+}

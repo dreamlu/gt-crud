@@ -69,10 +69,6 @@ func (c ComController) Update(u *gin.Context) {
 // Create 新增data信息
 func (c ComController) Create(u *gin.Context) {
 	if f, ok := c.M().(models.CreateService); ok {
-		// 增加token
-		//if tk, ok := c.M().(models.TokenService); ok {
-		//	tk.Token(u.Request.Header.Get("token"))
-		//}
 		result.GinCreate(u, c.M(), f.Create)
 		return
 	}
@@ -82,7 +78,7 @@ func (c ComController) Create(u *gin.Context) {
 // AddRoleParam 全局token参数自动注入传递
 func (c ComController) AddRoleParam(u *gin.Context) {
 	// 全局token参数自动注入传递
-	tm, err := token.GetTokenModel(u.Request.Header.Get("token"))
+	tm, err := token.GetTokenModel(result.GetToken(u))
 	if err == nil {
 		for _, role := range tm.Role {
 			_ = u.Request.ParseForm()
