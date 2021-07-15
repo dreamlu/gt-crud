@@ -8,7 +8,7 @@ version=1.0
 project=${2}
 
 # 必须要echo才能赋值version ???
-command -v git >/dev/null 2>&1 || echo "使用git版本号"; version=`git rev-parse --short HEAD`
+command -v git >/dev/null 2>&1 || echo "使用git版本号"; version=`git describe --tags --abbrev=0` #version=`git rev-parse --short HEAD`
 #echo "版本$version"
 
 # 默认dev

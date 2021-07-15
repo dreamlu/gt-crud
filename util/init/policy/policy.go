@@ -3,6 +3,7 @@ package policy
 import (
 	authz2 "demo/routers/authz"
 	"demo/routers/routelist"
+	"demo/util"
 	"demo/util/cons"
 	"fmt"
 	"net/http"
@@ -29,13 +30,15 @@ func InitPolicy() {
 			role = 0
 		)
 		// DELETE方法
-		path = strings.TrimSuffix(path, "/:id")
-		if !containPaths(path, "/admin") {
+		if methods[0] == http.MethodDelete {
+			path = strings.Replace(path, ":id", "*", -1)
+		}
+		if notContainPaths(path, "/admin") {
 			rolePs = append(rolePs, fmt.Sprintf(format, role, path, "*"))
 		}
 
 		role = 1
-		if !containPaths(path, "/admin") && methods[0] == http.MethodGet {
+		if notContainPaths(path, "/admin") && methods[0] == http.MethodGet {
 			rolePs = append(rolePs, fmt.Sprintf(format, role, path, http.MethodGet))
 		}
 	}
@@ -48,11 +51,15 @@ func InitPolicy() {
 	authz2.SavePolicy()
 }
 
+// 通用api
+var commApis = []string{"/file/upload", "/file/multi_upload"}
+
 func containPaths(path string, conditions ...string) bool {
-	for _, v := range conditions {
-		if strings.Contains(path, v) {
-			return true
-		}
-	}
-	return false
+
+	conditions = append(conditions, commApis...)
+	return util.Contains(path, conditions...)
+}
+
+func notContainPaths(path string, conditions ...string) bool {
+	return !util.Contains(path, conditions...)
 }
