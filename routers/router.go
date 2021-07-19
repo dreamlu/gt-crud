@@ -60,8 +60,8 @@ func SetRouter(router *routelist.Routes) {
 		// 静态目录
 		// relativePath:请求路径
 		// root:静态文件所在目录
-		v.Static("static", "static")
-		v.Static("template", "conf/template")
+		v.Static("/static", "static")
+		v.Static("/template", "conf/template")
 		// v.GET("/statics/file", file.StaticFile)
 		//文件上传
 		v.POST("/file/upload", file.UploadFile)
