@@ -8,6 +8,7 @@ import (
 	db2 "demo/util/init/db"
 	"demo/util/init/policy"
 	"github.com/dreamlu/gt/tool/conf"
+	"github.com/dreamlu/gt/tool/log"
 	"github.com/dreamlu/gt/tool/util/cons"
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,8 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	if conf.GetString("app.devMode") == cons.Dev {
 		gin.SetMode(gin.DebugMode)
+	} else {
+		log.DefaultFileLog()
 	}
 	//r := routers.SetRouter()
 	// 性能调试
