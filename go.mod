@@ -7,7 +7,7 @@ require (
 	github.com/casbin/casbin/v2 v2.31.2
 	github.com/dreamlu/gorm-adapter/v3 v3.3.3
 	github.com/dreamlu/gt v1.30.9
-	github.com/gin-gonic/gin v1.7.2
+	github.com/gin-gonic/gin v1.9.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/medivhzhan/weapp v1.5.1
 	github.com/robfig/cron/v3 v3.0.1
